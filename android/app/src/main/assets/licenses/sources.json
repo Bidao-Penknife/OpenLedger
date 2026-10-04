@@ -1,0 +1,57 @@
+[
+  {
+    "file": "Chaquopy.txt",
+    "source": "https://raw.githubusercontent.com/chaquo/chaquopy/17.0.0/LICENSE.txt",
+    "sha256": "345a9fdfeed355d37b18569ef277ba56eb0ab7c0b17a08a90163ce8d33d2b862"
+  },
+  {
+    "file": "CPython.txt",
+    "source": "https://raw.githubusercontent.com/python/cpython/v3.12.12/LICENSE",
+    "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+  },
+  {
+    "file": "Kotlin.txt",
+    "source": "https://raw.githubusercontent.com/JetBrains/kotlin/v2.2.21/license/LICENSE.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "file": "OpenSSL.txt",
+    "source": "https://raw.githubusercontent.com/openssl/openssl/openssl-3.0.18/LICENSE.txt",
+    "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+  },
+  {
+    "file": "libffi.txt",
+    "source": "https://raw.githubusercontent.com/libffi/libffi/v3.4.6/LICENSE",
+    "sha256": "67894089811f93fca47a76f85e017da6f8582d4ba0905963c6e0f1ad6df7a195"
+  },
+  {
+    "file": "bzip2.txt",
+    "source": "https://raw.githubusercontent.com/libarchive/bzip2/bzip2-1.0.8/LICENSE",
+    "sha256": "c6dbbf828498be844a89eaa3b84adbab3199e342eb5cb2ed2f0d4ba7ec0f38a3"
+  },
+  {
+    "file": "zlib.txt",
+    "source": "https://raw.githubusercontent.com/madler/zlib/v1.3.1/LICENSE",
+    "sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243"
+  },
+  {
+    "file": "xz.txt",
+    "source": "https://raw.githubusercontent.com/tukaani-project/xz/v5.4.7/COPYING",
+    "sha256": "72d7ef9c98be319fd34ce88b45203b36d5936f9c49e82bf3198ffee5e0c7d87e"
+  },
+  {
+    "file": "xz-LGPL-2.1.txt",
+    "source": "https://raw.githubusercontent.com/tukaani-project/xz/v5.4.7/COPYING.LGPLv2.1",
+    "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+  },
+  {
+    "file": "OpenLedger.txt",
+    "source": "repository/LICENSE",
+    "sha256": "d9be03b752b753b8fa317bfb279921d577ccae410d350d56b392965d4597c8a5"
+  },
+  {
+    "file": "tzdata.txt",
+    "source": "tzdata==2026.4 distribution license",
+    "sha256": "df58f69ea88683035d720b5375bcef0cf5aeaa98a1d098d572e0992c378deb46"
+  }
+]

@@ -41,3 +41,13 @@ credentials.*
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Android local toolchains, generated files, and signing keys
+.gradle/
+.kotlin/
+local.properties
+*.apk
+*.aab
+*.jks
+*.keystore
+!android/gradle/wrapper/gradle-wrapper.jar

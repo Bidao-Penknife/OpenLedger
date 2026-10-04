@@ -1,0 +1,61 @@
+name: Android preview quality and build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android preview / shared Python 3.12
+    runs-on: windows-2025
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Set up Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Check Kotlin formatting
+        run: python scripts/format_android.py --check
+      - name: Install required SDK packages
+        run: |
+          $manager = Join-Path $env:ANDROID_HOME 'cmdline-tools/latest/bin/sdkmanager.bat'
+          1..100 | ForEach-Object { 'y' } | & $manager --licenses
+          if ($LASTEXITCODE -ne 0) { throw 'Android SDK license setup failed.' }
+          & $manager 'platforms;android-36' 'build-tools;35.0.0'
+          if ($LASTEXITCODE -ne 0) { throw 'Required Android SDK packages unavailable.' }
+      - name: Build and verify APK
+        run: ./scripts/build_android.ps1 -Python (Get-Command python).Source
+      - name: Upload verified preview
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-preview-${{ github.sha }}
+          path: |
+            dist/android/*.apk
+            dist/android/*.sha256
+            build/validation/android/apk-check.json
+            android/app/build/reports/lint-results-debug.*
+          if-no-files-found: error
+          retention-days: 14

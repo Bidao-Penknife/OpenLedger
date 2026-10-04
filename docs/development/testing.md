@@ -97,3 +97,9 @@ GitHub Actions 配置以仓库中的 workflow 为准。Windows 任务配置了�
 翻译测试核对全部 tr 常量、静态动态标签、唯一 context/source、占位符、lrelease 确定性和实际英语控件。主题测试验证系统信号、人工覆盖及有效 QSS/图表主题，配置文件保持 system 选择。插件与 sync DTO 验证 API 版本、默认禁用、金额整数字符串及修改序号。
 
 启动验证的 --smoke-features 在源码、冻结和实际解压包中加载 QM、解析隐藏快速草稿并运行离线 AI/Release 引擎，资金数据保持不变；禁用实际托盘和热键，不访问 Windows 凭据或网络。该离线诊断与专用真实 Win32/IPC 测试分别提供证据。
+
+## Android 共享核心与设备测试
+
+`tests/integration/test_mobile_bridge.py` 使用真实临时 SQLite 验证 JSON 契约、只读草稿、整数分金额、失败回滚和幂等重试。运行 `uv run --locked pytest tests/integration/test_mobile_bridge.py` 不需要 Android SDK。
+
+Android APK 的内嵌 Python、Schema 资源和界面必须在设备上另验。`./scripts/build_android.ps1` 只构建与检查；设备执行使用 `./android/gradlew.bat -p android connectedDebugAndroidTest`。请使用新建的合成模拟器：已有账户或流水时 UI 测试跳过且不删除数据。核心设备测试只写独立缓存目录。模拟器通过与真机认证分别记录；当前结果见[阶段 10](phase10-validation.md)。

@@ -27,7 +27,7 @@ path = "src/openledger/_version.py"
 packages = ["src/openledger"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "tests", "scripts", "packaging", "docs", ".github", "main.py", "pyproject.toml", "uv.lock", "README.md", "CONTRIBUTING.md", "CHANGELOG.md", "SECURITY.md", "LICENSE", "THIRD_PARTY_NOTICES.md", ".python-version", ".gitignore", ".gitattributes"]
+include = ["src", "tests", "scripts", "packaging", "docs", "android", ".github", "main.py", "pyproject.toml", "uv.lock", "README.md", "CONTRIBUTING.md", "CHANGELOG.md", "SECURITY.md", "LICENSE", "THIRD_PARTY_NOTICES.md", ".python-version", ".gitignore", ".gitattributes"]
 
 [tool.ruff]
 target-version = "py312"

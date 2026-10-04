@@ -1,0 +1,8 @@
+SQLite is in the public domain. The embedded SQLite implementations are
+distributed with the Python runtime supplied by Chaquopy.
+
+Official copyright and public-domain statement:
+https://www.sqlite.org/copyright.html
+
+The actual SQLite runtime version is recorded by the shared mobile snapshot API
+and the device acceptance results, independently of Android's system SQLite.

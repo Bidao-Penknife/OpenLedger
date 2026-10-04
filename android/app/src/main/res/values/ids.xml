@@ -1,0 +1,5 @@
+<resources>
+    <item name="quick_input" type="id" />
+    <item name="parse_button" type="id" />
+    <item name="save_button" type="id" />
+</resources>

@@ -2,6 +2,8 @@
 
 面向 Windows 的本地个人财务管理与智能记账桌面应用，使用 Python、PySide6 和 SQLite。项目优先保证资金记录的正确性、数据可恢复性和长期可维护性。
 
+项目已提供 Android `0.1.0-alpha1` 预览版：Kotlin 原生触控界面 + 同一套 Python 3.12 记账核心。第一版覆盖本地规则解析、确认保存、收入支出、流水、账户与总资产；移动端的构建和限制见 [Android 说明](android/README.md)与 [ADR-019](docs/adr/019-android-shared-core.md)。实际构建、模拟器运行与 Windows 回归见[阶段 10 记录](docs/development/phase10-validation.md)。Android 与 Windows 的功能里程碑分别记录。
+
 **当前版本为 `1.0.0rc1` Windows 发行候选，阶段 8 本地实施与验收已通过。** 提供源码、便携 ZIP 与当前用户安装程序。既有记账、账户、统计、文件交换、系统入口和可选 AI 保留统一资金事务；自然语言与 AI 只生成可编辑草稿，确认后保存。默认关闭 AI，应用启动不联网。安装器、发行状态与实际验证见[阶段 8 记录](docs/development/phase8-validation.md)。
 
 ## 项目状态
@@ -24,6 +26,7 @@
 | 类型检查、格式检查、测试和 CI 配置 | 工程骨架；运行结果以阶段验收记录为准 |
 | Windows exe | PyInstaller `onedir` 发行候选；未签名 |
 | Windows 安装程序 | Inno Setup 当前用户安装，固定 AppId；修复安装、升级与卸载保留账目；候选版未签名 |
+| Android APK | 原生界面与共享 Python 核心；本地记账预览、调试签名；Android 7.0 起，ARM64 / x86_64 |
 | 单实例、托盘和全局快捷键 | 同一数据目录激活已有窗口；默认 Ctrl+Alt+L；关闭隐藏可配置 |
 | 独立快速记账窗口 | Enter 解析、Ctrl+Enter 确认；失败保留，复用同一个资金 writer |
 | 可选 AI | 用户自行配置兼容 API/模型/Windows 凭据；显式解析，只生成待确认建议 |
@@ -32,7 +35,7 @@
 
 仓库目前尚未配置 GitHub remote。本文不提供虚构的下载、徽章或 Release 链接；正式托管位置确定后补充。
 
-无 Python 的独立 Windows、真实系统输入法与最终发行审阅仍待完成，候选版没有被声明为稳定 `1.0.0`。本机 PATH 隔离和 GitHub runner 验证不能替代[清洁系统验收](docs/development/clean-windows.md)。
+本次交付按维护者要求采用当前 Windows 电脑验收，不以独立无 Python 系统为前提。环境覆盖范围与真实输入法等人工检查仍如实记录；候选版没有被声明为稳定 `1.0.0`。[清洁系统验收](docs/development/clean-windows.md)保留为更广泛发行的可选验证流程。
 
 ## 从源码运行
 
@@ -100,7 +103,7 @@ uv run --locked pytest
 
 Windows 脚本同步锁定的构建环境，生成 PE 版本资源、执行 PyInstaller、收集许可证并生成 ZIP 与 SHA256。后两步在仓库内准备固定版本的便携 Inno 编译器，核对完整 bundle 后编译安装程序。单独调用 PyInstaller spec 前需要先运行 `uv run --locked --group build python scripts/release_tools.py prepare`。
 
-采用 `onedir` 目录分发，以便验证 Qt 动态库、平台插件和许可证材料。分发时需要保留整个输出目录，不能只复制其中的 exe。普通权限的首次安装、升级、修复、备份恢复及卸载已完成本地验证；独立 Windows 和正式发布门禁仍待完成。具体输出路径和检查步骤见[发布指南](docs/development/releasing.md)与[草稿发行工作流](docs/development/release-workflow.md)。
+采用 `onedir` 目录分发，以便验证 Qt 动态库、平台插件和许可证材料。分发时需要保留整个输出目录，不能只复制其中的 exe。普通权限的首次安装、升级、修复、备份恢复及卸载已完成本地验证；本次按维护者要求使用当前电脑验收，独立 Windows 可补充更广泛的发行覆盖。具体输出路径和检查步骤见[发布指南](docs/development/releasing.md)与[草稿发行工作流](docs/development/release-workflow.md)。
 
 ## 设计与路线图
 
@@ -111,6 +114,7 @@ src/openledger/
 ├── domain/          # 金额、交易与领域规则
 ├── application/     # 用例、DTO 与端口
 ├── infrastructure/  # SQLite、文件、平台与外部适配器
+├── mobile/          # Android API v1 JSON 适配，共享资金服务
 ├── presentation/    # PySide6 窗口、模型与视图
 └── bootstrap.py     # 程序入口与依赖组装
 ```

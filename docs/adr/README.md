@@ -15,5 +15,6 @@ ADR 记录已经接受的跨模块选择及其原因。阶段 2 设计包保留�
 - [ADR-016：统计快照、文件预览与原子报告](016-analytics-and-file-exchange.md)
 - [ADR-017：桌面入口、可选服务与扩展契约](017-desktop-and-optional-services.md)
 - [ADR-018：当前用户安装与发行候选](018-installation-and-release.md)
+- [ADR-019：Android 原生界面与共享 Python 核心](019-android-shared-core.md)
 
 阶段 6 使用 Qt 原生绘图与 PDF 写入、不可变统计快照和预览后原子批次；现行实现决策已记录，统一本地验证结果另见[阶段 6 验收记录](../development/phase6-validation.md)。决策已采纳不表示发行验收已经通过。
