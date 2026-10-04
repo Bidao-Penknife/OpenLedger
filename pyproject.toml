@@ -1,0 +1,56 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openledger-desktop"
+dynamic = ["version"]
+description = "Local-first personal finance desktop application for Windows"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "OpenLedger contributors" }]
+dependencies = ["PySide6>=6.8,<7", "tzdata>=2025.2", "openpyxl>=3.1,<4", "defusedxml>=0.7,<1", "packaging>=24,<27"]
+
+[project.gui-scripts]
+openledger = "openledger.bootstrap:main"
+
+[dependency-groups]
+dev = ["ruff>=0.11,<1", "mypy>=1.15,<2", "pytest>=8.3,<10", "pytest-qt>=4.4,<5", "types-openpyxl>=3.1,<4"]
+build = ["pyinstaller>=6.12,<7"]
+
+[tool.hatch.version]
+path = "src/openledger/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openledger"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "scripts", "packaging", "docs", ".github", "main.py", "pyproject.toml", "uv.lock", "README.md", "CONTRIBUTING.md", "CHANGELOG.md", "SECURITY.md", "LICENSE", "THIRD_PARTY_NOTICES.md", ".python-version", ".gitignore", ".gitattributes"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = ["docs/architecture/phase2", "packaging/pyinstaller/*.spec"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["src/openledger", "tests", "scripts"]
+strict = true
+pretty = true
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = ["pytestqt.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-config --strict-markers"
+qt_api = "pyside6"
+markers = ["ui: Qt window tests", "integration: cross-module or process checks"]
+filterwarnings = ["error"]

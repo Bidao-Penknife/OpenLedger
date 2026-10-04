@@ -1,0 +1,43 @@
+# Local Python environment and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Build products and local verification
+build/
+dist/
+.smoke/
+artifacts/
+
+# Personal records and credentials must never enter source control
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+*.olbackup
+*.log
+.env
+.env.*
+!.env.example
+data/
+backups/
+migration-backups/
+attachments/
+credentials.*
+!src/openledger/infrastructure/credentials.py
+*.pem
+*.key
+
+# Editor and OS files
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini
+.DS_Store

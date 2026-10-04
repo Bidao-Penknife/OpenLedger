@@ -1,0 +1,21 @@
+* text=auto eol=lf
+*.py text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.qss text eol=lf
+*.ps1 text eol=crlf
+*.png binary
+*.ico binary
+*.zip binary
+*.exe binary
+
+# Preserve original bytes and hashes of upstream notices and archived design evidence.
+packaging/licenses/Qt/*.html -text -whitespace
+packaging/licenses/Qt/*.txt -text -whitespace
+packaging/licenses/InnoSetup/LICENSE.txt -text -whitespace
+packaging/inno/languages/*.isl -text -whitespace
+docs/architecture/phase2/** -text -whitespace
+src/openledger/resources/migrations/*.sql -text

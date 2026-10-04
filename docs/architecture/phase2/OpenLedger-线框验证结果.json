@@ -1,0 +1,65 @@
+{
+  "scope": "HTML design preview, not native Qt or business functionality",
+  "browser": "Chrome/154.0.8037.59",
+  "previewSha256": "c2292720d63b9a9f313b5f730d2c1146a0214c90e0eff227f8295d620bbfe4f0",
+  "passed": 14,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "All six navigation pages select a single visible page",
+      "status": "passed"
+    },
+    {
+      "name": "Draft has wallet and bank account choices",
+      "status": "passed"
+    },
+    {
+      "name": "Draft confirmation is disabled until account selection",
+      "status": "passed"
+    },
+    {
+      "name": "Account selection enables preview confirmation",
+      "status": "passed"
+    },
+    {
+      "name": "Preview confirmation explains that no data is saved",
+      "status": "passed"
+    },
+    {
+      "name": "Escape closes the draft",
+      "status": "passed"
+    },
+    {
+      "name": "IME composing Enter does not open a draft",
+      "status": "passed"
+    },
+    {
+      "name": "Quick preview opens and hides background interaction",
+      "status": "passed"
+    },
+    {
+      "name": "Escape closes quick preview and restores background",
+      "status": "passed"
+    },
+    {
+      "name": "Error state displays canonical DATABASE_BUSY",
+      "status": "passed"
+    },
+    {
+      "name": "Light and dark themes change document state",
+      "status": "passed"
+    },
+    {
+      "name": "Desktop layout does not overflow horizontally",
+      "status": "passed"
+    },
+    {
+      "name": "Wireframe has no remote resource tags or persistence code",
+      "status": "passed"
+    },
+    {
+      "name": "No browser JavaScript exceptions were observed",
+      "status": "passed"
+    }
+  ]
+}

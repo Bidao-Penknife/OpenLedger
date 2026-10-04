@@ -1,0 +1,40 @@
+name: 缺陷报告
+description: 使用合成数据描述可复现的问题。
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        当前为工程骨架，请先确认该功能已实现。安全问题遵循 SECURITY.md；不要在公开报告中提交账本、凭据或敏感细节。
+  - type: input
+    id: version
+    attributes:
+      label: 版本与启动方式
+      description: 例如 0.0.1.dev0，源码 main.py / 模块入口 / 冻结 exe。
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 运行环境
+      description: Windows 版本、架构、Python/Qt/SQLite 诊断。请删去个人路径。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 最小复现步骤
+      description: 使用合成输入；描述从启动到问题出现的步骤。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为与实际行为
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 脱敏日志或截图
+      description: 可选。不要上传完整个人数据目录或真实财务附件。

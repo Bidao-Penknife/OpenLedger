@@ -1,0 +1,1 @@
+"""Native Qt presentation layer."""

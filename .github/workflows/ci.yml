@@ -1,0 +1,123 @@
+name: Windows quality and build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Python 3.12 / Windows x64
+    runs-on: windows-2025
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      UV_PYTHON: '3.12'
+      UV_NO_PROGRESS: '1'
+      PYTHONUTF8: '1'
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+          architecture: x64
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.10.4'
+          enable-cache: false
+
+      - name: Install locked dependencies
+        run: uv sync --locked --group dev --group build
+
+      - name: Lint
+        run: uv run --locked ruff check .
+
+      - name: Verify and compile translation catalog
+        run: uv run --locked python scripts/update_translations.py --check --compile
+
+      - name: Check formatting
+        run: uv run --locked ruff format --check .
+
+      - name: Check types
+        run: uv run --locked mypy
+
+      - name: Run tests
+        run: uv run --locked pytest --junitxml=build/validation/pytest.xml
+
+      - name: Smoke test source application
+        run: uv run --locked python scripts/smoke_app.py --output-dir build/validation/source
+
+      - name: Build Windows directory bundle
+        run: ./scripts/build_windows.ps1
+
+      - name: Smoke test frozen application
+        run: ./scripts/smoke_windows.ps1 -Executable ./dist/windows/OpenLedger/OpenLedger.exe -OutputDirectory ./build/validation/frozen
+
+      - name: Verify portable ZIP and bundled migration
+        run: |
+          $archive = Get-ChildItem -LiteralPath ./dist/windows -Filter 'OpenLedger-*-windows-x64.zip' | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          uv run --locked --no-sync python scripts/verify_windows_archive.py --archive $archive.FullName --output-dir build/validation/portable
+
+      - name: Prepare pinned Inno Setup compiler
+        run: ./scripts/setup_inno.ps1
+
+      - name: Build current-user installer
+        run: ./scripts/build_installer.ps1
+
+      - name: Verify actual installer lifecycle
+        run: |
+          $version = uv run --locked --no-sync python -c "from openledger import __version__; print(__version__)"
+          ./scripts/verify_installer.ps1 -Installer "dist/installer/OpenLedger-$version-windows-x64-setup.exe" -OutputDirectory build/validation/installer -AllowElevatedRunner
+
+      - name: Upload verification evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: windows-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            build/validation/**/*.json
+            build/validation/**/*.xml
+            build/validation/**/*.txt
+            build/validation/**/*.log
+            build/validation/**/*.png
+            build/validation/**/*.pdf
+            build/validation/**/*.csv
+            build/validation/**/*.xlsx
+            !build/validation/**/settings.json
+            !build/validation/**/ai-settings.json
+            !build/validation/**/update-settings.json
+            build/windows/OpenLedger/warn-OpenLedger.txt
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload verified build
+        if: ${{ success() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: openledger-windows-x64-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            dist/windows/OpenLedger-*-windows-x64.zip
+            dist/windows/OpenLedger-*-windows-x64.zip.sha256
+            dist/installer/OpenLedger-*-windows-x64-setup.exe
+            dist/installer/OpenLedger-*-windows-x64-setup.exe.sha256
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

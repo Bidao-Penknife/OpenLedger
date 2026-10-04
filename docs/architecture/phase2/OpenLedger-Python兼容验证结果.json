@@ -1,0 +1,50 @@
+{
+  "scope": "Python sqlite3 DDL/runtime/backup compatibility smoke; not application or WAL concurrency tests",
+  "runtime": {
+    "python": "3.12.5 (tags/v3.12.5:ff3bc82, Aug  6 2024, 20:45:27) [MSC v.1940 64 bit (AMD64)]",
+    "executable": "C:\\Users\\ZhouShuolei\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "sqlite": "3.45.3"
+  },
+  "schemaSha256": "b7165f0783a7efcdff7bf4df7cf3f1404613d10d6eccd4e3bec168b2091ac0d9",
+  "databasePath": "D:\\Code\\2026-10-02\\zi\\work\\python-schema-lta5z0e1\\design.sqlite3",
+  "passed": 9,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Python sqlite3 executes the DDL and creates 14 user tables",
+      "status": "passed"
+    },
+    {
+      "name": "DDL creates 27 explicit indexes",
+      "status": "passed"
+    },
+    {
+      "name": "DDL creates 2 query views",
+      "status": "passed"
+    },
+    {
+      "name": "All user tables are STRICT",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign key enforcement is enabled",
+      "status": "passed"
+    },
+    {
+      "name": "Built-in JSON validation functions are available",
+      "status": "passed"
+    },
+    {
+      "name": "Design smoke check uses rollback journal, not WAL",
+      "status": "passed"
+    },
+    {
+      "name": "Database integrity and foreign keys pass",
+      "status": "passed"
+    },
+    {
+      "name": "Python backup API copies a committed synthetic database",
+      "status": "passed"
+    }
+  ]
+}

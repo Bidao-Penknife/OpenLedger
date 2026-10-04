@@ -1,0 +1,301 @@
+{
+  "scope": "SQLite design DDL, constraints, views and documented responsibility boundaries; not Python business-service tests",
+  "runtime": {
+    "node": "v24.15.0",
+    "sqlite": "3.51.3"
+  },
+  "schemaSha256": "b7165f0783a7efcdff7bf4df7cf3f1404613d10d6eccd4e3bec168b2091ac0d9",
+  "databasePath": "D:\\Code\\2026-10-02\\zi\\work\\schema-validation-IdkSDA\\design.sqlite3",
+  "passed": 72,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "DDL creates 14 user tables and 2 views",
+      "status": "passed"
+    },
+    {
+      "name": "All 14 user tables use STRICT",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign key enforcement is enabled",
+      "status": "passed"
+    },
+    {
+      "name": "Accounts do not store an authoritative balance",
+      "status": "passed"
+    },
+    {
+      "name": "Zero opening account is visible with balance zero",
+      "status": "passed"
+    },
+    {
+      "name": "Reject zero transaction amount",
+      "status": "passed"
+    },
+    {
+      "name": "Reject negative transaction amount",
+      "status": "passed"
+    },
+    {
+      "name": "Reject transaction amount above maximum",
+      "status": "passed"
+    },
+    {
+      "name": "Reject fractional transaction amount",
+      "status": "passed"
+    },
+    {
+      "name": "Reject nonnumeric transaction amount",
+      "status": "passed"
+    },
+    {
+      "name": "Reject unsupported currency",
+      "status": "passed"
+    },
+    {
+      "name": "Reject unknown transaction kind",
+      "status": "passed"
+    },
+    {
+      "name": "Reject unknown creation source",
+      "status": "passed"
+    },
+    {
+      "name": "Reject income without a book",
+      "status": "passed"
+    },
+    {
+      "name": "Reject income using expense category",
+      "status": "passed"
+    },
+    {
+      "name": "Reject expense using income category",
+      "status": "passed"
+    },
+    {
+      "name": "Reject transfer with book/category fields",
+      "status": "passed"
+    },
+    {
+      "name": "Reject missing explicit time zone",
+      "status": "passed"
+    },
+    {
+      "name": "Reject malformed date",
+      "status": "passed"
+    },
+    {
+      "name": "Reject exact time without a UTC instant",
+      "status": "passed"
+    },
+    {
+      "name": "Reject vague period without a period label",
+      "status": "passed"
+    },
+    {
+      "name": "Reject malformed audit timestamp",
+      "status": "passed"
+    },
+    {
+      "name": "Reject self-referencing category",
+      "status": "passed"
+    },
+    {
+      "name": "Reject child category with different parent kind",
+      "status": "passed"
+    },
+    {
+      "name": "Reject blank account name",
+      "status": "passed"
+    },
+    {
+      "name": "Reject invalid archived flag",
+      "status": "passed"
+    },
+    {
+      "name": "Reject duplicate active account name",
+      "status": "passed"
+    },
+    {
+      "name": "Balances reflect opening, income, expense, transfer and refund",
+      "status": "passed"
+    },
+    {
+      "name": "Transfer entries conserve total assets",
+      "status": "passed"
+    },
+    {
+      "name": "Cashflow excludes opening/transfer and separates refunds",
+      "status": "passed"
+    },
+    {
+      "name": "Refund inherits original book and category",
+      "status": "passed"
+    },
+    {
+      "name": "Refund category follows original category edit",
+      "status": "passed"
+    },
+    {
+      "name": "Archived account remains in balance view and total assets",
+      "status": "passed"
+    },
+    {
+      "name": "Another book changes shared account balance",
+      "status": "passed"
+    },
+    {
+      "name": "Book filter preserves isolated cashflow statistics",
+      "status": "passed"
+    },
+    {
+      "name": "Soft deletion removes balance/report contribution",
+      "status": "passed"
+    },
+    {
+      "name": "Restoring a transaction restores its query contribution",
+      "status": "passed"
+    },
+    {
+      "name": "Reject duplicate transaction/account entry",
+      "status": "passed"
+    },
+    {
+      "name": "Reject entry with unknown account",
+      "status": "passed"
+    },
+    {
+      "name": "Reject entry with unknown transaction",
+      "status": "passed"
+    },
+    {
+      "name": "Reject zero entry",
+      "status": "passed"
+    },
+    {
+      "name": "Reject entry above maximum",
+      "status": "passed"
+    },
+    {
+      "name": "Reject fractional entry",
+      "status": "passed"
+    },
+    {
+      "name": "Prevent physical deletion of referenced account",
+      "status": "passed"
+    },
+    {
+      "name": "Reject refund with independent book/category",
+      "status": "passed"
+    },
+    {
+      "name": "Reject self-referencing refund",
+      "status": "passed"
+    },
+    {
+      "name": "Reject duplicate tag association",
+      "status": "passed"
+    },
+    {
+      "name": "Reject duplicate file/mapping/row identity",
+      "status": "passed"
+    },
+    {
+      "name": "Soft deleted imported row still reserves source identity",
+      "status": "passed"
+    },
+    {
+      "name": "Reject mapping hash inconsistent with import batch",
+      "status": "passed"
+    },
+    {
+      "name": "Reject partial import identity",
+      "status": "passed"
+    },
+    {
+      "name": "Reject duplicate external namespace/record identity",
+      "status": "passed"
+    },
+    {
+      "name": "Reject duplicate committed request id",
+      "status": "passed"
+    },
+    {
+      "name": "Reject invalid receipt JSON",
+      "status": "passed"
+    },
+    {
+      "name": "Reject nonobject receipt JSON",
+      "status": "passed"
+    },
+    {
+      "name": "Deferred audit receipt reference permits atomic receipt-last commit",
+      "status": "passed"
+    },
+    {
+      "name": "Commit rejects audit without a receipt",
+      "status": "passed"
+    },
+    {
+      "name": "Reject attachment path ../escape.png",
+      "status": "passed"
+    },
+    {
+      "name": "Reject attachment path /absolute.png",
+      "status": "passed"
+    },
+    {
+      "name": "Reject attachment path C:/escape.png",
+      "status": "passed"
+    },
+    {
+      "name": "Reject attachment path images/../../escape.png",
+      "status": "passed"
+    },
+    {
+      "name": "Reject attachment path images\\escape.png",
+      "status": "passed"
+    },
+    {
+      "name": "Rollback after the first transfer entry leaves no partial record",
+      "status": "passed"
+    },
+    {
+      "name": "Adjustment metadata is excluded from income/expense",
+      "status": "passed"
+    },
+    {
+      "name": "Reject adjustment without reason and balance metadata",
+      "status": "passed"
+    },
+    {
+      "name": "Responsibility probe: orphan header requires application cardinality check",
+      "status": "passed"
+    },
+    {
+      "name": "Responsibility probe: over-refund requires application aggregate check",
+      "status": "passed"
+    },
+    {
+      "name": "Responsibility probe: future date requires Clock validation",
+      "status": "passed"
+    },
+    {
+      "name": "Responsibility probe: real calendar validation is outside shape CHECK",
+      "status": "passed"
+    },
+    {
+      "name": "Responsibility probe: account cut point requires application validation",
+      "status": "passed"
+    },
+    {
+      "name": "Integer SQL SUM overflow is explicit and BigInt iteration keeps precision",
+      "status": "passed"
+    },
+    {
+      "name": "Final database integrity and foreign keys pass",
+      "status": "passed"
+    }
+  ]
+}

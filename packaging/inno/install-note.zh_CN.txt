@@ -1,0 +1,10 @@
+OpenLedger 个人记账桌面应用
+
+程序默认安装到当前用户的 LocalAppData\Programs\OpenLedger，无需管理员权限。
+账本默认保存在 LocalAppData\OpenLedger，安装或卸载不会删除账目、备份或 AI 凭据。
+升级前请退出所有 OpenLedger 实例，并保留一份已验证的财务备份。
+
+本程序使用本地规则记账；AI 默认关闭，由用户自行配置。所有解析结果经确认后保存。
+当前为未签名的候选版。请核对发布页校验值和发行说明。
+
+安装与卸载由 Inno Setup 6.7.3 提供，版权及许可证在 licenses\InnoSetup 中。

@@ -1,0 +1,145 @@
+name: Build and prepare draft release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing version tag, for example v1.0.0rc1'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      PYTHONUTF8: '1'
+      UV_NO_PROGRESS: '1'
+      RELEASE_TAG: ${{ inputs.tag }}
+    outputs:
+      prerelease: ${{ steps.identity.outputs.prerelease }}
+    steps:
+      - name: Validate tag syntax
+        run: |
+          if ($env:RELEASE_TAG -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+(?:(?:a|b|rc)[0-9]+|\.dev[0-9]+)?$') { throw 'Invalid version tag' }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.10.4'
+          enable-cache: false
+      - name: Install locked dependencies
+        run: uv sync --locked --group dev --group build
+      - name: Validate source identity
+        id: identity
+        run: |
+          uv run --locked --no-sync python scripts/release_tools.py check-tag --tag $env:RELEASE_TAG
+          if ($LASTEXITCODE -ne 0) { throw 'Tag differs from source version' }
+          $pre = uv run --locked --no-sync python -c "from packaging.version import Version; from openledger import __version__; print(str(Version(__version__).is_prerelease).lower())"
+          "prerelease=$pre" >> $env:GITHUB_OUTPUT
+      - name: Check quality and translations
+        run: |
+          uv run --locked --no-sync ruff check .
+          if ($LASTEXITCODE -ne 0) { throw 'Lint failed' }
+          uv run --locked --no-sync ruff format --check .
+          if ($LASTEXITCODE -ne 0) { throw 'Format failed' }
+          uv run --locked --no-sync mypy
+          if ($LASTEXITCODE -ne 0) { throw 'Types failed' }
+          uv run --locked --no-sync python scripts/update_translations.py --check --compile
+          if ($LASTEXITCODE -ne 0) { throw 'Translations failed' }
+      - name: Run all tests and source startup
+        run: |
+          uv run --locked --no-sync pytest --junitxml=build/validation/pytest.xml
+          if ($LASTEXITCODE -ne 0) { throw 'Tests failed' }
+          uv run --locked --no-sync python scripts/smoke_app.py --output-dir build/validation/source
+          if ($LASTEXITCODE -ne 0) { throw 'Source startup failed' }
+      - name: Build and verify portable program
+        run: |
+          ./scripts/build_windows.ps1
+          ./scripts/smoke_windows.ps1 -Executable dist/windows/OpenLedger/OpenLedger.exe -OutputDirectory build/validation/frozen
+          $version = $env:RELEASE_TAG.Substring(1)
+          uv run --locked --no-sync python scripts/verify_windows_archive.py --archive "dist/windows/OpenLedger-$version-windows-x64.zip" --output-dir build/validation/portable
+          if ($LASTEXITCODE -ne 0) { throw 'Portable verification failed' }
+      - name: Build and verify installer
+        run: |
+          ./scripts/setup_inno.ps1
+          ./scripts/build_installer.ps1
+          $version = $env:RELEASE_TAG.Substring(1)
+          ./scripts/verify_installer.ps1 -Installer "dist/installer/OpenLedger-$version-windows-x64-setup.exe" -OutputDirectory build/validation/installer -AllowElevatedRunner
+      - name: Collect reviewable release assets
+        run: |
+          uv run --locked --no-sync python scripts/release_tools.py collect --tag $env:RELEASE_TAG
+          if ($LASTEXITCODE -ne 0) { throw 'Release asset collection failed' }
+          Copy-Item -LiteralPath docs/release/RELEASE_NOTES.md -Destination dist/release/RELEASE_NOTES.md
+      - name: Upload release assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-assets
+          path: dist/release/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
+      - name: Upload verification evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-verification
+          path: |
+            build/validation/**/*.json
+            build/validation/**/*.xml
+            build/validation/**/*.txt
+            build/validation/**/*.log
+            build/validation/**/*.png
+            build/validation/**/*.pdf
+            build/validation/**/*.csv
+            build/validation/**/*.xlsx
+            !build/validation/**/settings.json
+            !build/validation/**/ai-settings.json
+            !build/validation/**/update-settings.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+  draft:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: release
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ inputs.tag }}
+      IS_PRERELEASE: ${{ needs.build.outputs.prerelease }}
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-assets
+          path: release-assets
+      - name: Verify downloaded assets and create a draft
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          sha256sum --strict --check SHA256SUMS.txt
+          args=("$RELEASE_TAG" --verify-tag --draft --title "OpenLedger $RELEASE_TAG" --notes-file RELEASE_NOTES.md)
+          if [[ "$IS_PRERELEASE" == "true" ]]; then args+=(--prerelease); fi
+          version="${RELEASE_TAG#v}"
+          test "$(head -n 1 RELEASE_NOTES.md)" = "# OpenLedger $version"
+          gh release create "${args[@]}" "OpenLedger-$version-source.zip" "OpenLedger-$version-windows-x64.zip" "OpenLedger-$version-windows-x64-setup.exe" SHA256SUMS.txt release-manifest.json
