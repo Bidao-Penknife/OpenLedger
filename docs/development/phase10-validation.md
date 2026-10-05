@@ -1,6 +1,6 @@
 # 阶段 10：Android 预览与本机回归
 
-日期：2026-10-05。Windows 版本保持 `1.0.0rc1`；Android 版本为 `0.1.0-alpha1-preview`。本地构建和运行验收通过，GitHub 建仓仍需完成 CLI 浏览器登录。远端结果按交付记录更新，不以工作流配置代替执行结果。
+日期：2026-10-05。Windows 版本保持 `1.0.0rc1`；Android 版本为 `0.1.0-alpha1-preview`。本地构建和运行验收通过，新公开仓库 [Bidao-Penknife/OpenLedger](https://github.com/Bidao-Penknife/OpenLedger)已创建。远端提交与 CI 结果按交付记录更新，不以工作流配置代替执行结果。
 
 维护者已授权直接新建公开仓库，并指定在当前 Windows 电脑测试。本期采纳阶段 9 的普通用户安装、升级、修复、恢复与卸载证据，不把无 Python 的独立 Windows 作为本次交付前提。既有阶段记录和 Windows 候选制品不覆盖。
 
@@ -35,7 +35,7 @@ scripts/format_android.py                        固定 ktfmt 及下载摘要
 | 设备测试 | 本机 WHPX Android 15 / API 35 / x86_64 合成模拟器，真实 APK 内 5 项测试通过；飞行模式 |
 | UI 记账 | 明确创建合成现金账户，期初 1000 元；解析并确认咖啡 25 元；资产 975 元、月支出 25 元、流水 2 条（含期初） |
 | 冷启动保留 | 结束该预览应用进程，确认进程退出，再重新启动；界面资产和月支出与已保存账目一致 |
-| CI 静态检查 | actionlint 检查 Windows、Android 与发行工作流通过；未执行远端 CI |
+| CI 静态检查 | actionlint 检查 Windows、Android 与发行工作流通过；实际远端结果见 Actions 与交付记录 |
 
 桌面 Python 为 3.12.5、SQLite 为 3.45.3；Android 实际 SQLite 为 3.50.4。Schema、迁移与资金不变量通过各自运行时验证，未假设两个平台的 SQLite 二进制版本相同。模拟器使用本机已可用的 WHPX，没有启用额外 Windows 功能或重启系统。SDK/JDK/Gradle/CLI 工具均放在隔离工作目录，未纳入源码。
 
@@ -53,13 +53,13 @@ Android 支持本地自然语言草稿、手工收支、账户/账本创建、�
 
 | 编号 | 本期状态 |
 | --- | --- |
-| OLG-039 | 本地源码审查与 Git 导入准备；远端建仓待 CLI 登录完成 |
+| OLG-039 | 本地源码审查与 Git 导入完成；新公开仓库已建立，远端提交与 CI 按实际执行核对 |
 | OLG-040 | 当前 Windows 验收采用、1021 项回归与原生源码启动通过 |
 | OLG-041 | 共享 Python 移动适配、输入验证与 Schema 字节检查通过 |
 | OLG-042 | 记账闭环、流水、资产和冷启动保留通过 |
 | OLG-043 | 实际 APK 构建、静态检查与本机模拟器通过；真机待测 |
 | OLG-044 | 后续里程碑：移动备份、编辑/删除、转账/退款、导入导出、图表与可选 AI |
 
-GitHub App 当前支持已有仓库内容与 Issue 操作，未提供创建仓库工具；可用的 GitHub CLI 需要用户在 GitHub 完成浏览器设备登录。此前登录码已过期，账户验证与新仓库创建不能用旧码继续。用户已经授权建仓，缺少的是 CLI 的实际认证，不是重复请求建仓许可。未创建线上 Release 或稳定 tag。
+仓库归属与 CLI 登录账号已核对为 `Bidao-Penknife`，新仓库为公开项目。仅推送审查过的 main 分支，原始候选基线提交与通知字节保留；个人数据、凭据及签名私钥不入库。实际 CI 结果见 [Actions](https://github.com/Bidao-Penknife/OpenLedger/actions)与交付记录。未创建线上 Release 或稳定 tag。
 
 交付目录保留 APK、完整源码、Git 离线快照、SHA256、两端验证记录与手机截图；具体 Git 提交、归档摘要、远端状态和证据索引见本阶段交付记录。证据只含合成账户、测试结果和截图，不含个人数据库、备份、凭据或签名私钥。

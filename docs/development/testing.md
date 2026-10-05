@@ -84,9 +84,9 @@ uv run --locked pytest tests/ui/test_analysis_page.py tests/ui/test_exchange_pag
 
 ## CI 与报告
 
-GitHub Actions 配置以仓库中的 workflow 为准。Windows 任务配置了全部 pytest、检查、源码/冻结启动和便携包验证，权限限定为所需范围；PR 任务不自动发布，也不依赖私人凭据。当前没有已执行的远端 GitHub CI 结果，新增测试是否通过以本地验收及将来实际 CI 日志为准。
+GitHub Actions 配置以仓库中的 workflow 为准。Windows 任务配置了全部 pytest、检查、源码/冻结启动和便携包验证，权限限定为所需范围；PR 任务不自动发布，也不依赖私人凭据。实际远端执行以 [Actions 页面](https://github.com/Bidao-Penknife/OpenLedger/actions)为准，新增测试是否通过分别记录本地验收与实际 CI 日志。
 
-本地通过、远端 CI 通过、打包成功与干净系统验证是不同证据，阶段报告分别说明。没有远端仓库时，CI 配置只能本地审阅，不能称为“GitHub Actions 已运行通过”。
+本地通过、远端 CI 通过、打包成功与干净系统验证是不同证据，阶段报告分别说明。工作流存在或静态检查通过不能代替真正的远端执行。
 
 ## 阶段 7 系统与可选服务
 

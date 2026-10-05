@@ -33,7 +33,7 @@
 | 更新检查 | 配置真实 GitHub owner/repo 后手动检查稳定 Release；只提醒与打开页面 |
 | 插件和同步接口 | API v1 显式内置注册与不可变 DTO；未实现市场或云传输 |
 
-仓库目前尚未配置 GitHub remote。本文不提供虚构的下载、徽章或 Release 链接；正式托管位置确定后补充。
+源码托管于 [Bidao-Penknife/OpenLedger](https://github.com/Bidao-Penknife/OpenLedger)，实际构建状态见 [GitHub Actions](https://github.com/Bidao-Penknife/OpenLedger/actions)。Windows 与 Android 的本地交付仍保持候选/预览状态，尚未创建线上 Release。
 
 本次交付按维护者要求采用当前 Windows 电脑验收，不以独立无 Python 系统为前提。环境覆盖范围与真实输入法等人工检查仍如实记录；候选版没有被声明为稳定 `1.0.0`。[清洁系统验收](docs/development/clean-windows.md)保留为更广泛发行的可选验证流程。
 

@@ -25,7 +25,7 @@
 ### Release status
 
 - `1.0.0rc1` 保持候选状态。本地验收结果见阶段 8 记录；独立干净 Windows、真实系统输入法、远端 CI、签名和最终授权审阅待完成。
-- 发行工作流只在手动触发时创建草稿；仓库尚无 remote，未创建线上 Release、Issue 或提交。
+- 发行工作流只在手动触发时创建草稿；源码托管于 `Bidao-Penknife/OpenLedger`，CI 与 Issue 按实际远端记录核对，尚未创建线上 Release。
 
 ## Development snapshot — 0.3.0.dev0
 
