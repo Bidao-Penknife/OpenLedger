@@ -15,6 +15,10 @@ Android 版本为 `0.1.0-alpha1`，预览 APK 的包名为 `org.openledger.andro
 
 手机与桌面各自本地保存，本期没有跨端同步、AI 服务、交易编辑/删除、CSV/Excel 导入导出、移动备份或完整统计图表。APK 未申请网络权限，不读取微信、支付宝或银行通知。卸载或清除数据会删除手机账本；移动备份上线前请使用合成数据试用。
 
+## 下载与功能路线
+
+[公开预发布下载](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)包含实际经过本机模拟器测试的 APK。已实现与未实现功能、手机界面限制及下一阶段验收标准见[Android 功能清单与后续路线](../docs/development/android-roadmap.md)。当前优先补齐本地备份恢复。
+
 ## 构建
 
 需要 Python 3.12、JDK 17、Android SDK Platform 36 / Build Tools 35.0.0。SDK 可使用 Android Studio 内的安装版本或官方命令行工具，不需要 NDK。Gradle Wrapper 固定 8.13 并校验下载摘要。

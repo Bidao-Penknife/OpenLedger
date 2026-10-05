@@ -33,7 +33,9 @@
 | 更新检查 | 配置真实 GitHub owner/repo 后手动检查稳定 Release；只提醒与打开页面 |
 | 插件和同步接口 | API v1 显式内置注册与不可变 DTO；未实现市场或云传输 |
 
-源码托管于 [Bidao-Penknife/OpenLedger](https://github.com/Bidao-Penknife/OpenLedger)，实际构建状态见 [GitHub Actions](https://github.com/Bidao-Penknife/OpenLedger/actions)。Windows 与 Android 的本地交付仍保持候选/预览状态，尚未创建线上 Release。
+源码托管于 [Bidao-Penknife/OpenLedger](https://github.com/Bidao-Penknife/OpenLedger)，实际构建状态见 [GitHub Actions](https://github.com/Bidao-Penknife/OpenLedger/actions)。Windows `1.0.0rc1` 与 Android `0.1.0-alpha1-preview` 已于 2026-10-06 发布为[公开预发布 Release](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)，保持候选/预览状态。
+
+[下载 Windows 安装程序、便携版与 APK](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)。Release 还保存对应提交的完整源码、Git 历史、验证报告、历史文档归档和 SHA256。公开历史归档排除了含账本备份的离线验收包；账本数据库、备份、凭据与签名私钥不随公开制品上传。APK 已实现范围、缺失功能及后续顺序见[Android 功能清单与路线](docs/development/android-roadmap.md)。
 
 本次交付按维护者要求采用当前 Windows 电脑验收，不以独立无 Python 系统为前提。环境覆盖范围与真实输入法等人工检查仍如实记录；候选版没有被声明为稳定 `1.0.0`。[清洁系统验收](docs/development/clean-windows.md)保留为更广泛发行的可选验证流程。
 

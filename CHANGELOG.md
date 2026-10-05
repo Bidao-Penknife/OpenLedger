@@ -1,8 +1,12 @@
 # Changelog
 
-本文件记录面向使用者和维护者的变化。正式版本发布时补充发布日期与制品链接；当前没有已发布的 GitHub Release。
+本文件记录面向使用者和维护者的变化。Windows 发行候选与 Android 预览版已于 2026-10-06 发布为[公开预发布 Release](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)；没有稳定发行。
 
-## Unreleased — Android 0.1.0-alpha1
+## Unreleased
+
+- 整理 Android 已实现范围、未接入手机的共享核心能力、后续优先级与验收判据，见[功能清单与后续路线](docs/development/android-roadmap.md)。此项只更新文档，没有新增 APK 功能。
+
+## Android 0.1.0-alpha1-preview — 2026-10-06
 
 - 新增独立包名的 Android 预览工程，原生 Kotlin 触控界面通过 Chaquopy 使用共享 Python 3.12 资金核心，保留既有 Schema v1。
 - 新增自然语言草稿、明确确认、收支录入、账户/账本创建、流水搜索分页与资产汇总。
@@ -11,7 +15,7 @@
 
 本期 Windows 验收按维护者要求采用当前电脑。Android 预览不是 Windows 1.0.0rc1 的功能等价稳定发行，仍需明确区分构建检查、模拟器运行与真机测试。
 
-## Unreleased — 1.0.0rc1
+## 1.0.0rc1 — 2026-10-06
 
 ### Added
 
@@ -24,8 +28,8 @@
 
 ### Release status
 
-- `1.0.0rc1` 保持候选状态。本地验收结果见阶段 8 记录；独立干净 Windows、真实系统输入法、远端 CI、签名和最终授权审阅待完成。
-- 发行工作流只在手动触发时创建草稿；源码托管于 `Bidao-Penknife/OpenLedger`，CI 与 Issue 按实际远端记录核对，尚未创建线上 Release。
+- `1.0.0rc1` 保持候选状态。阶段 8–9 已执行本机普通用户安装与升级验收；对应源码的真实 Windows CI 1021 项测试通过，Android CI 构建与静态验证通过。独立干净 Windows、部分真实系统输入法检查和正式签名未完成。
+- 手动发行工作流继续创建草稿。本次公开预发布已保存原始候选二进制、实际设备测试 APK 与相应证据，全部基础资产重新下载后 SHA256 一致。历史记录保留各阶段当时的验证范围。
 
 ## Development snapshot — 0.3.0.dev0
 
