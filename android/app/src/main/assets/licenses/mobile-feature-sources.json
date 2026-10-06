@@ -1,0 +1,76 @@
+[
+  {
+    "package": "defusedxml",
+    "version": "0.7.1",
+    "source": "https://files.pythonhosted.org/packages/07/6c/aa3f2f849e01cb6a001cd8554a88d4c77c5c1a31c95bdf1cf9301e6d9ef4/defusedxml-0.7.1-py2.py3-none-any.whl",
+    "wheel_sha256": "a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61",
+    "entry": "defusedxml-0.7.1.dist-info/LICENSE",
+    "file": "defusedxml-LICENSE",
+    "sha256": "b80ce9da8c42a1f91079627fbbe2bf27210ae108a0ffe5f077d5b08e076c24c8"
+  },
+  {
+    "package": "et-xmlfile",
+    "version": "2.0.0",
+    "source": "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl",
+    "wheel_sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa",
+    "entry": "et_xmlfile-2.0.0.dist-info/LICENCE.python",
+    "file": "et-xmlfile-LICENCE.python",
+    "sha256": "4ccdaaebc0f44b83720ec0399bb7ab329adce067dd62f73c5535a2dc05628ab2"
+  },
+  {
+    "package": "et-xmlfile",
+    "version": "2.0.0",
+    "source": "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl",
+    "wheel_sha256": "7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa",
+    "entry": "et_xmlfile-2.0.0.dist-info/LICENCE.rst",
+    "file": "et-xmlfile-LICENCE.rst",
+    "sha256": "0c84bb42f5d367e5ebf9fc2dde35b16141df5ee0fdc189250858bc6c5560f69e"
+  },
+  {
+    "package": "openpyxl",
+    "version": "3.1.5",
+    "source": "https://files.pythonhosted.org/packages/c0/da/977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506/openpyxl-3.1.5-py2.py3-none-any.whl",
+    "wheel_sha256": "5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2",
+    "entry": "openpyxl-3.1.5.dist-info/LICENCE.rst",
+    "file": "openpyxl-LICENCE.rst",
+    "sha256": "0c84bb42f5d367e5ebf9fc2dde35b16141df5ee0fdc189250858bc6c5560f69e"
+  },
+  {
+    "package": "packaging",
+    "version": "26.3",
+    "source": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+    "wheel_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+    "entry": "packaging-26.3.dist-info/licenses/LICENSE",
+    "file": "packaging-LICENSE",
+    "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+  },
+  {
+    "package": "packaging",
+    "version": "26.3",
+    "source": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+    "wheel_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+    "entry": "packaging-26.3.dist-info/licenses/LICENSE.APACHE",
+    "file": "packaging-LICENSE.APACHE",
+    "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+  },
+  {
+    "package": "packaging",
+    "version": "26.3",
+    "source": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+    "wheel_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+    "entry": "packaging-26.3.dist-info/licenses/LICENSE.BSD",
+    "file": "packaging-LICENSE.BSD",
+    "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+  },
+  {
+    "package": "certifi-ca-bundle",
+    "version": "2025.8.3",
+    "source": "https://files.pythonhosted.org/packages/e5/48/1549795ba7742c948d2ad169c1c8cdbae65bc450d6cd753d124b17c8cd32/certifi-2025.8.3-py3-none-any.whl",
+    "wheel_sha256": "f6c12493cfb1b06ba2ff328595af9350c65d6644968e5d3a2ffd78699af217a5",
+    "entry": "certifi-2025.8.3.dist-info/licenses/LICENSE",
+    "file": "certifi-LICENSE.txt",
+    "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7",
+    "ca_bundle_sha256": "9102e6a3644a071ba6cdbd4a53698f291c4a64b18450a08bc046548b6db5cc8b",
+    "bundled_by": "Chaquopy 17.0"
+  }
+]

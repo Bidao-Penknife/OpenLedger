@@ -2,7 +2,7 @@
 
 面向 Windows 的本地个人财务管理与智能记账桌面应用，使用 Python、PySide6 和 SQLite。项目优先保证资金记录的正确性、数据可恢复性和长期可维护性。
 
-项目已提供 Android `0.1.0-alpha1` 预览版：Kotlin 原生触控界面 + 同一套 Python 3.12 记账核心。第一版覆盖本地规则解析、确认保存、收入支出、流水、账户与总资产；移动端的构建和限制见 [Android 说明](android/README.md)与 [ADR-019](docs/adr/019-android-shared-core.md)。实际构建、模拟器运行与 Windows 回归见[阶段 10 记录](docs/development/phase10-validation.md)。Android 与 Windows 的功能里程碑分别记录。
+项目提供 Android `0.2.0-beta1`：Kotlin 原生触控界面 + 同一套 Python 3.12 记账核心。本期补齐备份恢复、交易维护、转账退款、资料管理、统计图表、CSV/Excel、PDF/PNG、图片附件、可选 AI、主题/语言/时区和手机快速入口。使用见[手机指南](docs/user/android.md)，构建见 [Android 说明](android/README.md)，架构见 [ADR-019](docs/adr/019-android-shared-core.md)，本期验证见[阶段 11](docs/development/phase11-validation.md)。Android 与 Windows 的版本分别维护。
 
 **当前版本为 `1.0.0rc1` Windows 发行候选，阶段 8 本地实施与验收已通过。** 提供源码、便携 ZIP 与当前用户安装程序。既有记账、账户、统计、文件交换、系统入口和可选 AI 保留统一资金事务；自然语言与 AI 只生成可编辑草稿，确认后保存。默认关闭 AI，应用启动不联网。安装器、发行状态与实际验证见[阶段 8 记录](docs/development/phase8-validation.md)。
 
@@ -26,7 +26,7 @@
 | 类型检查、格式检查、测试和 CI 配置 | 工程骨架；运行结果以阶段验收记录为准 |
 | Windows exe | PyInstaller `onedir` 发行候选；未签名 |
 | Windows 安装程序 | Inno Setup 当前用户安装，固定 AppId；修复安装、升级与卸载保留账目；候选版未签名 |
-| Android APK | 原生界面与共享 Python 核心；本地记账预览、调试签名；Android 7.0 起，ARM64 / x86_64 |
+| Android APK | 本地记账、恢复、交易管理、图表与交换、附件、可选 AI；beta 调试签名；Android 7.0 起，ARM64 / x86_64 |
 | 单实例、托盘和全局快捷键 | 同一数据目录激活已有窗口；默认 Ctrl+Alt+L；关闭隐藏可配置 |
 | 独立快速记账窗口 | Enter 解析、Ctrl+Enter 确认；失败保留，复用同一个资金 writer |
 | 可选 AI | 用户自行配置兼容 API/模型/Windows 凭据；显式解析，只生成待确认建议 |
@@ -36,6 +36,8 @@
 源码托管于 [Bidao-Penknife/OpenLedger](https://github.com/Bidao-Penknife/OpenLedger)，实际构建状态见 [GitHub Actions](https://github.com/Bidao-Penknife/OpenLedger/actions)。Windows `1.0.0rc1` 与 Android `0.1.0-alpha1-preview` 已于 2026-10-06 发布为[公开预发布 Release](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)，保持候选/预览状态。
 
 [下载 Windows 安装程序、便携版与 APK](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)。Release 还保存对应提交的完整源码、Git 历史、验证报告、历史文档归档和 SHA256。公开历史归档排除了含账本备份的离线验收包；账本数据库、备份、凭据与签名私钥不随公开制品上传。APK 已实现范围、缺失功能及后续顺序见[Android 功能清单与路线](docs/development/android-roadmap.md)。
+
+[下载 Android 0.2.0-beta1 新版 APK](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.2.0-beta1)。使用与旧公开 alpha 相同的预览签名和包名；覆盖升级保留账目。旧 Release 保持原制品，正式移动签名和 ARM64 真机验收继续作为稳定版里程碑。
 
 本次交付按维护者要求采用当前 Windows 电脑验收，不以独立无 Python 系统为前提。环境覆盖范围与真实输入法等人工检查仍如实记录；候选版没有被声明为稳定 `1.0.0`。[清洁系统验收](docs/development/clean-windows.md)保留为更广泛发行的可选验证流程。
 

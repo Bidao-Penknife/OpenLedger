@@ -16,3 +16,9 @@ command-line utilities. The associated LGPL text is included for completeness.
 
 Original source locations and SHA256 digests are in sources.json. These runtime
 notices do not include a JDK, Android SDK, Gradle, or formatter in the APK.
+
+Spreadsheet exchange adds openpyxl 3.1.5, et-xmlfile 2.0.0 and defusedxml 0.7.1;
+release version comparisons add packaging 26.3. HTTPS uses Chaquopy's certifi
+2025.8.3 CA bundle. Their original license files and wheel/source digests are
+preserved alongside this notice in mobile-feature-sources.json. Financial
+reports use Android's native graphics APIs rather than bundling Qt.

@@ -38,7 +38,10 @@ try {
         $report = Join-Path $projectRoot 'build/validation/android/apk-check.json'
         & $Python (Join-Path $projectRoot 'scripts/verify_android_apk.py') --apk $apk --sdk-root $SdkRoot --output $report
         if ($LASTEXITCODE -ne 0) { throw 'APK verification failed.' }
-        $target = Join-Path $outputRoot 'OpenLedger-0.1.0-alpha1-android-preview.apk'
+        $verified = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+        $mobileVersion = $verified.version -replace '-preview$', ''
+        if ($mobileVersion -notmatch '^[0-9][0-9A-Za-z.+-]{0,39}$') { throw 'Invalid verified mobile version.' }
+        $target = Join-Path $outputRoot "OpenLedger-$mobileVersion-android-preview.apk"
         Copy-Item -LiteralPath $apk -Destination $target -Force
         $digest = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant()
         $utf8 = New-Object System.Text.UTF8Encoding($false)

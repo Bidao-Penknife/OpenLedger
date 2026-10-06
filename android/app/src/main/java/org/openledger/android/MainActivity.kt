@@ -3,6 +3,8 @@ package org.openledger.android
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Typeface
@@ -25,14 +27,22 @@ class MainActivity : Activity() {
         get() = application as LedgerApplication
 
     private lateinit var root: LinearLayout
-    private lateinit var content: LinearLayout
+    internal lateinit var content: LinearLayout
     private var quickInput: EditText? = null
-    private var snapshot = JSONObject()
+    internal var snapshot = JSONObject()
     private var tab = "quick"
     private var page = 0
     private var search = ""
     private var inputText = ""
     private var busy = false
+    internal val files = FileActions(this)
+    internal val transactions = TransactionActions(this)
+    internal val management = ManagementActions(this)
+    internal val analysis = AnalysisActions(this)
+    internal val exchange = ExchangeActions(this)
+    internal val settings = SettingsActions(this)
+    internal val attachments = AttachmentActions(this)
+    private var filters = JSONObject()
     private val dark
         get() =
             resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
@@ -41,7 +51,7 @@ class MainActivity : Activity() {
     private val ink
         get() = Color.parseColor(if (dark) "#E6EDF3" else "#243342")
 
-    private val muted
+    internal val muted
         get() = Color.parseColor(if (dark) "#ABB8C4" else "#627283")
 
     private val surface
@@ -53,13 +63,36 @@ class MainActivity : Activity() {
     private val backdrop
         get() = Color.parseColor(if (dark) "#161B22" else "#F6F7F9")
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppPreferences.context(newBase))
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.action == QuickEntry.ACTION) {
+            tab = "quick"
+            render()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
+        QuickEntry.publish(this)
+        files.restoreState(savedInstanceState)
+        analysis.restore(savedInstanceState)
+        filters = JSONObject(savedInstanceState?.getString("filters") ?: "{}")
         inputText = savedInstanceState?.getString("input") ?: ""
         tab = savedInstanceState?.getString("tab") ?: "quick"
+        if (intent.action == QuickEntry.ACTION) tab = "quick"
         page = savedInstanceState?.getInt("page") ?: 0
         search = savedInstanceState?.getString("search") ?: ""
-        root = column().apply { setBackgroundColor(backdrop) }
+        root =
+            column().apply {
+                setBackgroundColor(backdrop)
+                setPadding(dp(20), dp(12), dp(20), 0)
+            }
         root.setOnApplyWindowInsetsListener { view, insets ->
             view.setPadding(
                 dp(20),
@@ -71,19 +104,27 @@ class MainActivity : Activity() {
         }
         root.addView(label(getString(R.string.app_name), 27, true))
         root.addView(label(getString(R.string.subtitle), 13, color = muted))
-        val navigation = row()
+        val navigation = row().apply { isBaselineAligned = false }
         listOf(
-                "quick" to R.string.quick_title,
-                "transactions" to R.string.transactions,
-                "assets" to R.string.assets,
+                "quick" to R.string.nav_quick,
+                "transactions" to R.string.nav_transactions,
+                "assets" to R.string.nav_assets,
+                "analysis" to R.string.nav_analysis,
+                "settings" to R.string.settings,
             )
             .forEach { (key, title) ->
                 navigation.addView(
                     button(getString(title)) {
-                        inputText = quickInput?.text?.toString() ?: inputText
-                        tab = key
-                        render()
-                    },
+                            inputText = quickInput?.text?.toString() ?: inputText
+                            tab = key
+                            render()
+                        }
+                        .apply {
+                            textSize = 13f
+                            setPadding(dp(2), 0, dp(2), 0)
+                            maxLines = 1
+                            ellipsize = android.text.TextUtils.TruncateAt.END
+                        },
                     LinearLayout.LayoutParams(0, dp(56), 1f),
                 )
             }
@@ -103,6 +144,9 @@ class MainActivity : Activity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        files.saveState(outState)
+        analysis.save(outState)
+        outState.putString("filters", filters.toString())
         outState.putString("input", quickInput?.text?.toString() ?: inputText)
         outState.putString("tab", tab)
         outState.putInt("page", page)
@@ -110,14 +154,18 @@ class MainActivity : Activity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun refresh() {
-        request("snapshot", JSONObject().put("page", page).put("search", search)) {
+    internal fun refresh() {
+        request(
+            "snapshot",
+            JSONObject(filters.toString()).put("page", page).put("search", search),
+        ) {
             snapshot = it
+            analysis.invalidate()
             render()
         }
     }
 
-    private fun request(
+    internal fun request(
         action: String,
         body: JSONObject = JSONObject(),
         confirmed: Boolean = false,
@@ -182,8 +230,8 @@ class MainActivity : Activity() {
                 getString(
                     R.string.month_totals,
                     snapshot.getString("today").take(7),
-                    money(overview.getLong("income_minor")),
-                    money(overview.getLong("expense_minor")),
+                    ReportRenderer.money(overview.getString("income_minor")),
+                    ReportRenderer.money(overview.getString("expense_minor")),
                 ),
                 13,
                 color = muted,
@@ -194,7 +242,113 @@ class MainActivity : Activity() {
             "quick" -> renderQuick()
             "transactions" -> renderTransactions()
             "assets" -> renderAssets()
+            "settings" -> renderSettings()
+            "analysis" -> analysis.render()
         }
+    }
+
+    internal fun fileBusy(value: Boolean) {
+        busy = value
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        files.result(requestCode, resultCode, data)
+    }
+
+    internal fun importedFile(operation: String, filename: String) {
+        if (operation == "restore") {
+            request("backup_prepare", JSONObject().put("filename", filename)) {
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.restore_title)
+                    .setMessage(R.string.restore_note)
+                    .setNegativeButton(R.string.cancel, null)
+                    .setPositiveButton(R.string.confirm_save) { _, _ ->
+                        request(
+                            "backup_restore",
+                            JSONObject()
+                                .put("filename", filename)
+                                .put("request_id", UUID.randomUUID().toString()),
+                            true,
+                        ) {
+                            filters = JSONObject()
+                            page = 0
+                            analysis.invalidate(true)
+                            refresh()
+                        }
+                    }
+                    .show()
+            }
+        } else if (operation.startsWith("attachment:")) attachments.imported(operation, filename)
+        else if (operation == "import" || operation == "import_gb")
+            exchange.mapping(filename, if (operation == "import_gb") "gb18030" else "utf-8-sig")
+    }
+
+    private fun renderSettings() {
+        val panel = card()
+        panel.addView(label(getString(R.string.backup_title), 20, true))
+        panel.addView(label(getString(R.string.backup_note), 14, color = muted))
+        panel.addView(
+            button(getString(R.string.backup_create)) {
+                val filename =
+                    "OpenLedger-${snapshot.getString("today")}-${UUID.randomUUID()}.olbackup"
+                request("backup_create", JSONObject().put("filename", filename)) {
+                    files.export(it.getString("filename"), "application/zip")
+                }
+            }
+        )
+        panel.addView(
+            button(getString(R.string.restore_title)) {
+                if (ledger.pending() != null)
+                    Toast.makeText(this, R.string.pending_error, Toast.LENGTH_LONG).show()
+                else files.pick("restore", "olbackup")
+            }
+        )
+        panel.addView(
+            label(
+                getString(R.string.active_data, ledger.directoryLabel(ledger.directory, this)),
+                13,
+                color = muted,
+            )
+        )
+        panel.addView(
+            button(getString(R.string.switch_data)) {
+                val directories = ledger.directories()
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.switch_data)
+                    .setItems(directories.map { ledger.directoryLabel(it, this) }.toTypedArray()) {
+                        _,
+                        index ->
+                        fileBusy(true)
+                        ledger.worker.execute {
+                            val changed = runCatching {
+                                ledger.switchDirectory(directories[index])
+                            }
+                                .isSuccess
+                            runOnUiThread {
+                                fileBusy(false)
+                                if (changed) {
+                                    page = 0
+                                    search = ""
+                                    filters = JSONObject()
+                                    analysis.invalidate(true)
+                                    refresh()
+                                } else
+                                    Toast.makeText(this, R.string.pending_error, Toast.LENGTH_LONG)
+                                        .show()
+                            }
+                        }
+                    }
+                    .show()
+            }
+        )
+        content.addView(panel)
+        exchange.render()
+        settings.render()
+    }
+
+    internal fun renderCurrent() {
+        render()
     }
 
     private fun renderQuick() {
@@ -210,16 +364,7 @@ class MainActivity : Activity() {
                     inputText = quickInput?.text?.toString() ?: ""
                     if (!requireAccount()) return@button
                     request("preview", JSONObject().put("text", inputText)) { result ->
-                        val drafts = result.getJSONArray("drafts")
-                        if (result.getString("status") != "single" || drafts.length() != 1) {
-                            AlertDialog.Builder(this)
-                                .setMessage(R.string.multiple_events)
-                                .setPositiveButton(R.string.manual) { _, _ ->
-                                    editTransaction(null)
-                                }
-                                .setNegativeButton(R.string.cancel, null)
-                                .show()
-                        } else editTransaction(drafts.getJSONObject(0))
+                        reviewDrafts(result)
                     }
                 }
                 .apply { id = R.id.parse_button }
@@ -235,6 +380,12 @@ class MainActivity : Activity() {
             panel.addView(button(getString(R.string.new_account)) { newAccount() })
         }
         content.addView(panel)
+        content.addView(
+            button(getString(R.string.ai_parse)) {
+                inputText = quickInput?.text?.toString() ?: inputText
+                if (requireAccount()) settings.parse(inputText)
+            }
+        )
         content.addView(label(getString(R.string.privacy_note), 13, color = muted))
         content.addView(label(getString(R.string.preview_note), 13, color = muted))
     }
@@ -246,7 +397,56 @@ class MainActivity : Activity() {
         return false
     }
 
+    internal fun reviewDrafts(result: JSONObject, ai: Boolean = false) {
+        val drafts = jsonRows(result.getJSONArray("drafts"))
+        if (drafts.isEmpty()) {
+            AlertDialog.Builder(this)
+                .setMessage(R.string.no_parse_result)
+                .setPositiveButton(R.string.manual) { _, _ -> editTransaction(null) }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+            return
+        }
+        for (draft in drafts) draft
+            .put("parser_source", if (ai) "ai_assisted" else "local_rule")
+            .put("keep_source", drafts.size > 1)
+        if (drafts.size == 1) editTransaction(drafts[0])
+        else
+            AlertDialog.Builder(this)
+                .setTitle(R.string.select_draft)
+                .setItems(
+                    drafts
+                        .map { draft ->
+                            (candidate(draft, "kind")?.let(::kindLabel) ?: "") +
+                                " · ¥" +
+                                (candidate(draft, "amount_minor")?.let(ReportRenderer::money)
+                                    ?: "…")
+                        }
+                        .toTypedArray()
+                ) { _, index ->
+                    editTransaction(drafts[index])
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+    }
+
+    internal fun showTransactions(value: JSONObject) {
+        filters = value
+        page = 0
+        tab = "transactions"
+        refresh()
+    }
+
     private fun renderTransactions() {
+        content.addView(
+            button(getString(R.string.filter_title)) {
+                transactions.filters(filters) { value ->
+                    filters = value
+                    page = 0
+                    refresh()
+                }
+            }
+        )
         val searchField = edit(getString(R.string.search_hint), search)
         content.addView(searchField)
         content.addView(
@@ -263,6 +463,9 @@ class MainActivity : Activity() {
             val item = rows.getJSONObject(index)
             val kind = item.getString("kind")
             val panel = card()
+            panel.setOnClickListener { if (!busy) this.transactions.detail(item.getString("id")) }
+            if (!item.isNull("deleted_at_utc"))
+                panel.addView(label(getString(R.string.deleted), 13))
             val prefix =
                 if (kind == "expense") "−"
                 else if (kind in listOf("income", "expense_refund")) "+" else ""
@@ -332,6 +535,8 @@ class MainActivity : Activity() {
         }
         content.addView(button(getString(R.string.new_account), true) { newAccount() })
         content.addView(button(getString(R.string.new_book)) { newBook() })
+        content.addView(button(getString(R.string.transfer)) { transactions.transfer() })
+        content.addView(button(getString(R.string.manage_title)) { management.choose() })
         content.addView(label(getString(R.string.privacy_note), 13, color = muted))
     }
 
@@ -413,7 +618,7 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun editTransaction(draft: JSONObject?) {
+    internal fun editTransaction(draft: JSONObject?, existing: JSONObject? = null) {
         if (ledger.pending() != null) {
             Toast.makeText(this, R.string.pending_error, Toast.LENGTH_LONG).show()
             return
@@ -424,6 +629,7 @@ class MainActivity : Activity() {
         val kind =
             spinner(listOf(getString(R.string.expense), getString(R.string.income))).apply {
                 setSelection(if (initialKind == "income") 1 else 0)
+                isEnabled = existing == null
             }
         val amount =
             edit(
@@ -432,10 +638,10 @@ class MainActivity : Activity() {
                 amount = true,
             )
         val preferences = snapshot.getJSONObject("preferences")
-        val accounts = activeAccounts()
-        val books = jsonRows(snapshot.getJSONArray("books"))
-        val categories = jsonRows(snapshot.getJSONArray("categories"))
-        val payments = jsonRows(snapshot.getJSONArray("payment_methods"))
+        val accounts = selectable("account", candidate(draft, "account_id"))
+        val books = selectable("book", candidate(draft, "book_id"))
+        val categories = selectable("category", candidate(draft, "category_id"))
+        val payments = selectable("payment_method", candidate(draft, "payment_method_id"))
         val account =
             choices(
                 accounts,
@@ -505,6 +711,7 @@ class MainActivity : Activity() {
         val party = edit(getString(R.string.counterparty), candidate(draft, "counterparty") ?: "")
         val merchant = edit(getString(R.string.merchant), candidate(draft, "merchant") ?: "")
         val location = edit(getString(R.string.location), candidate(draft, "location") ?: "")
+        val tagSelection = transactions.tags(form, existing?.optJSONArray("tag_ids"))
         listOf(
                 R.string.transaction_type to kind,
                 R.string.amount to amount,
@@ -537,6 +744,8 @@ class MainActivity : Activity() {
                     .put("counterparty", party.text.toString())
                     .put("merchant", merchant.text.toString())
                     .put("location", location.text.toString())
+                    .put("tag_ids", tagSelection())
+                    .put("time_zone", snapshot.getString("time_zone"))
             val timeCode = periodCodes[precision.selectedItemPosition]
             values.put(
                 "occurrence_precision",
@@ -544,19 +753,37 @@ class MainActivity : Activity() {
             )
             if (timeCode == "exact") values.put("occurred_at_utc", exact)
             else if (timeCode != null) values.put("time_period", timeCode)
-            if (draft != null) values.put("source_text", inputText)
+            if (existing != null) {
+                values.put("source", existing.getString("source"))
+                values.put("source_text", existing.opt("source_text"))
+                values.put("time_zone", existing.getString("time_zone"))
+            } else if (draft != null) {
+                values.put("source_text", inputText)
+                values.put("source", draft.optString("parser_source", "local_rule"))
+            }
             val body =
                 JSONObject().put("request_id", UUID.randomUUID().toString()).put("fields", values)
-            request("record", body, true) {
+            val action = if (existing == null) "record" else "mutate"
+            val commandBody =
+                if (existing == null) body
+                else
+                    transactions.command(
+                        "transaction.update.v1",
+                        JSONObject()
+                            .put("id", existing.getString("id"))
+                            .put("expected_version", existing.getInt("version"))
+                            .put("fields", values),
+                    )
+            request(action, commandBody, true) {
                 dialog.dismiss()
-                inputText = ""
+                if (draft?.optBoolean("keep_source") != true) inputText = ""
                 Toast.makeText(this, R.string.saved, Toast.LENGTH_SHORT).show()
                 refresh()
             }
         }
     }
 
-    private fun confirmation(title: Int, form: LinearLayout, onSave: (AlertDialog) -> Unit) {
+    internal fun confirmation(title: Int, form: LinearLayout, onSave: (AlertDialog) -> Unit) {
         val dialog =
             AlertDialog.Builder(this)
                 .setTitle(title)
@@ -573,7 +800,7 @@ class MainActivity : Activity() {
         dialog.show()
     }
 
-    private fun choices(
+    internal fun choices(
         rows: List<JSONObject>,
         selected: String?,
         placeholder: String = getString(R.string.select_required),
@@ -594,30 +821,35 @@ class MainActivity : Activity() {
         spinner.setSelection(rows.indexOfFirst { it.getString("id") == selected } + 1)
     }
 
-    private fun selectedId(spinner: Spinner, rows: List<JSONObject>): Any =
+    internal fun selectedId(spinner: Spinner, rows: List<JSONObject>): Any =
         rows.getOrNull(spinner.selectedItemPosition - 1)?.getString("id") ?: JSONObject.NULL
 
-    private fun activeAccounts() =
+    internal fun selectable(entity: String, retained: String? = null): List<JSONObject> =
+        jsonRows(snapshot.getJSONObject("catalogs").getJSONArray(entity)).filter {
+            it.optInt("is_archived") == 0 || it.getString("id") == retained
+        }
+
+    internal fun activeAccounts() =
         jsonRows(snapshot.getJSONArray("accounts")).filter { it.optInt("is_archived") == 0 }
 
-    private fun jsonRows(array: JSONArray) =
+    internal fun jsonRows(array: JSONArray) =
         (0 until array.length()).map { array.getJSONObject(it) }
 
-    private fun nullable(value: JSONObject, key: String): String? =
+    internal fun nullable(value: JSONObject, key: String): String? =
         if (value.isNull(key)) null else value.optString(key).takeIf { it.isNotEmpty() }
 
     private fun candidate(value: JSONObject?, key: String): String? =
         value?.optJSONObject(key)?.let { nullable(it, "value") }
 
-    private fun money(minor: Long): String {
+    internal fun money(minor: Long): String {
         val parts = BigInteger.valueOf(minor).abs().divideAndRemainder(BigInteger.valueOf(100))
-        return (if (minor < 0) "−" else "") +
+        return (if (minor < 0) "-" else "") +
             parts[0].toString() +
             "." +
             parts[1].toString().padStart(2, '0')
     }
 
-    private fun datePicker(value: String, done: (String) -> Unit) {
+    internal fun datePicker(value: String, done: (String) -> Unit) {
         val parts = value.split("-").map { it.toInt() }
         DatePickerDialog(
                 this,
@@ -639,13 +871,13 @@ class MainActivity : Activity() {
             }
     }
 
-    private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
+    internal fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
 
-    private fun column() = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+    internal fun column() = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
 
-    private fun row() = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+    internal fun row() = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
 
-    private fun label(value: String, size: Int, bold: Boolean = false, color: Int = ink) =
+    internal fun label(value: String, size: Int, bold: Boolean = false, color: Int = ink) =
         TextView(this).apply {
             text = value
             textSize = size.toFloat()
@@ -654,7 +886,7 @@ class MainActivity : Activity() {
             if (bold) setTypeface(typeface, Typeface.BOLD)
         }
 
-    private fun edit(
+    internal fun edit(
         hintText: String,
         value: String = "",
         multiline: Boolean = false,
@@ -662,6 +894,7 @@ class MainActivity : Activity() {
         signed: Boolean = false,
     ) =
         EditText(this).apply {
+            if (amount) id = R.id.amount_input
             hint = hintText
             setText(value)
             setTextColor(ink)
@@ -682,7 +915,7 @@ class MainActivity : Activity() {
             }
         }
 
-    private fun spinner(labels: List<String>) =
+    internal fun spinner(labels: List<String>) =
         Spinner(this).apply {
             minimumHeight = dp(52)
             adapter =
@@ -693,7 +926,7 @@ class MainActivity : Activity() {
                 )
         }
 
-    private fun button(title: String, primary: Boolean = false, action: () -> Unit) =
+    internal fun button(title: String, primary: Boolean = false, action: () -> Unit) =
         Button(this).apply {
             text = title
             isAllCaps = false
@@ -706,7 +939,7 @@ class MainActivity : Activity() {
             setOnClickListener { if (!busy) action() }
         }
 
-    private fun card() =
+    internal fun card() =
         column().apply {
             setPadding(dp(18), dp(12), dp(18), dp(14))
             background =
@@ -717,7 +950,7 @@ class MainActivity : Activity() {
             layoutParams = LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(16) }
         }
 
-    private fun kindLabel(kind: String) =
+    internal fun kindLabel(kind: String) =
         getString(
             when (kind) {
                 "income" -> R.string.income
@@ -731,22 +964,37 @@ class MainActivity : Activity() {
 
     private fun errorText(code: String) =
         getString(
-            when (code) {
-                "INVALID_AMOUNT",
-                "AMOUNT_PRECISION" -> R.string.invalid_amount
-                "AMOUNT_OUT_OF_RANGE",
-                "AGGREGATE_OUT_OF_RANGE" -> R.string.out_of_range
-                "INVALID_DATE",
-                "FUTURE_DATE",
-                "BEFORE_BALANCE_START" -> R.string.invalid_date
-                "NAME_CONFLICT" -> R.string.name_conflict
-                "IDEMPOTENCY_KEY_REUSED" -> R.string.retry_changed
-                "PENDING_CONFIRMATION" -> R.string.pending_error
-                "MISSING_REQUIRED_FIELD",
-                "ENTITY_NOT_FOUND",
-                "FIELD_CONFLICT",
-                "INVALID_ENVELOPE" -> R.string.invalid_fields
-                else -> R.string.storage_error
+            when {
+                code.startsWith("AI_") -> R.string.ai_error
+                code.startsWith("CREDENTIAL_") -> R.string.key_error
+                code.startsWith("UPDATE_") || code.startsWith("INVALID_UPDATE_") ->
+                    R.string.update_error
+                code.startsWith("BACKUP_") -> R.string.backup_error
+                code == "ACTIVE_REFUNDS_BLOCK_OPERATION" || code == "IMPORT_BATCH_CHANGED" ->
+                    R.string.dependency_error
+                code.startsWith("IMPORT_") -> R.string.import_error
+                code.startsWith("ATTACHMENT_") || code.startsWith("INVALID_FILE_") ->
+                    R.string.image_failed
+                code == "VERSION_CONFLICT" -> R.string.version_error
+                code == "INVALID_TIMEZONE" -> R.string.invalid_fields
+                else ->
+                    when (code) {
+                        "INVALID_AMOUNT",
+                        "AMOUNT_PRECISION" -> R.string.invalid_amount
+                        "AMOUNT_OUT_OF_RANGE",
+                        "AGGREGATE_OUT_OF_RANGE" -> R.string.out_of_range
+                        "INVALID_DATE",
+                        "FUTURE_DATE",
+                        "BEFORE_BALANCE_START" -> R.string.invalid_date
+                        "NAME_CONFLICT" -> R.string.name_conflict
+                        "IDEMPOTENCY_KEY_REUSED" -> R.string.retry_changed
+                        "PENDING_CONFIRMATION" -> R.string.pending_error
+                        "MISSING_REQUIRED_FIELD",
+                        "ENTITY_NOT_FOUND",
+                        "FIELD_CONFLICT",
+                        "INVALID_ENVELOPE" -> R.string.invalid_fields
+                        else -> R.string.storage_error
+                    }
             }
         )
 }

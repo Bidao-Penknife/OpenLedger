@@ -35,6 +35,7 @@ _TABLES = {
     "payment_method": "payment_methods",
     "transaction": "transactions",
     "import_batch": "import_batches",
+    "attachment": "attachments",
 }
 _MANAGEMENT_ENTITIES = {"book", "account", "category", "tag", "payment_method"}
 _SOURCES = {"manual", "local_rule", "ai_assisted", "import", "system"}
@@ -454,6 +455,8 @@ class LedgerService:
                 return self._default(work, command.split(".")[0], payload)
             raise LedgerError("INVALID_ENVELOPE")
         entity, action, _ = parts
+        if entity == "attachment" and action in {"create", "delete", "restore"}:
+            return self._attachment(work, action, payload)
         if entity == "import":
             if action == "commit":
                 return self._import_commit(work, payload)
@@ -471,6 +474,91 @@ class LedgerService:
         if entity == "transaction" and action in {"delete", "restore"}:
             return self._delete_restore(work, action, payload)
         raise LedgerError("INVALID_ENVELOPE")
+
+    def _attachment(
+        self, work: _Work, action: str, payload: dict[str, object]
+    ) -> dict[str, object]:
+        """Journal image metadata; the file adapter validates bytes before this command."""
+        identifier = _id(payload)
+        if action == "create":
+            _keys(
+                payload,
+                {
+                    "id",
+                    "transaction_id",
+                    "expected_transaction_version",
+                    "relative_path",
+                    "original_file_name",
+                    "mime_type",
+                    "size_bytes",
+                    "sha256",
+                },
+            )
+            transaction = _row(work.connection, "transaction", _id(payload, "transaction_id"))
+            self._version(transaction, payload, "expected_transaction_version")
+            if transaction["deleted_at_utc"] is not None:
+                raise LedgerError("TRANSACTION_DELETED")
+            relative = payload.get("relative_path")
+            mime = payload.get("mime_type")
+            extensions = {"image/png": "png", "image/jpeg": "jpg", "image/webp": "webp"}
+            if (
+                not isinstance(mime, str)
+                or mime not in extensions
+                or relative != f"{identifier}.{extensions[mime]}"
+            ):
+                raise LedgerError("INVALID_FILE_FORMAT")
+            name = payload.get("original_file_name")
+            digest = payload.get("sha256")
+            size = _integer(payload, "size_bytes")
+            if (
+                not isinstance(name, str)
+                or not 1 <= len(name) <= 255
+                or not isinstance(digest, str)
+                or re.fullmatch(r"[0-9a-f]{64}", digest) is None
+                or not 1 <= size <= 20 * 1024 * 1024
+            ):
+                raise LedgerError("INVALID_ENVELOPE")
+            if work.connection.execute(
+                "SELECT 1 FROM attachments WHERE id=?", (identifier,)
+            ).fetchone():
+                raise LedgerError("ENTITY_ALREADY_EXISTS")
+            work.connection.execute(
+                "INSERT INTO attachments(id,transaction_id,relative_path,original_file_name,"
+                "mime_type,size_bytes,sha256,created_at_utc,updated_at_utc) "
+                "VALUES(?,?,?,?,?,?,?,?,?)",
+                (
+                    identifier,
+                    transaction["id"],
+                    relative,
+                    name,
+                    mime,
+                    size,
+                    digest,
+                    work.timestamp,
+                    work.timestamp,
+                ),
+            )
+            work.journal("attachment", identifier, "create", None)
+        else:
+            _keys(payload, {"id", "expected_version"})
+            row = _row(work.connection, "attachment", identifier)
+            self._version(row, payload)
+            transaction = _row(work.connection, "transaction", row["transaction_id"])
+            if action == "restore" and transaction["deleted_at_utc"] is not None:
+                raise LedgerError("TRANSACTION_DELETED")
+            if (row["deleted_at_utc"] is None) == (action == "restore"):
+                return {"id": identifier}
+            before = _snapshot(work.connection, "attachment", identifier)
+            self._update_row(
+                work,
+                "attachment",
+                identifier,
+                {"deleted_at_utc": work.timestamp if action == "delete" else None},
+            )
+            work.journal(
+                "attachment", identifier, "soft_delete" if action == "delete" else "restore", before
+            )
+        return {"id": identifier}
 
     @staticmethod
     def _version(

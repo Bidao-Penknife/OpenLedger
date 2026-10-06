@@ -11,7 +11,7 @@ import stat
 import tempfile
 import time
 import zipfile
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from contextlib import closing
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -112,9 +112,16 @@ class BackupService:
     replaces an open database: it publishes a validated, separate data directory.
     """
 
-    def __init__(self, database: Database, *, limits: BackupLimits | None = None) -> None:
+    def __init__(
+        self,
+        database: Database,
+        *,
+        limits: BackupLimits | None = None,
+        publish_file: Callable[[Path, Path], None] | None = None,
+    ) -> None:
         self.database = database
         self.limits = limits or BackupLimits()
+        self.publish_file = publish_file
 
     def backup(
         self,
@@ -180,7 +187,7 @@ class BackupService:
                             _copy_checked(input_file, entry, item.size_bytes, item.sha256)
                 with archive.open("r+b") as archive_file:
                     os.fsync(archive_file.fileno())
-                _publish_file(archive, destination)
+                (self.publish_file or _publish_file)(archive, destination)
             return destination
         except LedgerError:
             raise

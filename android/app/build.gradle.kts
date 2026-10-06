@@ -13,8 +13,8 @@ android {
         applicationId = "org.openledger.android"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0-alpha1"
+        versionCode = 2
+        versionName = "0.2.0-beta1"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -59,11 +59,31 @@ val stageSharedPython by
                 "openledger/application/dto/queries.py",
             )
             include("openledger/application/dto/results.py")
+            include(
+                "openledger/application/dto/ai.py",
+                "openledger/application/ports/__init__.py",
+                "openledger/application/ports/ai.py",
+            )
+            include(
+                "openledger/application/dto/analytics.py",
+                "openledger/application/dto/exchange.py",
+            )
             include("openledger/infrastructure/__init__.py", "openledger/infrastructure/runtime.py")
             include("openledger/infrastructure/ledger.py", "openledger/infrastructure/queries.py")
             include("openledger/infrastructure/integrity.py")
+            include(
+                "openledger/infrastructure/ai.py",
+                "openledger/infrastructure/credential_identity.py",
+                "openledger/infrastructure/updates.py",
+            )
+            include("openledger/infrastructure/backup.py")
+            include(
+                "openledger/infrastructure/analytics.py",
+                "openledger/infrastructure/exchange.py",
+            )
             include("openledger/infrastructure/database/**/*.py")
             include("openledger/mobile/**/*.py")
+            include("openledger/plugins/**/*.py", "openledger/application/ports/sync.py")
             include("openledger/resources/__init__.py", "openledger/resources/migrations/*.sql")
         }
         into(sharedPython)
@@ -73,7 +93,13 @@ chaquopy {
     defaultConfig {
         version = "3.12"
         buildPython(providers.environmentVariable("OPENLEDGER_BUILD_PYTHON").orElse("python").get())
-        pip { install("tzdata==2026.4") }
+        pip {
+            install("tzdata==2026.4")
+            install("openpyxl==3.1.5")
+            install("et-xmlfile==2.0.0")
+            install("defusedxml==0.7.1")
+            install("packaging==26.3")
+        }
     }
     sourceSets { getByName("main") { srcDir(sharedPython) } }
 }

@@ -228,7 +228,7 @@ def test_fresh_process_imports_no_qt_or_desktop_dependencies(tmp_path: Path) -> 
         'print(mobile.call(\'{"api_version":1,"action":"snapshot"}\'))'
     )
     result = subprocess.run(
-        [sys.executable, "-c", script, str(tmp_path / "isolated")],
+        [sys.executable, "-X", "utf8", "-c", script, str(tmp_path / "isolated")],
         text=True,
         capture_output=True,
         check=True,

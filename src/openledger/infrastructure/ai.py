@@ -32,7 +32,7 @@ from openledger.application.ports.ai import CancelCheck
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import parse_amount, validate_minor
 from openledger.domain.values import normalize_id, normalize_text, utc_now, validate_occurrence
-from openledger.infrastructure.credentials import credential_target as credential_target
+from openledger.infrastructure.credential_identity import credential_target as credential_target
 
 MAX_RESPONSE_BYTES = 256 * 1024
 HTTP_TIMEOUT_SECONDS = 10

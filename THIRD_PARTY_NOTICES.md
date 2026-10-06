@@ -1,6 +1,6 @@
 # 第三方组件与许可证说明
 
-Android 预览 APK 的原始运行时许可材料单独保存在 [Android licenses](android/app/src/main/assets/licenses/NOTICE.md)，随 APK 的 `assets/licenses` 分发。覆盖 Chaquopy、Python、Kotlin、OpenSSL、SQLite、时区数据及标准库中的压缩 / FFI 组件，来源与摘要见同目录 `sources.json`。Android 不打包 Qt、JDK、Android SDK 或 formatter。
+Android 预览 APK 的原始运行时许可材料单独保存在 [Android licenses](android/app/src/main/assets/licenses/NOTICE.md)，随 APK 的 `assets/licenses` 分发。覆盖 Chaquopy、Python、Kotlin、OpenSSL、SQLite、时区数据及标准库中的压缩 / FFI 组件，来源与摘要见同目录 `sources.json`。0.2.0-beta1 增加 openpyxl、et-xmlfile、defusedxml、packaging 和 certifi CA 副本的原文许可证，来源与字节摘要见 `mobile-feature-sources.json`。Android 不打包 Qt、JDK、Android SDK 或 formatter。
 
 OpenLedger 的原创源码采用 [MIT License](LICENSE)。依赖、打包运行库、Qt 插件及其内部第三方代码保留原有授权；项目的 MIT 许可不能替代这些组件的许可条件。
 

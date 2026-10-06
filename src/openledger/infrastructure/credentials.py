@@ -1,25 +1,17 @@
 """Windows Credential Manager adapter; no credential enumeration or plain-text fallback."""
 
 import ctypes
-import hashlib
 import os
 from ctypes import wintypes
-from pathlib import Path
 
-from openledger.application.dto.ai import AIConfig
 from openledger.domain.errors import LedgerError
+from openledger.infrastructure.credential_identity import credential_target as credential_target
 
 _PREFIX = "OpenLedger/AI/"
 _GENERIC = 1
 _LOCAL_MACHINE = 2  # Persists for this user on this computer, without roaming.
 _NOT_FOUND = 1168
 _MAX_SECRET_BYTES = 2560
-
-
-def credential_target(data_dir: Path, config: AIConfig) -> str:
-    """Scope a credential to an absolute data directory and explicit API endpoint."""
-    identity = str(data_dir.resolve()).casefold() + "\n" + config.base_url.rstrip("/")
-    return _PREFIX + hashlib.sha256(identity.encode("utf-8")).hexdigest()
 
 
 def _target(value: str) -> None:
