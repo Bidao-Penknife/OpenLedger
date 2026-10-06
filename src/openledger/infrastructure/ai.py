@@ -29,6 +29,7 @@ from openledger.application.dto.parsing import (
     Span,
 )
 from openledger.application.ports.ai import CancelCheck
+from openledger.domain.currencies import currency
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import parse_amount, validate_minor
 from openledger.domain.values import normalize_id, normalize_text, utc_now, validate_occurrence
@@ -63,8 +64,8 @@ one key "transactions", an array of at most 20 objects. Return [] if no supporte
 Supported kinds: income, expense. Do not reinterpret transfers, refunds, opening balances,
 balance adjustments, loans or future events as ordinary income/expense.
 Each transaction: span [start,end] character indexes into the exact source text; kind;
-amount_minor as a positive integer STRING of CNY cents (or amount as a decimal STRING
-with at most two decimal places, never both); occurred_on YYYY-MM-DD.
+amount_minor as a positive integer STRING of the supplied currency's smallest units
+(or amount as a decimal STRING at its supplied precision, never both); occurred_on YYYY-MM-DD.
 Optional: account_id, category_id, payment_method_id, book_id, time_zone,
 occurrence_precision (date/period/exact), time_period (morning/noon/afternoon/evening/night),
 occurred_at_utc (aware ISO timestamp), counterparty, merchant, location, note.
@@ -342,7 +343,8 @@ class AIParser:
             "text": request.text,
             "reference_date": request.reference_date.isoformat(),
             "time_zone": request.time_zone,
-            "currency_code": "CNY",
+            "currency_code": request.currency_code,
+            "minor_unit_digits": currency(request.currency_code).digits,
             "current_book_id": request.current_book_id,
             "categories": _choices(request.category_choices),
             "accounts": _choices(request.account_choices),
@@ -453,7 +455,7 @@ class AIParser:
                 raise ValueError("Invalid integer cents")
             minor = validate_minor(int(amount))
         else:
-            minor = parse_amount(amount)
+            minor = parse_amount(amount, request.currency_code)
         day = row.get("occurred_on")
         if not isinstance(day, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
             raise ValueError("Invalid date")
@@ -494,9 +496,12 @@ class AIParser:
             matches = [item for item in values if item.id == value]
             if not matches or (field == "category_id" and matches[0].kind != kind):
                 raise ValueError("Unknown or mismatched identifier")
+            if field == "account_id" and matches[0].currency_code != request.currency_code:
+                raise ValueError("Account currency differs from the parsing context")
             return value
 
         return ParsedDraft(
+            currency_code=request.currency_code,
             candidate_id=str(uuid4()),
             span=span,
             time_zone=request.time_zone,

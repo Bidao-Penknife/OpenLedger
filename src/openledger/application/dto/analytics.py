@@ -19,6 +19,7 @@ class AnalyticsFilter:
     account_ids: tuple[str, ...] = ()
     category_ids: tuple[str, ...] = ()
     tag_ids: tuple[str, ...] = ()
+    currency_code: str = "CNY"
 
 
 @dataclass(frozen=True)

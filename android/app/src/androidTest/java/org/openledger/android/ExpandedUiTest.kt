@@ -80,8 +80,8 @@ class ExpandedUiTest {
     private fun choose(id: String, name: String) {
         assertTrue(device.wait(Until.hasObject(By.res(context.packageName, id)), 10000))
         device.findObject(By.res(context.packageName, id)).click()
-        assertTrue(device.wait(Until.hasObject(By.text(name)), 5000))
-        device.findObject(By.text(name)).click()
+        assertTrue(device.wait(Until.hasObject(By.text(name + " · CNY")), 5000))
+        device.findObject(By.text(name + " · CNY")).click()
     }
 
     private fun seed(name: String, opening: String) {

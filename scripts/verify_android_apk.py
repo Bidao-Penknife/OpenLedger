@@ -57,6 +57,8 @@ def inspect(apk: Path, sdk_root: Path) -> dict[str, Any]:
             "NOTICE.md",
             "sources.json",
             "mobile-feature-sources.json",
+            "ocr-runtime-sources.json",
+            "OCR-NOTICE.md",
             "certifi-LICENSE.txt",
             "defusedxml-LICENSE",
             "et-xmlfile-LICENCE.python",
@@ -76,6 +78,34 @@ def inspect(apk: Path, sdk_root: Path) -> dict[str, Any]:
                 != source["sha256"]
             ):
                 raise ValueError("Feature dependency license checksum differs")
+        ocr_sources = json.loads(archive.read("assets/licenses/ocr-runtime-sources.json"))
+        if len(ocr_sources) < 20:
+            raise ValueError("OCR runtime dependency provenance missing")
+        for source in ocr_sources:
+            for license_entry in source["licenses"]:
+                if (
+                    "sha256" in license_entry
+                    and hashlib.sha256(
+                        archive.read("assets/licenses/" + license_entry["file"])
+                    ).hexdigest()
+                    != license_entry["sha256"]
+                ):
+                    raise ValueError("Original OCR artifact notice checksum differs")
+        for model in ("Hani_ctc", "Latn_ctc"):
+            if not any("mlkit-google-ocr-models" in name and model in name for name in names):
+                raise ValueError("Required offline Chinese/Latin OCR model missing")
+        help_bytes = archive.read("assets/help/manual.html")
+        if b"Content-Security-Policy" not in help_bytes or b"<script" in help_bytes.lower():
+            raise ValueError("Offline manual security policy missing or contains script")
+        if help_bytes.count(b"data:image/png;base64,") != 6:
+            raise ValueError("Six reviewed screenshots must be embedded in the offline manual")
+        if help_bytes != (ROOT / "src/openledger/resources/help/manual.html").read_bytes():
+            raise ValueError("Bundled offline manual differs from reviewed source")
+        if (
+            archive.read("assets/currencies.json")
+            != (ROOT / "src/openledger/resources/currencies.json").read_bytes()
+        ):
+            raise ValueError("Native currency registry differs from the shared core")
         ca_bundles: list[bytes] = [archive.read("assets/chaquopy/cacert.pem")]
         for name in names:
             if name.startswith("assets/chaquopy/") and name.endswith(".imy"):
@@ -97,6 +127,12 @@ def inspect(apk: Path, sdk_root: Path) -> dict[str, Any]:
             migration = python_archive.read("openledger/resources/migrations/0001.sql")
             if hashlib.sha256(migration).hexdigest() != MIGRATION_SHA256:
                 raise ValueError("Android migration differs from the shared immutable schema")
+            for resource in ("migrations/0002.sql", "currencies.json"):
+                if (
+                    python_archive.read("openledger/resources/" + resource)
+                    != (ROOT / "src/openledger/resources" / resource).read_bytes()
+                ):
+                    raise ValueError("Shared currency schema/resource differs from source")
             if any(
                 "presentation/" in name or "credentials" in name
                 for name in python_archive.namelist()
@@ -113,9 +149,23 @@ def inspect(apk: Path, sdk_root: Path) -> dict[str, Any]:
         raise ValueError("Unexpected Android API range")
     permissions = run("aapt2.exe", "dump", "permissions", str(apk))
     requested_permissions = sorted(set(re.findall(r"uses-permission: name='([^']+)'", permissions)))
-    if requested_permissions != ["android.permission.INTERNET"]:
-        raise ValueError("Only the optional AI and update Internet permission is permitted")
+    expected_permissions = sorted(
+        [
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.INTERNET",
+            "android.permission.RECORD_AUDIO",
+            "org.openledger.android.preview.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+        ]
+    )
+    if requested_permissions != expected_permissions:
+        raise ValueError("Unexpected Android privilege outside the reviewed OCR/voice scope")
     manifest = run("aapt2.exe", "dump", "xmltree", str(apk), "--file", "AndroidManifest.xml")
+    if "MlKitInitProvider" in manifest:
+        raise ValueError("OCR SDK must not initialize before the user's disclosure")
+    if "BIND_NOTIFICATION_LISTENER_SERVICE" not in manifest:
+        raise ValueError("Notification service must require the system binding permission")
+    if not re.search(r"android:protectionLevel\([^)]*\)=0x0*2\b", manifest):
+        raise ValueError("Private dynamic receiver permission must require the same signature")
     if not re.search(r"android:allowBackup\([^)]*\)=false\b", manifest):
         raise ValueError("Android cloud backup must be explicitly disabled")
     if "android:dataExtractionRules" not in manifest or "android:fullBackupContent" not in manifest:
@@ -167,6 +217,14 @@ def inspect(apk: Path, sdk_root: Path) -> dict[str, Any]:
         "abis": abis,
         "runtime_license_files": sorted(required_notices),
         "migration_sha256": MIGRATION_SHA256,
+        "schema_version": 2,
+        "migration2_sha256": hashlib.sha256(
+            (ROOT / "src/openledger/resources/migrations/0002.sql").read_bytes()
+        ).hexdigest(),
+        "currency_registry_sha256": hashlib.sha256(
+            (ROOT / "src/openledger/resources/currencies.json").read_bytes()
+        ).hexdigest(),
+        "offline_manual_screenshots": 6,
         "requested_permissions": requested_permissions,
         "https_ca_bundle_sha256": CA_SHA256,
         "android_cloud_backup": False,

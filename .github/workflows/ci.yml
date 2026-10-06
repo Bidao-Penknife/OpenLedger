@@ -56,6 +56,9 @@ jobs:
       - name: Check formatting
         run: uv run --locked ruff format --check .
 
+      - name: Verify bundled offline manual
+        run: uv run --locked python scripts/build_help.py --check
+
       - name: Check types
         run: uv run --locked mypy
 

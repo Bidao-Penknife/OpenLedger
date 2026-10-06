@@ -22,3 +22,5 @@ release version comparisons add packaging 26.3. HTTPS uses Chaquopy's certifi
 2025.8.3 CA bundle. Their original license files and wheel/source digests are
 preserved alongside this notice in mobile-feature-sources.json. Financial
 reports use Android's native graphics APIs rather than bundling Qt.
+
+Bundled Chinese OCR additions: see OCR-NOTICE.md and ocr-runtime-sources.json.

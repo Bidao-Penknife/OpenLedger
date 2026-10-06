@@ -66,3 +66,4 @@ class TransferFields:
     source: str = "manual"
     source_text: str | None = None
     currency_code: str = "CNY"
+    to_amount_minor: int | None = None

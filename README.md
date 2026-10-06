@@ -2,9 +2,11 @@
 
 面向 Windows 的本地个人财务管理与智能记账桌面应用，使用 Python、PySide6 和 SQLite。项目优先保证资金记录的正确性、数据可恢复性和长期可维护性。
 
-项目提供 Android `0.2.0-beta1`：Kotlin 原生触控界面 + 同一套 Python 3.12 记账核心。本期补齐备份恢复、交易维护、转账退款、资料管理、统计图表、CSV/Excel、PDF/PNG、图片附件、可选 AI、主题/语言/时区和手机快速入口。使用见[手机指南](docs/user/android.md)，构建见 [Android 说明](android/README.md)，架构见 [ADR-019](docs/adr/019-android-shared-core.md)，本期验证见[阶段 11](docs/development/phase11-validation.md)。Android 与 Windows 的版本分别维护。
+项目提供 Android `0.3.0-beta1-preview`：Kotlin 原生界面和同一套 Python 3.12 / SQLite 核心。新增支付通知待确认、离线中文收据 OCR、中文语音录入及文字回退、多币种账户与实际换汇；保留交易维护、完整备份、统计、CSV/Excel、PDF/PNG、附件和可选 AI。
 
-**当前版本为 `1.0.0rc1` Windows 发行候选，阶段 8 本地实施与验收已通过。** 提供源码、便携 ZIP 与当前用户安装程序。既有记账、账户、统计、文件交换、系统入口和可选 AI 保留统一资金事务；自然语言与 AI 只生成可编辑草稿，确认后保存。默认关闭 AI，应用启动不联网。安装器、发行状态与实际验证见[阶段 8 记录](docs/development/phase8-validation.md)。
+Windows 配套版本为 `1.1.0rc1`，共享 Schema v2、币种精度、汇率、换汇和完整备份。Android 与 Windows 仍本地运行，云同步和插件市场未实现。开始使用请看[完整图文手册](docs/user/complete-manual.md)，手机设置中也可离线查看。验证记录见[阶段 12](docs/development/phase12-validation.md)。
+
+[下载新版 APK、配套 Windows、使用手册和样例](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.3.0-beta1)。公开 APK 与旧 alpha/beta 使用同一预览签名，可覆盖升级；保持预发布状态，真机和正式签名工作见 [#6](https://github.com/Bidao-Penknife/OpenLedger/issues/6)。
 
 ## 项目状态
 
@@ -18,15 +20,16 @@
 | 转账、退款、期初和余额校准 | 专用表单；资金操作经过统一事务与幂等回执 |
 | 首页汇总与统计分析 | 总资产、本月收支；日期与资料筛选、月度趋势、分类占比、消费排行和前期比较 |
 | CSV/XLSX 导入 | 列映射、只读预览、精确/疑似重复提示、明确勾选、原子整批提交和受约束的批次撤销 |
-| CSV/XLSX 导出 | 一次数据库快照、整数分字符串、安全可逆文本；不替代完整备份 |
+| CSV/XLSX 导出 | 一次数据库快照、币种最小单位整数字符串、安全可逆文本；不替代完整备份 |
 | PDF/PNG 报告 | 使用当前统计 DTO；中文、多页 PDF、完整图片及超限提示、原子文件发布 |
 | 浅色/深色/跟随系统与记账时区 | 主题即时切换；语言选择下次启动生效；设置与资金记录分离 |
-| SQLite 数据库、迁移与审计 | 资金核心；金额以整数分保存 |
+| SQLite 数据库、迁移与审计 | 资金核心；金额以对应币种最小单位整数保存 |
 | 一致备份与新目录恢复 | 服务接口与维护命令 |
 | 类型检查、格式检查、测试和 CI 配置 | 工程骨架；运行结果以阶段验收记录为准 |
 | Windows exe | PyInstaller `onedir` 发行候选；未签名 |
 | Windows 安装程序 | Inno Setup 当前用户安装，固定 AppId；修复安装、升级与卸载保留账目；候选版未签名 |
-| Android APK | 本地记账、恢复、交易管理、图表与交换、附件、可选 AI；beta 调试签名；Android 7.0 起，ARM64 / x86_64 |
+| Android APK | 支付通知待确认、离线中文 OCR、语音及文字回退、多币种；保留原有功能；预览签名；Android 7.0 起，ARM64 / x86_64 |
+| 多币种 | 固定 ISO 精度、原币账户、实际双端换汇、手动日期汇率、显示币种和缺失报价提示 |
 | 单实例、托盘和全局快捷键 | 同一数据目录激活已有窗口；默认 Ctrl+Alt+L；关闭隐藏可配置 |
 | 独立快速记账窗口 | Enter 解析、Ctrl+Enter 确认；失败保留，复用同一个资金 writer |
 | 可选 AI | 用户自行配置兼容 API/模型/Windows 凭据；显式解析，只生成待确认建议 |
@@ -37,7 +40,7 @@
 
 [下载 Windows 安装程序、便携版与 APK](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)。Release 还保存对应提交的完整源码、Git 历史、验证报告、历史文档归档和 SHA256。公开历史归档排除了含账本备份的离线验收包；账本数据库、备份、凭据与签名私钥不随公开制品上传。APK 已实现范围、缺失功能及后续顺序见[Android 功能清单与路线](docs/development/android-roadmap.md)。
 
-[下载 Android 0.2.0-beta1 新版 APK](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.2.0-beta1)。使用与旧公开 alpha 相同的预览签名和包名；覆盖升级保留账目。旧 Release 保持原制品，正式移动签名和 ARM64 真机验收继续作为稳定版里程碑。
+[历史 Android 0.2.0-beta1 APK](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.2.0-beta1)。使用与旧公开 alpha 相同的预览签名和包名；覆盖升级保留账目。旧 Release 保持原制品，正式移动签名和 ARM64 真机验收继续作为稳定版里程碑。
 
 本次交付按维护者要求采用当前 Windows 电脑验收，不以独立无 Python 系统为前提。环境覆盖范围与真实输入法等人工检查仍如实记录；候选版没有被声明为稳定 `1.0.0`。[清洁系统验收](docs/development/clean-windows.md)保留为更广泛发行的可选验证流程。
 

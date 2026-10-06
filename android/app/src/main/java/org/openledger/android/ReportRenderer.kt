@@ -16,13 +16,13 @@ import org.json.JSONObject
 /** Native Android PDF/PNG output, with complete paginated text and exact amounts. */
 class ReportRenderer(private val context: Context) {
     companion object {
-        fun money(minor: String): String {
+        fun money(minor: String, code: String = "CNY"): String {
             val value = BigInteger(minor)
-            val parts = value.abs().divideAndRemainder(BigInteger.valueOf(100))
+            val digits = CurrencyCatalog.digits(code)
+            val parts = value.abs().divideAndRemainder(BigInteger.TEN.pow(digits))
             return (if (value.signum() < 0) "-" else "") +
                 parts[0] +
-                "." +
-                parts[1].toString().padStart(2, '0')
+                (if (digits == 0) "" else "." + parts[1].toString().padStart(digits, '0'))
         }
 
         fun percent(ratio: String): String =
@@ -39,6 +39,7 @@ class ReportRenderer(private val context: Context) {
         val result = mutableListOf<String>()
         val totals = report.getJSONObject("totals")
         val filters = report.getJSONObject("filters")
+        val code = filters.getString("currency_code")
         result.add(filters.getString("start_on") + " — " + filters.getString("end_on"))
         result.add(
             context.getString(
@@ -54,7 +55,13 @@ class ReportRenderer(private val context: Context) {
                 "refund_minor" to R.string.refund,
                 "net_expense_minor" to R.string.net_expense,
                 "surplus_minor" to R.string.surplus,
-            )) result.add(context.getString(title) + ": ¥ " + money(totals.getString(key)))
+            )) result.add(
+            context.getString(title) +
+                ": " +
+                CurrencyCatalog.label(code) +
+                " " +
+                money(totals.getString(key), code)
+        )
         if (!totals.isNull("savings_rate"))
             result.add(
                 context.getString(R.string.savings_rate) +
@@ -70,8 +77,8 @@ class ReportRenderer(private val context: Context) {
                     R.string.comparison_note,
                     report.getString("comparison_start"),
                     report.getString("comparison_end"),
-                    money(previous.getString("income_minor")),
-                    money(previous.getString("net_expense_minor")),
+                    money(previous.getString("income_minor"), code),
+                    money(previous.getString("net_expense_minor"), code),
                 )
             )
         result.add(context.getString(R.string.month_trend))
@@ -83,12 +90,14 @@ class ReportRenderer(private val context: Context) {
                 row.getString("month") +
                     " · " +
                     context.getString(R.string.income) +
-                    " ¥" +
-                    money(amounts.getString("income_minor")) +
+                    " " +
+                    CurrencyCatalog.label(code) +
+                    money(amounts.getString("income_minor"), code) +
                     " · " +
                     context.getString(R.string.net_expense) +
-                    " ¥" +
-                    money(amounts.getString("net_expense_minor"))
+                    " " +
+                    CurrencyCatalog.label(code) +
+                    money(amounts.getString("net_expense_minor"), code)
             )
         }
         result.add(context.getString(R.string.category_share))
@@ -98,8 +107,9 @@ class ReportRenderer(private val context: Context) {
             val row = categories.getJSONObject(i)
             result.add(
                 row.getString("name") +
-                    " · ¥" +
-                    money(row.getString("net_expense_minor")) +
+                    " · " +
+                    CurrencyCatalog.label(code) +
+                    money(row.getString("net_expense_minor"), code) +
                     " · " +
                     share(row)
             )
@@ -109,7 +119,7 @@ class ReportRenderer(private val context: Context) {
         for (i in 0 until ranks.length()) {
             val row = ranks.getJSONObject(i)
             result.add(
-                "${i + 1}. ${row.getString("label")} · ¥${money(row.getString("amount_minor"))} · ${row.getInt("count")}"
+                "${i + 1}. ${row.getString("label")} · ${CurrencyCatalog.label(code)}${money(row.getString("amount_minor"), code)} · ${row.getInt("count")}"
             )
         }
         val notes = report.getJSONArray("notes")

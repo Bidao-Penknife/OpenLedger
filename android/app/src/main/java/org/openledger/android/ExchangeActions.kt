@@ -155,6 +155,10 @@ class ExchangeActions(private val a: MainActivity) {
                 "kind" to R.string.transaction_type,
                 "amount" to R.string.amount,
                 "amount_minor" to R.string.amount_fen,
+                "currency_code" to R.string.display_currency,
+                "to_amount" to R.string.fx_incoming,
+                "to_amount_minor" to R.string.fx_incoming_minor,
+                "to_currency_code" to R.string.destination_currency,
                 "occurred_on" to R.string.date,
                 "book_name" to R.string.book,
                 "account_name" to R.string.account,
@@ -202,8 +206,12 @@ class ExchangeActions(private val a: MainActivity) {
                 if (fields == null) ""
                 else
                     a.kindLabel(fields.getString("kind")) +
-                        " ¥" +
-                        ReportRenderer.money(fields.getString("amount_minor")) +
+                        " " +
+                        CurrencyCatalog.label(fields.getString("currency_code")) +
+                        ReportRenderer.money(
+                            fields.getString("amount_minor"),
+                            fields.getString("currency_code"),
+                        ) +
                         " · " +
                         fields.getString("occurred_on") +
                         " · " +

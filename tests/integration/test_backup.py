@@ -165,7 +165,7 @@ def test_round_trip_preserves_funds_receipts_audit_and_source(
     assert source_database.path.read_bytes() == before
     receipt = json.loads((tmp_path / "恢复 data" / "restore-receipt.json").read_text("utf-8"))
     assert receipt["backup_sha256"] == hashlib.sha256(archive.read_bytes()).hexdigest()
-    assert receipt["schema_version"] == 1
+    assert receipt["schema_version"] == 2
     assert not list(tmp_path.glob(".openledger-*"))
 
 

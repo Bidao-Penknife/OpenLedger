@@ -44,3 +44,7 @@ Ruff、mypy、pytest、pytest-qt、uv 与构建后端用于开发和构建。它
 正式 Release 前应核对：冻结包实际包含的 DLL、Qt 插件、Python 扩展、数据文件及其来源；上游许可全文是否齐全；所需源码或获取方式是否对应准确版本；新增图标、字体、报告模板是否有授权。发现缺失时修正构建和通知，再发布制品。
 
 MIT 项目许可、生成一份依赖清单和保留动态 DLL 都不能单独证明最终发行满足所有第三方要求。当前材料是发行审阅的起点，后续阶段按具体制品完成核对。
+
+## Android bundled Chinese OCR additions (0.3 beta)
+
+The Google ML Kit Chinese/Latin models and runtime APIs retain their own terms and are not relicensed by OpenLedger MIT. See [original runtime notices](android/app/src/main/assets/licenses/OCR-NOTICE.md) and [locked artifact provenance](android/app/src/main/assets/licenses/ocr-runtime-sources.json). Original embedded notices and the Apache-2.0 license are packaged in APK assets/licenses. Google SDK diagnostics are disclosed before first OCR use; source images/text are processed on-device.

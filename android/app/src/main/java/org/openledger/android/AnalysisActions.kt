@@ -37,6 +37,7 @@ class AnalysisActions(private val a: MainActivity) {
             load()
             return
         }
+        val code = report.getJSONObject("filters").getString("currency_code")
         val totals = report.getJSONObject("totals")
         val summary = a.card()
         for ((key, title) in
@@ -48,7 +49,11 @@ class AnalysisActions(private val a: MainActivity) {
                 "surplus_minor" to R.string.surplus,
             )) summary.addView(
             a.label(
-                a.getString(title) + ": ¥ " + ReportRenderer.money(totals.getString(key)),
+                a.getString(title) +
+                    ": " +
+                    CurrencyCatalog.label(code) +
+                    " " +
+                    ReportRenderer.money(totals.getString(key), code),
                 17,
                 true,
             )
@@ -82,12 +87,14 @@ class AnalysisActions(private val a: MainActivity) {
                     month.getString("month") +
                         "  " +
                         a.getString(R.string.income) +
-                        " ¥" +
-                        ReportRenderer.money(money.getString("income_minor")) +
+                        " " +
+                        CurrencyCatalog.label(code) +
+                        ReportRenderer.money(money.getString("income_minor"), code) +
                         " · " +
                         a.getString(R.string.net_expense) +
-                        " ¥" +
-                        ReportRenderer.money(money.getString("net_expense_minor")),
+                        " " +
+                        CurrencyCatalog.label(code) +
+                        ReportRenderer.money(money.getString("net_expense_minor"), code),
                     13,
                 )
             )
@@ -96,8 +103,9 @@ class AnalysisActions(private val a: MainActivity) {
         for (category in a.jsonRows(report.getJSONArray("categories"))) details.addView(
             a.label(
                 category.getString("name") +
-                    " · ¥" +
-                    ReportRenderer.money(category.getString("net_expense_minor")) +
+                    " · " +
+                    CurrencyCatalog.label(code) +
+                    ReportRenderer.money(category.getString("net_expense_minor"), code) +
                     " · " +
                     ReportRenderer.share(category),
                 14,
@@ -107,7 +115,7 @@ class AnalysisActions(private val a: MainActivity) {
         for ((index, item) in a.jsonRows(report.getJSONArray("ranking")).withIndex()) details
             .addView(
                 a.label(
-                    "${index + 1}. ${item.getString("label")} · ¥${ReportRenderer.money(item.getString("amount_minor"))} · ${item.getInt("count")}",
+                    "${index + 1}. ${item.getString("label")} · ${CurrencyCatalog.label(code)}${ReportRenderer.money(item.getString("amount_minor"), code)} · ${item.getInt("count")}",
                     14,
                 )
             )
@@ -119,8 +127,8 @@ class AnalysisActions(private val a: MainActivity) {
                         R.string.comparison_note,
                         report.getString("comparison_start"),
                         report.getString("comparison_end"),
-                        ReportRenderer.money(comparison.getString("income_minor")),
-                        ReportRenderer.money(comparison.getString("net_expense_minor")),
+                        ReportRenderer.money(comparison.getString("income_minor"), code),
+                        ReportRenderer.money(comparison.getString("net_expense_minor"), code),
                     ),
                     14,
                 )

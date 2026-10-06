@@ -85,11 +85,11 @@ def report_font(pixel_size: int = 14, *, bold: bool = False) -> QFont:
     return font
 
 
-def amount_text(minor: int) -> str:
+def amount_text(minor: int, code: str = "CNY") -> str:
     """Format any integer amount exactly, without passing money through a float."""
-    sign = "-" if minor < 0 else ""
-    major, fraction = divmod(abs(minor), 100)
-    return f"{sign}{major:,}.{fraction:02d}"
+    from openledger.domain.currencies import format_minor
+
+    return format_minor(minor, code, grouping=True)
 
 
 def percentage_text(value: Decimal | None) -> str:
@@ -136,25 +136,26 @@ class ChartHit:
 
 def chart_description(report: ReportData, kind: ChartKind) -> str:
     """Provide all labels and exact amounts to assistive technologies."""
+    code = report.filters.currency_code
     if kind == "trend":
         rows = [
-            f"{month.month}：收入 {amount_text(month.totals.income_minor)} 元，"
-            f"支出 {amount_text(month.totals.gross_expense_minor)} 元，"
-            f"退款 {amount_text(month.totals.refund_minor)} 元，"
-            f"净支出 {amount_text(month.totals.net_expense_minor)} 元"
+            f"{month.month}：收入 {amount_text(month.totals.income_minor, code)} {code}，"
+            f"支出 {amount_text(month.totals.gross_expense_minor, code)} {code}，"
+            f"退款 {amount_text(month.totals.refund_minor, code)} {code}，"
+            f"净支出 {amount_text(month.totals.net_expense_minor, code)} {code}"
             for month in report.months
         ]
     elif kind == "categories":
         rows = [
-            f"{category.name}：支出 {amount_text(category.gross_expense_minor)} 元，"
-            f"退款 {amount_text(category.refund_minor)} 元，"
-            f"净支出 {amount_text(category.net_expense_minor)} 元，"
+            f"{category.name}：支出 {amount_text(category.gross_expense_minor, code)} {code}，"
+            f"退款 {amount_text(category.refund_minor, code)} {code}，"
+            f"净支出 {amount_text(category.net_expense_minor, code)} {code}，"
             f"支出占比 {percentage_text(category.share)}"
             for category in report.categories
         ]
     else:
         rows = [
-            f"{rank.label}：支出 {amount_text(rank.amount_minor)} 元，{rank.count} 笔"
+            f"{rank.label}：支出 {amount_text(rank.amount_minor, code)} {code}，{rank.count} 笔"
             for rank in report.ranking
         ]
     description = "；".join(rows) if rows else "所选范围暂无交易数据。"
@@ -193,6 +194,7 @@ def paint_chart(
 def _paint_trend(
     painter: QPainter, rect: QRectF, report: ReportData, palette: ChartPalette
 ) -> tuple[ChartHit, ...]:
+    code = report.filters.currency_code
     _text(
         painter,
         QRectF(rect.x() + 16, rect.y() + 10, rect.width() - 32, 24),
@@ -234,7 +236,7 @@ def _paint_trend(
         _text(
             painter,
             QRectF(rect.x() + 2, y - 10, 74, 20),
-            amount_text(value),
+            amount_text(value, code),
             palette.muted,
             size=10,
             alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,
@@ -245,10 +247,10 @@ def _paint_trend(
     for index, month in enumerate(report.months):
         center = plot.left() + (index + 0.5) * group_width
         detail = (
-            f"{month.month}\n收入：{amount_text(month.totals.income_minor)} 元\n"
-            f"支出：{amount_text(month.totals.gross_expense_minor)} 元\n"
-            f"退款：{amount_text(month.totals.refund_minor)} 元\n"
-            f"净支出：{amount_text(month.totals.net_expense_minor)} 元"
+            f"{month.month}\n收入：{amount_text(month.totals.income_minor, code)} {code}\n"
+            f"支出：{amount_text(month.totals.gross_expense_minor, code)} {code}\n"
+            f"退款：{amount_text(month.totals.refund_minor, code)} {code}\n"
+            f"净支出：{amount_text(month.totals.net_expense_minor, code)} {code}"
         )
         for offset, value, color in (
             (-bar_width - 1, month.totals.income_minor, palette.income),
@@ -285,6 +287,7 @@ def _paint_bars(
     kind: Literal["categories", "ranking"],
     palette: ChartPalette,
 ) -> tuple[ChartHit, ...]:
+    code = report.filters.currency_code
     title = "分类支出占比 · 退款单列" if kind == "categories" else ranking_title(report)
     _text(
         painter,
@@ -299,9 +302,9 @@ def _paint_bars(
                 row.name,
                 row.gross_expense_minor,
                 row.category_id,
-                f"{row.name}\n支出：{amount_text(row.gross_expense_minor)} 元\n"
-                f"退款：{amount_text(row.refund_minor)} 元\n"
-                f"净支出：{amount_text(row.net_expense_minor)} 元\n"
+                f"{row.name}\n支出：{amount_text(row.gross_expense_minor, code)} {code}\n"
+                f"退款：{amount_text(row.refund_minor, code)} {code}\n"
+                f"净支出：{amount_text(row.net_expense_minor, code)} {code}\n"
                 f"支出占比：{percentage_text(row.share)}",
             )
             for row in report.categories
@@ -312,7 +315,7 @@ def _paint_bars(
                 row.label,
                 row.count if report.ranking_metric == "count" else row.amount_minor,
                 None,
-                f"{row.label}\n支出：{amount_text(row.amount_minor)} 元\n{row.count} 笔",
+                f"{row.label}\n支出：{amount_text(row.amount_minor, code)} {code}\n{row.count} 笔",
             )
             for row in report.ranking
         ]
@@ -359,7 +362,7 @@ def _paint_bars(
             QRectF(rect.right() - value_width - 14, y, value_width, row_height),
             f"{value} 笔"
             if kind == "ranking" and report.ranking_metric == "count"
-            else f"{amount_text(value)} 元",
+            else f"{amount_text(value, code)} {code}",
             palette.text,
             size=11,
             alignment=Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter,

@@ -65,7 +65,7 @@ class TransactionActions(private val a: MainActivity) {
             val kind = value.getString("kind")
             form.addView(
                 a.label(
-                    "${a.kindLabel(kind)} ¥ ${a.money(value.getLong("amount_minor"))}",
+                    "${a.kindLabel(kind)} ${CurrencyCatalog.label(value.getString("currency_code"))} ${a.money(value.getLong("amount_minor"), value.getString("currency_code"))}",
                     24,
                     true,
                 )
@@ -88,11 +88,18 @@ class TransactionActions(private val a: MainActivity) {
                 if (name != null) form.addView(a.label(a.getString(title) + ": " + name, 14))
             }
             for (entry in a.jsonRows(value.getJSONArray("entries"))) {
-                val name =
-                    a.jsonRows(a.snapshot.getJSONArray("accounts"))
-                        .first { it.getString("id") == entry.getString("account_id") }
-                        .getString("name")
-                form.addView(a.label("$name: ¥ ${a.money(entry.getLong("delta_minor"))}", 14))
+                val account =
+                    a.jsonRows(a.snapshot.getJSONArray("accounts")).first {
+                        it.getString("id") == entry.getString("account_id")
+                    }
+                val name = account.getString("name")
+                val code = account.getString("currency_code")
+                form.addView(
+                    a.label(
+                        "$name: ${CurrencyCatalog.label(code)} ${a.money(entry.getLong("delta_minor"), code)}",
+                        14,
+                    )
+                )
             }
             for ((key, title) in
                 listOf(
@@ -134,6 +141,7 @@ class TransactionActions(private val a: MainActivity) {
                                 refund(value.getString("original_transaction_id"), value)
                             else -> {
                                 val draft = JSONObject()
+                                draft.put("currency_code", value.getString("currency_code"))
                                 for (key in
                                     listOf(
                                         "kind",
@@ -204,12 +212,18 @@ class TransactionActions(private val a: MainActivity) {
         }
     }
 
-    fun transfer(existing: JSONObject? = null) = financial("transfer", null, existing)
+    fun transfer(existing: JSONObject? = null, capture: JSONObject? = null) =
+        financial("transfer", null, existing, capture)
 
-    fun refund(originalId: String, existing: JSONObject? = null) =
-        financial("refund", originalId, existing)
+    fun refund(originalId: String, existing: JSONObject? = null, capture: JSONObject? = null) =
+        financial("refund", originalId, existing, capture)
 
-    private fun financial(type: String, originalId: String?, existing: JSONObject?) {
+    private fun financial(
+        type: String,
+        originalId: String?,
+        existing: JSONObject?,
+        capture: JSONObject?,
+    ) {
         val form = a.column().apply { setPadding(a.dp(20), a.dp(8), a.dp(20), a.dp(12)) }
         val entries = existing?.getJSONArray("entries")?.let(a::jsonRows).orEmpty()
         val fromId = entries.firstOrNull { it.getLong("delta_minor") < 0 }?.getString("account_id")
@@ -223,7 +237,11 @@ class TransactionActions(private val a: MainActivity) {
         val amount =
             a.edit(
                 a.getString(R.string.amount),
-                existing?.getLong("amount_minor")?.let(a::money) ?: "",
+                capture?.optString("selected_amount")
+                    ?: existing?.getLong("amount_minor")?.let {
+                        a.money(it, existing.getString("currency_code"))
+                    }
+                    ?: "",
                 amount = true,
             )
         var day = existing?.getString("occurred_on") ?: a.snapshot.getString("today")
@@ -251,6 +269,21 @@ class TransactionActions(private val a: MainActivity) {
         form.addView(a.label(a.getString(R.string.to_account), 13))
         form.addView(to)
         form.addView(amount)
+        val incoming =
+            a.edit(
+                a.getString(R.string.fx_incoming),
+                existing
+                    ?.takeIf { it.optString("currency_code") != it.optString("to_currency_code") }
+                    ?.optString("to_amount_minor")
+                    ?.takeIf { it != "null" }
+                    ?.let { ReportRenderer.money(it, existing.getString("to_currency_code")) }
+                    ?: "",
+                amount = true,
+            )
+        if (type == "transfer") {
+            form.addView(a.label(a.getString(R.string.fx_note), 13))
+            form.addView(incoming)
+        }
         form.addView(date)
         form.addView(note)
         val payments =
@@ -295,6 +328,24 @@ class TransactionActions(private val a: MainActivity) {
                     .put("original_transaction_id", originalId)
                     .put("account_id", a.selectedId(to, accounts))
                     .put("payment_method_id", a.selectedId(payment, payments))
+            if (type == "transfer" && incoming.text.isNotBlank())
+                fields.put("to_amount", incoming.text.toString())
+            if (capture != null) {
+                fields.put("kind", if (type == "transfer") "transfer" else "expense_refund")
+                a.request(
+                    "capture_record",
+                    JSONObject()
+                        .put("request_id", UUID.randomUUID().toString())
+                        .put("id", capture.getString("id"))
+                        .put("expected_version", capture.getInt("version"))
+                        .put("fields", fields),
+                    true,
+                ) {
+                    dialog.dismiss()
+                    a.refresh()
+                }
+                return@confirmation
+            }
             val payload =
                 JSONObject()
                     .put("id", existing?.getString("id") ?: UUID.randomUUID().toString())

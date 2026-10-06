@@ -16,6 +16,7 @@ class SyntheticLedger : AutoCloseable {
             as LedgerApplication
     private val original: String
     private val overview: String
+    private val onboarding: Boolean
 
     init {
         assumeTrue(
@@ -23,6 +24,10 @@ class SyntheticLedger : AutoCloseable {
             InstrumentationRegistry.getArguments().getString("synthetic_device") == "true",
         )
         assertNull(application.pending())
+        val presentation =
+            application.getSharedPreferences("presentation", android.content.Context.MODE_PRIVATE)
+        onboarding = presentation.getBoolean("onboarding_seen", false)
+        assertTrue(presentation.edit().putBoolean("onboarding_seen", true).commit())
         original = application.directory
         overview =
             application.call("snapshot").getJSONObject("data").getJSONObject("overview").toString()
@@ -59,6 +64,13 @@ class SyntheticLedger : AutoCloseable {
     override fun close() {
         assertNull(application.pending())
         application.switchDirectory(original)
+        assertTrue(
+            application
+                .getSharedPreferences("presentation", android.content.Context.MODE_PRIVATE)
+                .edit()
+                .putBoolean("onboarding_seen", onboarding)
+                .commit()
+        )
         assertEquals(
             overview,
             application.call("snapshot").getJSONObject("data").getJSONObject("overview").toString(),

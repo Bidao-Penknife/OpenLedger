@@ -87,7 +87,7 @@ def test_future_database_startup_fails_without_modification(tmp_path: Path) -> N
     database = Database(source / "database/openledger.sqlite3")
     database.initialize()
     with database.write() as connection:
-        connection.execute("PRAGMA user_version=2")
+        connection.execute("PRAGMA user_version=3")
     before = hashlib.sha256(database.path.read_bytes()).hexdigest()
     report = tmp_path / "failure.json"
     result = _run(

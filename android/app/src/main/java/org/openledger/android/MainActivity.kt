@@ -14,7 +14,6 @@ import android.text.InputType
 import android.view.Gravity
 import android.view.View
 import android.widget.*
-import java.math.BigInteger
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
@@ -42,6 +41,8 @@ class MainActivity : Activity() {
     internal val exchange = ExchangeActions(this)
     internal val settings = SettingsActions(this)
     internal val attachments = AttachmentActions(this)
+    internal val captures = CaptureActions(this)
+    internal val currencies = CurrencyActions(this)
     private var filters = JSONObject()
     private val dark
         get() =
@@ -154,6 +155,20 @@ class MainActivity : Activity() {
         super.onSaveInstanceState(outState)
     }
 
+    override fun onStop() {
+        captures.voice.close()
+        super.onStop()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        captures.voice.permission(requestCode, grantResults)
+    }
+
     internal fun refresh() {
         request(
             "snapshot",
@@ -162,7 +177,32 @@ class MainActivity : Activity() {
             snapshot = it
             analysis.invalidate()
             render()
+            onboarding()
         }
+    }
+
+    private fun onboarding() {
+        val preferences = getSharedPreferences("presentation", MODE_PRIVATE)
+        if (
+            preferences.getBoolean("onboarding_seen", false) ||
+                snapshot.getJSONArray("accounts").length() != 0
+        )
+            return
+        preferences.edit().putBoolean("onboarding_seen", true).apply()
+        AlertDialog.Builder(this)
+            .setTitle(R.string.onboarding_title)
+            .setMessage(R.string.onboarding_note)
+            .setPositiveButton(R.string.onboarding_read) { _, _ ->
+                startActivity(Intent(this, HelpActivity::class.java))
+            }
+            .setNeutralButton(R.string.new_account) { _, _ -> newAccount() }
+            .setNegativeButton(R.string.ok, null)
+            .show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (snapshot.length() > 0 && tab == "settings" && !busy) render()
     }
 
     internal fun request(
@@ -220,24 +260,40 @@ class MainActivity : Activity() {
             content.addView(warning)
         }
         val overview = snapshot.getJSONObject("overview")
+        val displayCode = overview.getString("currency_code")
         val summary = card()
         summary.addView(label(getString(R.string.total_assets), 14, color = muted))
         summary.addView(
-            label("¥ ${money(overview.getLong("total_assets_minor"))}", 32, true, accent)
+            label(
+                if (overview.getBoolean("assets_complete"))
+                    "${CurrencyCatalog.label(displayCode)} ${ReportRenderer.money(overview.getString("total_assets_minor"), displayCode)}"
+                else getString(R.string.valuation_incomplete),
+                32,
+                true,
+                accent,
+            )
         )
         summary.addView(
             label(
                 getString(
                     R.string.month_totals,
                     snapshot.getString("today").take(7),
-                    ReportRenderer.money(overview.getString("income_minor")),
-                    ReportRenderer.money(overview.getString("expense_minor")),
+                    if (overview.getBoolean("income_complete"))
+                        CurrencyCatalog.label(displayCode) +
+                            ReportRenderer.money(overview.getString("income_minor"), displayCode)
+                    else "—",
+                    if (overview.getBoolean("expense_complete"))
+                        CurrencyCatalog.label(displayCode) +
+                            ReportRenderer.money(overview.getString("expense_minor"), displayCode)
+                    else "—",
                 ),
                 13,
                 color = muted,
             )
         )
         content.addView(summary)
+        if (overview.getJSONArray("missing_rates").length() > 0)
+            content.addView(label(getString(R.string.rate_missing), 13, color = muted))
         when (tab) {
             "quick" -> renderQuick()
             "transactions" -> renderTransactions()
@@ -280,6 +336,7 @@ class MainActivity : Activity() {
                     .show()
             }
         } else if (operation.startsWith("attachment:")) attachments.imported(operation, filename)
+        else if (operation == "ocr") captures.ocr.imported(filename)
         else if (operation == "import" || operation == "import_gb")
             exchange.mapping(filename, if (operation == "import_gb") "gb18030" else "utf-8-sig")
     }
@@ -343,8 +400,17 @@ class MainActivity : Activity() {
             }
         )
         content.addView(panel)
+        val intelligent = card()
+        captures.settings(intelligent)
+        currencies.render(intelligent)
+        content.addView(intelligent)
         exchange.render()
         settings.render()
+        content.addView(
+            button(getString(R.string.help_title)) {
+                startActivity(Intent(this, HelpActivity::class.java))
+            }
+        )
     }
 
     internal fun renderCurrent() {
@@ -352,6 +418,17 @@ class MainActivity : Activity() {
     }
 
     private fun renderQuick() {
+        content.addView(button(getString(R.string.capture_inbox)) { captures.inbox() })
+        val automatic = row()
+        automatic.addView(
+            button(getString(R.string.ocr_title)) { captures.ocr.pick() },
+            LinearLayout.LayoutParams(0, dp(56), 1f),
+        )
+        automatic.addView(
+            button(getString(R.string.voice_title)) { captures.voice.start() },
+            LinearLayout.LayoutParams(0, dp(56), 1f),
+        )
+        content.addView(automatic)
         val panel = card()
         panel.addView(label(getString(R.string.quick_title), 20, true))
         quickInput =
@@ -418,9 +495,14 @@ class MainActivity : Activity() {
                     drafts
                         .map { draft ->
                             (candidate(draft, "kind")?.let(::kindLabel) ?: "") +
-                                " · ¥" +
-                                (candidate(draft, "amount_minor")?.let(ReportRenderer::money)
-                                    ?: "…")
+                                " · " +
+                                CurrencyCatalog.label(draft.optString("currency_code", "CNY")) +
+                                (candidate(draft, "amount_minor")?.let {
+                                    ReportRenderer.money(
+                                        it,
+                                        draft.optString("currency_code", "CNY"),
+                                    )
+                                } ?: "…")
                         }
                         .toTypedArray()
                 ) { _, index ->
@@ -471,7 +553,7 @@ class MainActivity : Activity() {
                 else if (kind in listOf("income", "expense_refund")) "+" else ""
             panel.addView(
                 label(
-                    "${kindLabel(kind)}  $prefix¥ ${money(item.getLong("amount_minor"))}",
+                    "${kindLabel(kind)}  $prefix${CurrencyCatalog.label(item.getString("currency_code"))} ${money(item.getLong("amount_minor"), item.getString("currency_code"))}",
                     19,
                     true,
                     if (kind == "expense") ink else accent,
@@ -527,7 +609,12 @@ class MainActivity : Activity() {
             val panel = card()
             panel.addView(label(account.getString("name"), 18, true))
             panel.addView(
-                label("¥ ${money(balances.getLong(account.getString("id")))}", 25, true, accent)
+                label(
+                    "${CurrencyCatalog.label(account.getString("currency_code"))} ${money(balances.getLong(account.getString("id")), account.getString("currency_code"))}",
+                    25,
+                    true,
+                    accent,
+                )
             )
             if (account.optInt("is_archived") != 0)
                 panel.addView(label(getString(R.string.archived), 13, color = muted))
@@ -547,7 +634,8 @@ class MainActivity : Activity() {
         }
         val form = column().apply { setPadding(dp(20), dp(8), dp(20), 0) }
         val name = edit(getString(R.string.account_name))
-        val opening = edit(getString(R.string.opening_amount), "0.00", amount = true, signed = true)
+        val opening = edit(getString(R.string.opening_amount), "0", amount = true, signed = true)
+        val code = spinner(CurrencyCatalog.codes)
         val type =
             spinner(
                 listOf(
@@ -574,6 +662,8 @@ class MainActivity : Activity() {
         }
         form.addView(name)
         form.addView(type)
+        form.addView(label(getString(R.string.account_currency), 13, color = muted))
+        form.addView(code)
         form.addView(opening)
         form.addView(label(getString(R.string.start_date), 13, color = muted))
         form.addView(dayButton)
@@ -588,6 +678,7 @@ class MainActivity : Activity() {
                             type.selectedItemPosition],
                     )
                     .put("opening_amount", opening.text.toString())
+                    .put("currency_code", CurrencyCatalog.codes[code.selectedItemPosition])
                     .put("balance_start_on", day)
             request("create_account", body, true) {
                 dialog.dismiss()
@@ -618,7 +709,11 @@ class MainActivity : Activity() {
         }
     }
 
-    internal fun editTransaction(draft: JSONObject?, existing: JSONObject? = null) {
+    internal fun editTransaction(
+        draft: JSONObject?,
+        existing: JSONObject? = null,
+        capture: JSONObject? = null,
+    ) {
         if (ledger.pending() != null) {
             Toast.makeText(this, R.string.pending_error, Toast.LENGTH_LONG).show()
             return
@@ -634,7 +729,11 @@ class MainActivity : Activity() {
         val amount =
             edit(
                 getString(R.string.amount),
-                candidate(draft, "amount_minor")?.toLongOrNull()?.let { money(it) } ?: "",
+                capture?.optString("selected_amount")
+                    ?: candidate(draft, "amount_minor")?.toLongOrNull()?.let {
+                        money(it, draft?.optString("currency_code", "CNY") ?: "CNY")
+                    }
+                    ?: "",
                 amount = true,
             )
         val preferences = snapshot.getJSONObject("preferences")
@@ -774,7 +873,11 @@ class MainActivity : Activity() {
                             .put("expected_version", existing.getInt("version"))
                             .put("fields", values),
                     )
-            request(action, commandBody, true) {
+            if (capture != null)
+                commandBody
+                    .put("id", capture.getString("id"))
+                    .put("expected_version", capture.getInt("version"))
+            request(if (capture != null) "capture_record" else action, commandBody, true) {
                 dialog.dismiss()
                 if (draft?.optBoolean("keep_source") != true) inputText = ""
                 Toast.makeText(this, R.string.saved, Toast.LENGTH_SHORT).show()
@@ -816,7 +919,12 @@ class MainActivity : Activity() {
             ArrayAdapter(
                 this,
                 android.R.layout.simple_spinner_dropdown_item,
-                listOf(placeholder) + rows.map { it.getString("name") },
+                listOf(placeholder) +
+                    rows.map {
+                        it.getString("name") +
+                            (if (it.has("currency_code")) " · " + it.getString("currency_code")
+                            else "")
+                    },
             )
         spinner.setSelection(rows.indexOfFirst { it.getString("id") == selected } + 1)
     }
@@ -841,13 +949,8 @@ class MainActivity : Activity() {
     private fun candidate(value: JSONObject?, key: String): String? =
         value?.optJSONObject(key)?.let { nullable(it, "value") }
 
-    internal fun money(minor: Long): String {
-        val parts = BigInteger.valueOf(minor).abs().divideAndRemainder(BigInteger.valueOf(100))
-        return (if (minor < 0) "-" else "") +
-            parts[0].toString() +
-            "." +
-            parts[1].toString().padStart(2, '0')
-    }
+    internal fun money(minor: Long, code: String = "CNY"): String =
+        ReportRenderer.money(minor.toString(), code)
 
     internal fun datePicker(value: String, done: (String) -> Unit) {
         val parts = value.split("-").map { it.toInt() }
@@ -962,7 +1065,7 @@ class MainActivity : Activity() {
             }
         )
 
-    private fun errorText(code: String) =
+    internal fun errorText(code: String) =
         getString(
             when {
                 code.startsWith("AI_") -> R.string.ai_error
@@ -977,6 +1080,12 @@ class MainActivity : Activity() {
                     R.string.image_failed
                 code == "VERSION_CONFLICT" -> R.string.version_error
                 code == "INVALID_TIMEZONE" -> R.string.invalid_fields
+                code == "EXCHANGE_RATE_MISSING" -> R.string.rate_missing
+                code == "TRANSFER_TARGET_AMOUNT_REQUIRED" -> R.string.fx_required
+                code == "CURRENCY_MISMATCH" || code == "ACCOUNT_CURRENCY_IMMUTABLE" ->
+                    R.string.currency_mismatch
+                code == "CAPTURE_ALREADY_SAVED" || code == "CAPTURE_NOT_PENDING" ->
+                    R.string.capture_done
                 else ->
                     when (code) {
                         "INVALID_AMOUNT",

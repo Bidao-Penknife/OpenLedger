@@ -145,6 +145,7 @@ def _table_blocks(
 
 
 def _build_pages(report: ReportData) -> tuple[tuple[_Block, ...], ...]:
+    code = report.filters.currency_code
     blocks: list[_Block] = []
     scopes = "；".join(report.scope_labels)
     if scopes and _line_count(scopes, _CONTENT_WIDTH, report_font(10)) > 1:
@@ -155,9 +156,9 @@ def _build_pages(report: ReportData) -> tuple[tuple[_Block, ...], ...]:
         blocks.append(
             _paragraph(
                 f"对比期间：{report.comparison_start} 至 {report.comparison_end}；"
-                f"收入 {amount_text(previous.income_minor)} 元，"
-                f"净支出 {amount_text(previous.net_expense_minor)} 元，"
-                f"结余 {amount_text(previous.surplus_minor)} 元。"
+                f"收入 {amount_text(previous.income_minor, code)} {code}，"
+                f"净支出 {amount_text(previous.net_expense_minor, code)} {code}，"
+                f"结余 {amount_text(previous.surplus_minor, code)} {code}。"
             )
         )
     if report.notes:
@@ -175,10 +176,10 @@ def _build_pages(report: ReportData) -> tuple[tuple[_Block, ...], ...]:
             tuple(
                 (
                     month.month,
-                    amount_text(month.totals.income_minor),
-                    amount_text(month.totals.gross_expense_minor),
-                    amount_text(month.totals.refund_minor),
-                    amount_text(month.totals.net_expense_minor),
+                    amount_text(month.totals.income_minor, code),
+                    amount_text(month.totals.gross_expense_minor, code),
+                    amount_text(month.totals.refund_minor, code),
+                    amount_text(month.totals.net_expense_minor, code),
                 )
                 for month in report.months
             ),
@@ -198,9 +199,9 @@ def _build_pages(report: ReportData) -> tuple[tuple[_Block, ...], ...]:
             tuple(
                 (
                     category.name,
-                    amount_text(category.gross_expense_minor),
-                    amount_text(category.refund_minor),
-                    amount_text(category.net_expense_minor),
+                    amount_text(category.gross_expense_minor, code),
+                    amount_text(category.refund_minor, code),
+                    amount_text(category.net_expense_minor, code),
                     percentage_text(category.share),
                 )
                 for category in report.categories
@@ -219,7 +220,11 @@ def _build_pages(report: ReportData) -> tuple[tuple[_Block, ...], ...]:
         _table_blocks(
             ("消费项", "支出（元）", "笔数"),
             tuple(
-                (rank.label, amount_text(rank.amount_minor), str(rank.count))
+                (
+                    rank.label,
+                    amount_text(rank.amount_minor, code),
+                    str(rank.count),
+                )
                 for rank in report.ranking
             ),
             (0.54, 0.32, 0.14),
@@ -279,13 +284,34 @@ def _draw_text(
 def _paint_metrics(
     painter: QPainter, top: float, report: ReportData, palette: ChartPalette
 ) -> None:
+    code = report.filters.currency_code
     totals = report.totals
     values = (
-        ("收入", f"{amount_text(totals.income_minor)} 元", f"{totals.income_count} 笔"),
-        ("原支出", f"{amount_text(totals.gross_expense_minor)} 元", f"{totals.expense_count} 笔"),
-        ("退款", f"{amount_text(totals.refund_minor)} 元", f"{totals.refund_count} 笔"),
-        ("净支出", f"{amount_text(totals.net_expense_minor)} 元", "原支出 − 退款"),
-        ("结余", f"{amount_text(totals.surplus_minor)} 元", "收入 − 净支出"),
+        (
+            "收入",
+            f"{amount_text(totals.income_minor, code)} {code}",
+            f"{totals.income_count} 笔",
+        ),
+        (
+            "原支出",
+            f"{amount_text(totals.gross_expense_minor, code)} {code}",
+            f"{totals.expense_count} 笔",
+        ),
+        (
+            "退款",
+            f"{amount_text(totals.refund_minor, code)} {code}",
+            f"{totals.refund_count} 笔",
+        ),
+        (
+            "净支出",
+            f"{amount_text(totals.net_expense_minor, code)} {code}",
+            "原支出 − 退款",
+        ),
+        (
+            "结余",
+            f"{amount_text(totals.surplus_minor, code)} {code}",
+            "收入 − 净支出",
+        ),
         ("结余率", percentage_text(totals.savings_rate), "结余 ÷ 收入"),
     )
     width = (_CONTENT_WIDTH - 20) / 3
@@ -356,7 +382,8 @@ def _paint_page(
     _draw_text(
         painter,
         QRectF(_MARGIN, 72, _CONTENT_WIDTH, 24),
-        f"统计期间：{report.filters.start_on} 至 {report.filters.end_on} · 币种 CNY / 元",
+        f"统计期间：{report.filters.start_on} 至 {report.filters.end_on} "
+        f"· 币种 {report.filters.currency_code}",
         palette,
         size=12,
     )

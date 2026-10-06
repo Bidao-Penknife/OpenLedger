@@ -19,16 +19,15 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from openledger.domain.currencies import format_minor
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import parse_amount
 from openledger.infrastructure.ledger import LedgerService
 
 
-def money_text(minor: int) -> str:
+def money_text(minor: int, code: str = "CNY") -> str:
     """Format cents with integer arithmetic, including negative account balances."""
-    sign = "-" if minor < 0 else ""
-    whole, fraction = divmod(abs(minor), 100)
-    return f"{sign}{whole:,}.{fraction:02d}"
+    return format_minor(minor, code, grouping=True)
 
 
 class QuickInput(QPlainTextEdit):
@@ -83,7 +82,7 @@ class TransactionForm(QWidget):
         self.kind.addItem(self.tr("支出"), "expense")
         self.kind.addItem(self.tr("收入"), "income")
         self.amount = QLineEdit(self)
-        self.amount.setPlaceholderText(self.tr("0.00，单位：元"))
+        self.amount.setPlaceholderText(self.tr("请输入原币金额"))
         self.day = QDateEdit(self)
         self.day.setCalendarPopup(True)
         self.day.setDisplayFormat("yyyy-MM-dd")
@@ -114,7 +113,7 @@ class TransactionForm(QWidget):
         self.tags.setMaximumHeight(74)
         rows = [
             (self.tr("类型"), self.kind, "draftKind"),
-            (self.tr("金额（元）"), self.amount, "draftAmount"),
+            (self.tr("金额（账户币种）"), self.amount, "draftAmount"),
             (self.tr("日期"), self.day, "draftDate"),
             (self.tr("时段"), self.period, "draftPeriod"),
             (self.tr("精确时间"), self.exact_label, "draftExactTime"),
@@ -236,6 +235,17 @@ class TransactionForm(QWidget):
             if self.tags.item(i).checkState() == Qt.CheckState.Checked
         )
 
+    def account_currency(self) -> str:
+        """Return the selected account's immutable native unit."""
+        return next(
+            (
+                str(row["currency_code"])
+                for row in self.ledger.entities("account", include_archived=True)
+                if row["id"] == self.account.currentData()
+            ),
+            "CNY",
+        )
+
     def fields(
         self, time_zone: str, *, source: str = "manual", source_text: str | None = None
     ) -> dict[str, object]:
@@ -244,9 +254,10 @@ class TransactionForm(QWidget):
             if combo.currentData() is None:
                 raise LedgerError("MISSING_REQUIRED_FIELD")
         period = self.period.currentData()
+        code = self.account_currency()
         return {
             "kind": self.kind.currentData(),
-            "amount_minor": parse_amount(self.amount.text()),
+            "amount_minor": parse_amount(self.amount.text(), code),
             "account_id": self.account.currentData(),
             "book_id": self.book.currentData(),
             "category_id": self.category.currentData(),
@@ -263,7 +274,7 @@ class TransactionForm(QWidget):
             "tag_ids": self.tag_ids(),
             "source": source,
             "source_text": source_text,
-            "currency_code": "CNY",
+            "currency_code": code,
         }
 
     def load(self, values: Mapping[str, object]) -> None:
@@ -274,7 +285,10 @@ class TransactionForm(QWidget):
             self._kind_changed()
         if "amount_minor" in values:
             self.amount.setText(
-                money_text(cast(int, values["amount_minor"])).replace(",", "")
+                money_text(
+                    cast(int, values["amount_minor"]),
+                    str(values.get("currency_code", self.account_currency())),
+                ).replace(",", "")
                 if values["amount_minor"] is not None
                 else ""
             )

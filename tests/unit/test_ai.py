@@ -115,11 +115,13 @@ def test_ai_returns_reviewable_draft_identity_and_minimal_explicit_request() -> 
     assert endpoint == "https://api.openai.com/v1/chat/completions" and key == "synthetic-key"
     body = json.loads(encoded)
     context = json.loads(body["messages"][1]["content"])
+    assert context["minor_unit_digits"] == 2
     assert set(context) == {
         "text",
         "reference_date",
         "time_zone",
         "currency_code",
+        "minor_unit_digits",
         "current_book_id",
         "categories",
         "accounts",

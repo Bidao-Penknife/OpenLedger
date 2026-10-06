@@ -3,6 +3,7 @@
 import re
 from decimal import Decimal, localcontext
 
+from openledger.domain.currencies import currency
 from openledger.domain.errors import LedgerError
 
 MAX_EVENT_MINOR = 99_999_999_999_999
@@ -12,8 +13,9 @@ MAX_INT64 = 2**63 - 1
 _AMOUNT = re.compile(r"([0-9]+)(?:\.([0-9]+))?\Z")
 
 
-def parse_amount(text: str) -> int:
-    """Parse a positive CNY amount string into cents, without rounding or guessing."""
+def parse_amount(text: str, currency_code: str = "CNY") -> int:
+    """Parse positive native currency text into exact smallest units without rounding."""
+    digits = currency(currency_code).digits
     if not isinstance(text, str):
         raise LedgerError("INVALID_AMOUNT")
     match = _AMOUNT.fullmatch(text.strip())
@@ -21,14 +23,14 @@ def parse_amount(text: str) -> int:
         raise LedgerError("INVALID_AMOUNT")
     whole = match.group(1).lstrip("0") or "0"
     fraction = match.group(2) or ""
-    if len(fraction) > 2:
+    if len(fraction) > digits:
         raise LedgerError("AMOUNT_PRECISION")
-    if len(whole) > 12:
+    if len(whole) > len(str(MAX_EVENT_MINOR // 10**digits)):
         raise LedgerError("AMOUNT_OUT_OF_RANGE")
     # Limit the Decimal precision locally, independent of a caller's global context.
     with localcontext() as context:
-        context.prec = 16
-        minor = int(Decimal(f"{whole}.{fraction or '0'}") * 100)
+        context.prec = 24
+        minor = int(Decimal(f"{whole}.{fraction or '0'}") * 10**digits)
     return validate_minor(minor)
 
 

@@ -111,7 +111,10 @@ class QuickEntryWindow(QDialog):
     def _choices(self, entity: str) -> tuple[ParseChoice, ...]:
         return tuple(
             ParseChoice(
-                str(row["id"]), str(row["name"]), kind=cast(str | None, row.get("transaction_kind"))
+                str(row["id"]),
+                str(row["name"]),
+                kind=cast(str | None, row.get("transaction_kind")),
+                currency_code=str(row.get("currency_code", "CNY")),
             )
             for row in self.ledger.entities(entity)
         )
@@ -150,6 +153,7 @@ class QuickEntryWindow(QDialog):
             category_choices=self._choices("category"),
             account_choices=self._choices("account"),
             payment_method_choices=self._choices("payment_method"),
+            currency_code=self.form.account_currency(),
             channel_account_mappings=tuple(
                 ChannelAccountMapping(str(row["id"]), str(row["default_account_id"]))
                 for row in self.ledger.entities("payment_method")
@@ -174,7 +178,10 @@ class QuickEntryWindow(QDialog):
             )
             return
         self._candidate = result.drafts[0]
-        values: dict[str, object] = {"time_zone": self.time_zone}
+        values: dict[str, object] = {
+            "time_zone": self.time_zone,
+            "currency_code": self._candidate.currency_code,
+        }
         for field in (
             "kind",
             "amount_minor",

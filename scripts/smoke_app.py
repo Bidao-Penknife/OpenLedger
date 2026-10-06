@@ -117,7 +117,7 @@ def main() -> int:
 
         database = run_directory / "独立数据目录" / "database" / "openledger.sqlite3"
         with closing(sqlite3.connect(database.as_uri() + "?mode=ro", uri=True)) as connection:
-            if connection.execute("PRAGMA user_version").fetchone()[0] != 1:
+            if connection.execute("PRAGMA user_version").fetchone()[0] != 2:
                 raise RuntimeError("The initialized schema version is incorrect.")
             if connection.execute("SELECT COUNT(*) FROM transactions").fetchone()[0] != 0:
                 raise RuntimeError("Startup must not seed financial transactions.")

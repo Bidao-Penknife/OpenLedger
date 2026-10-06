@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from openledger.application.dto.ledger import RefundFields, TransactionFields, TransferFields
 from openledger.application.dto.results import BalanceChange, EntityRevision, MutationResult
+from openledger.domain.currencies import currency, rate_fraction
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import MAX_INT64, checked_aggregate, validate_minor
 from openledger.domain.values import (
@@ -25,6 +26,7 @@ from openledger.domain.values import (
     utc_text,
     validate_occurrence,
 )
+from openledger.infrastructure.currencies import SETTINGS_ID, Valuation, display_currency
 from openledger.infrastructure.database.database import Database
 
 _TABLES = {
@@ -36,6 +38,9 @@ _TABLES = {
     "transaction": "transactions",
     "import_batch": "import_batches",
     "attachment": "attachments",
+    "rate": "exchange_rates",
+    "currency_settings": "currency_settings",
+    "capture": "captured_inputs",
 }
 _MANAGEMENT_ENTITIES = {"book", "account", "category", "tag", "payment_method"}
 _SOURCES = {"manual", "local_rule", "ai_assisted", "import", "system"}
@@ -79,7 +84,11 @@ def _normalized(value: object, key: str = "") -> object:
     if isinstance(value, Mapping):
         if not all(isinstance(item, str) for item in value):
             raise LedgerError("INVALID_ENVELOPE")
-        return {str(item): _normalized(content, str(item)) for item, content in value.items()}
+        return {
+            str(item): _normalized(content, str(item))
+            for item, content in value.items()
+            if not (item == "to_amount_minor" and content is None)
+        }
     if key in {"occurred_on", "balance_start_on"}:
         return _day(value)
     if key == "occurred_at_utc" and isinstance(value, str):
@@ -100,7 +109,7 @@ def _normalized(value: object, key: str = "") -> object:
     if isinstance(value, str):
         if key == "id" or (key.endswith("_id") and key != "external_transaction_id"):
             return normalize_id(value)
-        return normalize_text(value, max_length=8192)
+        return normalize_text(value, max_length=16000 if key == "suggested_json" else 8192)
     if isinstance(value, (tuple, list)):
         return tuple(_normalized(item) for item in value)
     return value
@@ -267,13 +276,15 @@ class LedgerService:
                 BalanceChange(identifier, before, _balance(connection, identifier))
                 for identifier, before in sorted(work.before_balances.items())
             )
-            # Check total assets independently of individual account bounds.
-            checked_aggregate(
-                sum(
-                    _balance(connection, row[0])
-                    for row in connection.execute("SELECT id FROM accounts")
+            # Aggregate only like units. Valuation is a separate explicit read operation.
+            native_totals: dict[str, int] = {}
+            for account in connection.execute("SELECT id,currency_code FROM accounts"):
+                code = str(account["currency_code"])
+                native_totals[code] = native_totals.get(code, 0) + _balance(
+                    connection, account["id"]
                 )
-            )
+            for native_total in native_totals.values():
+                checked_aggregate(native_total)
             sequence = int(
                 connection.execute("SELECT COALESCE(MAX(seq),0) FROM change_log").fetchone()[0]
             )
@@ -335,8 +346,11 @@ class LedgerService:
         self, fields: TransferFields, *, request_id: str, transaction_id: str
     ) -> MutationResult:
         """Move equal integer amounts between two different accounts."""
+        values = asdict(fields)
+        if fields.to_amount_minor is None:
+            values.pop("to_amount_minor")
         return self.execute(
-            request_id, "transfer.record.v1", {"id": transaction_id, "fields": asdict(fields)}
+            request_id, "transfer.record.v1", {"id": transaction_id, "fields": values}
         )
 
     def balances(self) -> dict[str, int]:
@@ -348,8 +362,14 @@ class LedgerService:
             }
 
     def total_assets(self) -> int:
-        """Check signed int64 limits after an exact aggregate."""
-        return checked_aggregate(sum(self.balances().values()))
+        """Value native balances in the selected display currency without dropping digits."""
+        with self.database.read() as connection:
+            valuation = Valuation(connection, display_currency(connection))
+            day = self.clock().astimezone(ZoneInfo(self.time_zone)).date()
+            return sum(
+                valuation.convert(_balance(connection, row["id"]), row["currency_code"], day)
+                for row in connection.execute("SELECT id,currency_code FROM accounts")
+            )
 
     def preferences(self) -> dict[str, object]:
         """Expose explicit default selections without inventing account mappings."""
@@ -411,6 +431,59 @@ class LedgerService:
                 result["remaining_refundable_minor"] = cast(int, result["amount_minor"]) - refunded
             return result
 
+    def _currency(self, work: _Work, entity: str, payload: dict[str, object]) -> dict[str, object]:
+        """Audit a display selection or one dated manual quotation without moving funds."""
+        if entity == "currency":
+            _keys(payload, {"display_currency", "expected_version"})
+            identifier = SETTINGS_ID
+            settings_before = _snapshot(work.connection, "currency_settings", identifier)
+            self._version(_row(work.connection, "currency_settings", identifier), payload)
+            code = currency(payload.get("display_currency")).code
+            if settings_before["display_currency"] == code:
+                return {"id": identifier}
+            self._update_row(work, "currency_settings", identifier, {"display_currency": code})
+            work.journal("currency_settings", identifier, "update", settings_before)
+            return {"id": identifier}
+        _keys(payload, {"currency_code", "effective_on", "rate_text", "note", "expected_version"})
+        code = currency(payload.get("currency_code")).code
+        if code == "CNY":
+            raise LedgerError("INVALID_EXCHANGE_RATE")
+        day = _day(payload.get("effective_on"))
+        validate_occurrence(day, self.time_zone, now=work.now)
+        rate = self._text(payload, "rate_text", 26, required=True)
+        rate_fraction(rate)
+        identifier = str(uuid5(NAMESPACE_URL, f"openledger:rate:{code}:{day.isoformat()}"))
+        row = work.connection.execute(
+            "SELECT * FROM exchange_rates WHERE id=?", (identifier,)
+        ).fetchone()
+        before = dict(row) if row is not None else None
+        values: dict[str, object] = {
+            "rate_text": rate,
+            "note": self._text(payload, "note", 1000) or "",
+        }
+        if before is None:
+            if "expected_version" in payload:
+                raise LedgerError("VERSION_CONFLICT")
+            work.connection.execute(
+                "INSERT INTO exchange_rates(id,currency_code,effective_on,rate_text,note,"
+                "created_at_utc,updated_at_utc) VALUES(?,?,?,?,?,?,?)",
+                (
+                    identifier,
+                    code,
+                    day.isoformat(),
+                    rate,
+                    values["note"],
+                    work.timestamp,
+                    work.timestamp,
+                ),
+            )
+        else:
+            assert row is not None
+            self._version(row, payload)
+            self._update_row(work, "rate", identifier, values)
+        work.journal("rate", identifier, "create" if before is None else "update", before)
+        return {"id": identifier}
+
     def ensure_defaults(self) -> None:
         """Seed deterministic, replayable empty-book metadata; invent no account balances."""
         items: list[tuple[str, dict[str, object]]] = [
@@ -455,6 +528,12 @@ class LedgerService:
                 return self._default(work, command.split(".")[0], payload)
             raise LedgerError("INVALID_ENVELOPE")
         entity, action, _ = parts
+        if entity == "capture" and action in {"stage", "ignore", "restore", "record"}:
+            from openledger.infrastructure.captures import mutate
+
+            return mutate(self, work, action, payload)
+        if (entity == "rate" and action == "set") or (entity == "currency" and action == "set"):
+            return self._currency(work, entity, payload)
         if entity == "attachment" and action in {"create", "delete", "restore"}:
             return self._attachment(work, action, payload)
         if entity == "import":
@@ -639,8 +718,16 @@ class LedgerService:
             "payment_method": {"code", "default_account_id"},
         }[entity]
         _keys(payload, common | extra | ({"expected_version"} if action == "update" else set()))
-        if payload.get("currency_code", "CNY") != "CNY":
-            raise LedgerError("CURRENCY_MISMATCH")
+        code = currency(
+            payload.get(
+                "currency_code",
+                before["currency_code"]
+                if before is not None and entity in {"book", "account"}
+                else "CNY",
+            )
+        ).code
+        if entity == "account" and before is not None and code != before["currency_code"]:
+            raise LedgerError("ACCOUNT_CURRENCY_IMMUTABLE")
         name_value = payload.get("name")
         if not isinstance(name_value, str):
             raise LedgerError("MISSING_REQUIRED_FIELD")
@@ -650,6 +737,7 @@ class LedgerService:
             raise LedgerError("INVALID_ENVELOPE")
         values: dict[str, object] = {"name": name, "sort_order": order}
         if entity in {"book", "account"}:
+            values["currency_code"] = code
             values["description"] = self._text(payload, "description", 1000) or ""
         if entity == "account":
             account_type = payload.get("account_type")
@@ -708,10 +796,10 @@ class LedgerService:
             values["color"] = color
         if entity == "payment_method":
             if action == "create":
-                code = self._text(payload, "code", 80, required=True)
-                values["code"] = code
+                payment_code = self._text(payload, "code", 80, required=True)
+                values["code"] = payment_code
                 if connection.execute(
-                    "SELECT 1 FROM payment_methods WHERE code=?", (code,)
+                    "SELECT 1 FROM payment_methods WHERE code=?", (payment_code,)
                 ).fetchone():
                     raise LedgerError("NAME_CONFLICT")
             elif "code" in payload:
@@ -825,12 +913,11 @@ class LedgerService:
                 "location",
             },
             "expense_refund": {"original_transaction_id", "account_id", "payment_method_id"},
-            "transfer": {"from_account_id", "to_account_id"},
+            "transfer": {"from_account_id", "to_account_id", "to_amount_minor"},
         }[kind]
         _keys(fields, common | extra)
         amount = validate_minor(fields.get("amount_minor"))
-        if fields.get("currency_code", "CNY") != "CNY":
-            raise LedgerError("CURRENCY_MISMATCH")
+        code = currency(fields.get("currency_code", "CNY")).code
         source = fields.get("source", "manual")
         if not isinstance(source, str) or source not in _SOURCES:
             raise LedgerError("INVALID_ENVELOPE")
@@ -862,7 +949,9 @@ class LedgerService:
         values: dict[str, object] = {
             "kind": kind,
             "amount_minor": amount,
-            "currency_code": "CNY",
+            "currency_code": code,
+            "to_amount_minor": None,
+            "to_currency_code": None,
             "source": source,
             "occurred_on": occurred_on.isoformat(),
             "time_zone": zone,
@@ -895,9 +984,26 @@ class LedgerService:
             first, second = _id(fields, "from_account_id"), _id(fields, "to_account_id")
             if first == second:
                 raise LedgerError("INVALID_TRANSFER")
-            entries = [(first, -amount), (second, amount)]
+            first_row = self._reference(work, "account", first, retained["account"])
+            second_row = self._reference(work, "account", second, retained["account"])
+            if first_row["currency_code"] != code:
+                raise LedgerError("CURRENCY_MISMATCH")
+            destination_code = str(second_row["currency_code"])
+            if destination_code == code:
+                destination_amount = validate_minor(fields.get("to_amount_minor", amount))
+                if destination_amount != amount:
+                    raise LedgerError("INVALID_TRANSFER")
+            else:
+                if "to_amount_minor" not in fields:
+                    raise LedgerError("TRANSFER_TARGET_AMOUNT_REQUIRED")
+                destination_amount = validate_minor(fields.get("to_amount_minor"))
+            values.update(to_amount_minor=destination_amount, to_currency_code=destination_code)
+            entries = [(first, -amount), (second, destination_amount)]
         else:
             account = _id(fields, "account_id")
+            account_row = self._reference(work, "account", account, retained["account"])
+            if account_row["currency_code"] != code:
+                raise LedgerError("CURRENCY_MISMATCH")
             entries = [(account, -amount if kind == "expense" else amount)]
             channel = fields.get("payment_method_id")
             if channel is not None:
@@ -928,6 +1034,8 @@ class LedgerService:
             original_id = _id(fields, "original_transaction_id")
             if previous is not None and original_id != previous["original_transaction_id"]:
                 raise LedgerError("FIELD_CONFLICT")
+            if _row(work.connection, "transaction", original_id)["currency_code"] != code:
+                raise LedgerError("CURRENCY_MISMATCH")
             self._validate_refund(
                 work,
                 original_id,
@@ -982,6 +1090,8 @@ class LedgerService:
         )
         if not refunds:
             return
+        if values["currency_code"] != before["currency_code"]:
+            raise LedgerError("REFUND_DEPENDENCY_CONFLICT")
         if values["book_id"] != before["book_id"]:
             raise LedgerError("ACTIVE_REFUNDS_BLOCK_OPERATION")
         if sum(row["amount_minor"] for row in refunds) > cast(int, values["amount_minor"]):
@@ -1362,6 +1472,7 @@ class LedgerService:
             previous = _snapshot(work.connection, "transaction", identifier) if active else None
             values: dict[str, object] = {
                 "kind": "opening",
+                "currency_code": _row(work.connection, "account", account_id)["currency_code"],
                 "amount_minor": abs(amount),
                 "source": "system",
                 "occurred_on": start,
@@ -1419,6 +1530,7 @@ class LedgerService:
         transaction_id = str(uuid4())
         values: dict[str, object] = {
             "kind": "adjustment",
+            "currency_code": account["currency_code"],
             "amount_minor": abs(delta),
             "source": "system",
             "occurred_on": occurred_on.isoformat(),

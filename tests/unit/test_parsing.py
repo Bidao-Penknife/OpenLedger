@@ -418,3 +418,17 @@ def test_invalid_request_returns_a_safe_issue(overrides: dict[str, object], code
     assert result.status == "unsupported"
     assert not result.drafts
     assert _codes(result) == {code}
+
+
+@pytest.mark.parametrize(("code", "text", "minor"), [("JPY", "500", 500), ("KWD", "1.234", 1234)])
+def test_explicit_account_selects_its_currency_precision(code: str, text: str, minor: int) -> None:
+    result = LocalParser().parse(
+        _request(
+            f"合成外币账户咖啡{text}元",
+            account_choices=(ParseChoice(WALLET, "合成外币账户", currency_code=code),),
+        )
+    )
+    assert result.drafts[0].currency_code == code
+    assert result.drafts[0].amount_minor.value == minor
+    assert result.drafts[0].amount_minor.reason_code is None
+    assert "AMOUNT_PRECISION" not in _codes(result)

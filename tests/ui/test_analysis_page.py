@@ -83,7 +83,7 @@ def test_empty_report_has_zero_amounts_unavailable_rate_and_same_chart_dto(
 ) -> None:
     assert page.report is not None
     assert "暂无收支记录" in page.status.text()
-    assert page.values["income"].text() == page.values["net_expense"].text() == "0.00 元"
+    assert page.values["income"].text() == page.values["net_expense"].text() == "0.00 CNY"
     assert "分母为零" in page.values["savings_rate"].text()
     assert page.table.rowCount() == 0
     assert page.trend._report is page.categories._report is page.ranking._report is page.report
@@ -102,9 +102,9 @@ def test_after_write_invalidation_refreshes_metrics_charts_and_ranking(
     finish(qtbot, page)
     assert page.report is not None and page.report is not previous
     assert page.report.totals.expense_count == 1
-    assert page.values["gross_expense"].text() == "25.00 元"
-    assert page.values["net_expense"].text() == "25.00 元"
-    assert page.values["surplus"].text() == "-25.00 元"
+    assert page.values["gross_expense"].text() == "25.00 CNY"
+    assert page.values["net_expense"].text() == "25.00 CNY"
+    assert page.values["surplus"].text() == "-25.00 CNY"
     assert cell(page, 0, 0) == "咖啡店"
     assert cell(page, 0, 1) == "25.00" and cell(page, 0, 2) == "1"
     assert page.trend._report is page.categories._report is page.ranking._report is page.report
@@ -224,7 +224,7 @@ def test_latest_generation_wins_when_an_older_query_finishes(
     assert len(calls) == 2 and calls[0].end_on == TODAY
     assert page.report is not None and page.report.filters.end_on == date(2026, 10, 1)
     assert page.report.totals.expense_count == 0
-    assert page.values["gross_expense"].text() == "0.00 元"
+    assert page.values["gross_expense"].text() == "0.00 CNY"
 
 
 def test_reference_and_analytic_io_execute_off_the_gui_thread(

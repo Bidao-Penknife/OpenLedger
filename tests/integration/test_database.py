@@ -31,13 +31,16 @@ def _insert_book(connection: sqlite3.Connection, name: str = "测试账本") -> 
         "INSERT INTO books(id, name, created_at_utc, updated_at_utc) VALUES (?, ?, ?, ?)",
         (identifier, name, STAMP, STAMP),
     )
+    connection.execute(
+        "UPDATE app_preferences SET default_book_id=? WHERE default_book_id IS NULL", (identifier,)
+    )
     return identifier
 
 
 def _new_revision(monkeypatch: pytest.MonkeyPatch, sql: str) -> None:
     known = database_module._load_migrations()
-    revision = Migration(2, sql, sha256(sql.encode("utf-8")).hexdigest())
-    monkeypatch.setattr(database_module, "CURRENT_SCHEMA_VERSION", 2)
+    revision = Migration(len(known) + 1, sql, sha256(sql.encode("utf-8")).hexdigest())
+    monkeypatch.setattr(database_module, "CURRENT_SCHEMA_VERSION", len(known) + 1)
     monkeypatch.setattr(database_module, "_load_migrations", lambda: (*known, revision))
 
 
@@ -46,7 +49,7 @@ def test_real_schema_has_expected_objects_and_no_finance_seed(database: Database
         objects = connection.execute(
             "SELECT type, count(*) FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%' GROUP BY type"
         ).fetchall()
-        assert dict(objects) == {"index": 27, "table": 16, "view": 2}
+        assert dict(objects) == {"index": 29, "table": 19, "view": 2}
         assert connection.execute("SELECT count(*) FROM books").fetchone()[0] == 0
         assert tuple(connection.execute("SELECT * FROM app_preferences").fetchone()) == (
             1,
@@ -232,7 +235,7 @@ def test_failed_migration_preserves_schema_data_version_and_backup(
     assert failure.value.code == "MIGRATION_FAILED"
     assert database.path.read_bytes() == before
     with database.read() as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == CURRENT_SCHEMA_VERSION
         assert connection.execute("SELECT count(*) FROM books").fetchone()[0] == 1
         assert (
             connection.execute("SELECT name FROM sqlite_schema WHERE name='newly_added'").fetchone()
@@ -241,7 +244,7 @@ def test_failed_migration_preserves_schema_data_version_and_backup(
     snapshots = list((database.path.parent / "migration-backups").glob("*.sqlite3"))
     assert len(snapshots) == 1
     with closing(sqlite3.connect(snapshots[0])) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 1
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == CURRENT_SCHEMA_VERSION
         assert connection.execute("SELECT count(*) FROM books").fetchone()[0] == 1
 
 
@@ -253,11 +256,10 @@ def test_successful_migration_advances_once_with_checked_backup(
     database.initialize()
     database.initialize()
     with database.read() as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 2
-        assert [row[0] for row in connection.execute("SELECT version FROM schema_migrations")] == [
-            1,
-            2,
-        ]
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == CURRENT_SCHEMA_VERSION + 1
+        assert [
+            row[0] for row in connection.execute("SELECT version FROM schema_migrations")
+        ] == list(range(1, CURRENT_SCHEMA_VERSION + 2))
     assert len(list((database.path.parent / "migration-backups").glob("*.sqlite3"))) == 1
 
 

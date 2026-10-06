@@ -304,7 +304,7 @@ class SharedCoreTest {
     fun firstStartCreatesNoFakeMoney() {
         val (service, _) = service()
         val data = call(service, "snapshot").getJSONObject("data")
-        assertEquals(1, data.getInt("schema_version"))
+        assertEquals(2, data.getInt("schema_version"))
         assertEquals(0, data.getJSONArray("accounts").length())
         assertEquals(0L, data.getJSONObject("overview").getLong("total_assets_minor"))
     }

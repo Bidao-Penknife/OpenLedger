@@ -317,8 +317,18 @@ class AnalysisPage(QWidget):
         return AnalyticsFilter(
             cast(date, self.start.date().toPython()),
             cast(date, self.end.date().toPython()),
-            **selected,
+            book_ids=selected["book_ids"],
+            account_ids=selected["account_ids"],
+            category_ids=selected["category_ids"],
+            tag_ids=selected["tag_ids"],
+            currency_code=self._display_currency(),
         )
+
+    def _display_currency(self) -> str:
+        from openledger.infrastructure.currencies import display_currency
+
+        with self.ledger.database.read() as connection:
+            return display_currency(connection)
 
     def refresh(self) -> None:
         """Queue the latest immutable filter request without running I/O on the GUI thread."""
@@ -380,6 +390,7 @@ class AnalysisPage(QWidget):
         self.report = result.report
         self._valid = True
         report = result.report
+        code = report.filters.currency_code
         totals = report.totals
         for key, amount in (
             ("income", totals.income_minor),
@@ -388,7 +399,7 @@ class AnalysisPage(QWidget):
             ("net_expense", totals.net_expense_minor),
             ("surplus", totals.surplus_minor),
         ):
-            self.values[key].setText(amount_text(amount) + self.tr(" 元"))
+            self.values[key].setText(amount_text(amount, code) + " " + report.filters.currency_code)
         self.values["savings_rate"].setText(percentage_text(totals.savings_rate))
         count = totals.income_count + totals.expense_count + totals.refund_count
         self.status.setText(
@@ -410,9 +421,13 @@ class AnalysisPage(QWidget):
                 ).format(
                     start=report.comparison_start,
                     end=report.comparison_end,
-                    income=amount_text(previous_totals.income_minor),
-                    expense=amount_text(previous_totals.net_expense_minor),
-                    surplus=amount_text(previous_totals.surplus_minor),
+                    income=amount_text(previous_totals.income_minor, code),
+                    expense=amount_text(
+                        previous_totals.net_expense_minor, report.filters.currency_code
+                    ),
+                    surplus=amount_text(
+                        previous_totals.surplus_minor, report.filters.currency_code
+                    ),
                 )
             )
         for chart in (self.trend, self.categories, self.ranking):
@@ -420,7 +435,11 @@ class AnalysisPage(QWidget):
         self.table.setRowCount(len(report.ranking))
         for index, rank in enumerate(report.ranking):
             for column, value in enumerate(
-                (rank.label, amount_text(rank.amount_minor), str(rank.count))
+                (
+                    rank.label,
+                    amount_text(rank.amount_minor, code),
+                    str(rank.count),
+                )
             ):
                 self.table.setItem(index, column, QTableWidgetItem(value))
         self.notes.setText("\n".join("• " + note for note in report.notes))

@@ -1,6 +1,6 @@
 # OpenLedger Android 功能与路线
 
-更新日期：2026-10-06。本期 Android 为 `0.2.0-beta1-preview`，Windows 仍为 `1.0.0rc1`。维护者要求连续按顺序补齐 A–D，功能已经接入手机；稳定版的正式签名、真机和最低系统验收单独记录。
+更新日期：2026-10-06。本期 Android 为 `0.3.0-beta1-preview`，Windows 为 `1.1.0rc1`。维护者要求连续按顺序补齐 A–D，功能已经接入手机；稳定版的正式签名、真机和最低系统验收单独记录。
 
 ## 功能状态
 
@@ -18,11 +18,15 @@
 | AI | 默认关闭；自配兼容 HTTPS API 和模型；Keystore 加密密钥、独立 JNI 参数、建议再次确认 |
 | 设置 | 中文/英语、浅色/深色/系统主题、IANA 时区；历史交易保留原时区 |
 | 快速入口/更新 | 固定快捷方式、系统磁贴；手动检查本项目 APK Release，只提醒和打开网页 |
+| 支付通知 / OCR / 语音 | 系统授权、应用白名单、持久草稿和确认；离线中文模型、原图与多金额校对；系统语音及文字回退 |
+| 多币种 | 原币精度、实际双端转账、手动日期汇率、显示币种；缺失报价不显示伪完整总额 |
 | 扩展与同步 | AI/分析/导入/主题契约和同步 DTO/端口预留；没有插件市场或实际云同步服务器 |
 
-手机与桌面仍分别本地保存。移动完整备份可以传递账本，恢复不是自动合并或同步。应用不读取支付通知、不执行后台自动扣款、OCR 或语音识别。第一版只支持 CNY。
+手机与桌面仍分别本地保存。移动完整备份可以传递账本，恢复不是自动合并或同步。支付通知、OCR 和语音进入持久待确认箱，用户核对后保存；不自动扣款。支持原币账户、165 个 ISO 精度币种和手动估值；本地备份升级至 Schema v2。
 
-## 工作项
+本期新增工作项：[#12](https://github.com/Bidao-Penknife/OpenLedger/issues/12) 多币种、[#13](https://github.com/Bidao-Penknife/OpenLedger/issues/13) 通知、[#14](https://github.com/Bidao-Penknife/OpenLedger/issues/14) OCR、[#15](https://github.com/Bidao-Penknife/OpenLedger/issues/15) 语音、[#16](https://github.com/Bidao-Penknife/OpenLedger/issues/16) 手册与发布。当前证据见[阶段 12](phase12-validation.md)。真实支付应用格式与实体手机语音服务仍需设备验证。
+
+## 历史工作项
 
 | 路线 | 本期状态 | 跟踪 |
 | --- | --- | --- |

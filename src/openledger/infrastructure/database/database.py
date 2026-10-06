@@ -17,7 +17,7 @@ from openledger.domain.errors import LedgerError
 from openledger.infrastructure.runtime import sqlite_wal_supported, verify_sqlite_capabilities
 
 APPLICATION_ID = 0x4F4C4447
-CURRENT_SCHEMA_VERSION = 1
+CURRENT_SCHEMA_VERSION = 2
 _MIGRATION_TABLE_SQL = (
     "CREATE TABLE schema_migrations ("
     "version INTEGER PRIMARY KEY CHECK (version >= 1), "
@@ -148,6 +148,7 @@ class Database:
                     return
                 with closing(self.connect()) as connection:
                     try:
+                        connection.execute("PRAGMA foreign_keys = OFF")
                         connection.execute("BEGIN IMMEDIATE")
                         # Another process may have completed the migration since the read check.
                         version = self._validate(connection, migrations, allow_empty=is_new)
@@ -155,9 +156,17 @@ class Database:
                             connection.rollback()
                             return
                         if version:
+                            from openledger.infrastructure.integrity import (
+                                validate_financial_integrity,
+                            )
+
+                            validate_financial_integrity(connection)
                             self._snapshot_before_migration()
                         self._migrate(connection, migrations, version)
                         connection.commit()
+                        connection.execute("PRAGMA foreign_keys = ON")
+                        if connection.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
+                            raise LedgerError("MIGRATION_FAILED")
                     except BaseException:
                         if connection.in_transaction:
                             connection.rollback()

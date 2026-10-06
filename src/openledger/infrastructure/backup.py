@@ -245,10 +245,16 @@ class BackupService:
                             item.size_bytes,
                             item.sha256,
                         )
-                actual_attachments = _validate_database(database_path, self.limits)
+                actual_attachments = _validate_database(
+                    database_path, self.limits, expected_version=manifest.schema_version
+                )
                 if actual_attachments != manifest.attachments:
                     raise LedgerError("BACKUP_INVALID", "附件清单与数据库不一致。")
-                if _sha256(database_path) != manifest.database_sha256:
+                # Extraction checked the original digest before validation. A supported
+                # legacy schema is deliberately migrated only in this isolated copy.
+                if manifest.schema_version == CURRENT_SCHEMA_VERSION and (
+                    _sha256(database_path) != manifest.database_sha256
+                ):
                     raise LedgerError("BACKUP_INVALID", "数据库验证改变了快照，恢复已取消。")
                 if _sha256(archive) != archive_digest:
                     raise LedgerError("BACKUP_INVALID", "备份归档在恢复过程中发生变化。")
@@ -384,7 +390,10 @@ def _parse_manifest(encoded: bytes, limits: BackupLimits) -> _Manifest:
         raise LedgerError("BACKUP_INVALID", "备份清单字段不完整或版本不受支持。")
     if type(data["format_version"]) is not int or data["format_version"] != _FORMAT_VERSION:
         raise LedgerError("BACKUP_INVALID", "不支持此备份格式版本。")
-    if type(data["schema_version"]) is not int or data["schema_version"] != CURRENT_SCHEMA_VERSION:
+    if (
+        type(data["schema_version"]) is not int
+        or not 1 <= data["schema_version"] <= CURRENT_SCHEMA_VERSION
+    ):
         raise LedgerError("BACKUP_INVALID", "不支持此数据库版本。")
     app_version = data["app_version"]
     created_at = data["created_at_utc"]
@@ -433,7 +442,7 @@ def _parse_manifest(encoded: bytes, limits: BackupLimits) -> _Manifest:
         attachments.append(_Attachment(path, attachment_size, attachment_hash))
     return _Manifest(
         app_version,
-        CURRENT_SCHEMA_VERSION,
+        data["schema_version"],
         created_at,
         digest,
         size,
@@ -454,15 +463,19 @@ def _check_total_size(manifest: _Manifest, manifest_size: int, limits: BackupLim
         raise LedgerError("BACKUP_INVALID", "备份大小超过限制。")
 
 
-def _validate_database(path: Path, limits: BackupLimits) -> tuple[_Attachment, ...]:
+def _validate_database(
+    path: Path, limits: BackupLimits, *, expected_version: int | None = None
+) -> tuple[_Attachment, ...]:
     if not 1 <= path.stat().st_size <= limits.database_bytes:
         raise LedgerError("BACKUP_INVALID", "数据库大小无效。")
     database = Database(path)
     with closing(database.connect(read_only=True)) as connection:
         application_id = connection.execute("PRAGMA application_id").fetchone()[0]
         version = connection.execute("PRAGMA user_version").fetchone()[0]
-        if application_id != APPLICATION_ID or version != CURRENT_SCHEMA_VERSION:
+        if application_id != APPLICATION_ID or not 1 <= version <= CURRENT_SCHEMA_VERSION:
             raise LedgerError("BACKUP_INVALID", "备份不是受支持的 OpenLedger 数据库。")
+        if expected_version is not None and version != expected_version:
+            raise LedgerError("BACKUP_INVALID", "清单中的数据库版本与备份不一致。")
         integrity = connection.execute("PRAGMA integrity_check").fetchall()
         if len(integrity) != 1 or integrity[0][0] != "ok":
             raise LedgerError("BACKUP_INVALID", "数据库完整性检查失败。")
@@ -472,7 +485,9 @@ def _validate_database(path: Path, limits: BackupLimits) -> tuple[_Attachment, .
     with closing(database.connect(read_only=True)) as connection:
         validate_financial_integrity(connection)
         rows = connection.execute(
-            "SELECT relative_path, size_bytes, sha256 FROM attachments ORDER BY relative_path",
+            "SELECT relative_path, size_bytes, sha256 FROM attachments "
+            "UNION SELECT image_relative_path, image_size_bytes, image_sha256 "
+            "FROM captured_inputs WHERE image_relative_path IS NOT NULL ORDER BY relative_path",
         ).fetchall()
     attachments: list[_Attachment] = []
     folded_names: set[str] = set()

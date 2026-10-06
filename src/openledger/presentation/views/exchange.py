@@ -40,8 +40,12 @@ from openledger.presentation.views.transaction_form import money_text
 
 _MAP_FIELDS = (
     ("kind", "类型"),
-    ("amount", "金额（元）"),
-    ("amount_minor", "金额（整数分）"),
+    ("amount", "金额（账户币种）"),
+    ("amount_minor", "金额（最小单位整数）"),
+    ("currency_code", "币种"),
+    ("to_amount", "实际到账金额"),
+    ("to_amount_minor", "到账金额（最小单位整数）"),
+    ("to_currency_code", "到账币种"),
     ("occurred_on", "日期"),
     ("account_name", "账户名称"),
     ("category_name", "分类名称"),
@@ -197,7 +201,7 @@ class ExchangePage(QScrollArea):
                     "源行",
                     "日期",
                     "类型",
-                    "金额（元）",
+                    "金额（账户币种）",
                     "资金账户",
                     "账本 / 分类",
                     "备注",
@@ -405,7 +409,11 @@ class ExchangePage(QScrollArea):
                     str(row.source_row_number),
                     str(fields.get("occurred_on", "")),
                     kind_label,
-                    money_text(cast(int, fields["amount_minor"])) if fields else "—",
+                    str(fields["currency_code"])
+                    + " "
+                    + money_text(cast(int, fields["amount_minor"]), str(fields["currency_code"]))
+                    if fields
+                    else "—",
                     account_label,
                     classification or "—",
                     str(fields.get("note") or ""),

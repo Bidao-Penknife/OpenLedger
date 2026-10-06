@@ -13,8 +13,8 @@ android {
         applicationId = "org.openledger.android"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0-beta1"
+        versionCode = 3
+        versionName = "0.3.0-beta1"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,6 +44,17 @@ kotlin {
 // Package an explicit dependency closure from the shared source, never a copied
 // second implementation or the Windows UI, providers, or personal settings.
 val sharedPython = layout.buildDirectory.dir("generated/shared-python")
+val sharedAssets = layout.buildDirectory.dir("generated/shared-assets")
+val stageSharedAssets by
+    tasks.registering(Sync::class) {
+        from("../../src/openledger/resources") { include("currencies.json", "help/**") }
+        into(sharedAssets)
+    }
+
+android.sourceSets.getByName("main").assets.srcDir(sharedAssets)
+
+tasks.named("preBuild") { dependsOn(stageSharedAssets) }
+
 val stageSharedPython by
     tasks.registering(Sync::class) {
         from("../../src") {
@@ -72,6 +83,10 @@ val stageSharedPython by
             include("openledger/infrastructure/ledger.py", "openledger/infrastructure/queries.py")
             include("openledger/infrastructure/integrity.py")
             include(
+                "openledger/infrastructure/currencies.py",
+                "openledger/infrastructure/captures.py",
+            )
+            include(
                 "openledger/infrastructure/ai.py",
                 "openledger/infrastructure/credential_identity.py",
                 "openledger/infrastructure/updates.py",
@@ -84,7 +99,11 @@ val stageSharedPython by
             include("openledger/infrastructure/database/**/*.py")
             include("openledger/mobile/**/*.py")
             include("openledger/plugins/**/*.py", "openledger/application/ports/sync.py")
-            include("openledger/resources/__init__.py", "openledger/resources/migrations/*.sql")
+            include(
+                "openledger/resources/__init__.py",
+                "openledger/resources/migrations/*.sql",
+                "openledger/resources/currencies.json",
+            )
         }
         into(sharedPython)
     }
@@ -113,6 +132,7 @@ tasks.configureEach {
 dependencyLocking { lockAllConfigurations() }
 
 dependencies {
+    implementation("com.google.mlkit:text-recognition-chinese:16.0.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

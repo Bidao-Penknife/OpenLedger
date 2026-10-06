@@ -140,12 +140,7 @@
     <context>
         <name>AnalysisPage</name>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="391" />
-            <source> 元</source>
-            <translation> CNY</translation>
-        </message>
-        <message>
-            <location filename="../../presentation/views/analysis.py" line="464" />
+            <location filename="../../presentation/views/analysis.py" line="483" />
             <source>PDF 报告 (*.pdf)</source>
             <translation>PDF Report (*.pdf)</translation>
         </message>
@@ -175,7 +170,7 @@
             <translation>All Books</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="397" />
+            <location filename="../../presentation/views/analysis.py" line="408" />
             <source>共 {count} 笔收支记录 · 数据版本 {revision}</source>
             <translation>{count} income/expense records · Data revision {revision}</translation>
         </message>
@@ -190,14 +185,14 @@
             <translation>Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="407" />
+            <location filename="../../presentation/views/analysis.py" line="418" />
             <source>前一段等长日期：{start} 至 {end}（含首尾）
 前期收入 {income} 元 · 前期净支出 {expense} 元 · 前期结余 {surplus} 元</source>
             <translation>Previous equal-length period: {start} to {end} (inclusive)
 Previous income {income} CNY · Previous net expenses {expense} CNY · Previous surplus {surplus} CNY</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="403" />
+            <location filename="../../presentation/views/analysis.py" line="414" />
             <source>前期比较不可用：无法构造完整的前一段等长日历日期。</source>
             <translation>Comparison unavailable: a complete preceding calendar period of equal length cannot be constructed.</translation>
         </message>
@@ -207,7 +202,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Cancel Export</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="464" />
+            <location filename="../../presentation/views/analysis.py" line="483" />
             <source>图片报告 (*.png)</source>
             <translation>Image Report (*.png)</translation>
         </message>
@@ -222,12 +217,12 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Export Image Report</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="465" />
+            <location filename="../../presentation/views/analysis.py" line="484" />
             <source>导出财务报告</source>
             <translation>Export Financial Report</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="495" />
+            <location filename="../../presentation/views/analysis.py" line="514" />
             <source>已取消报告导出，原有文件已保留。</source>
             <translation>Report export canceled. The existing file is preserved.</translation>
         </message>
@@ -237,22 +232,22 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Start Date</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="395" />
+            <location filename="../../presentation/views/analysis.py" line="406" />
             <source>所选范围暂无收支记录，可调整日期和筛选条件。</source>
             <translation>No income or expenses in this range. Try different dates or filters.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="497" />
+            <location filename="../../presentation/views/analysis.py" line="516" />
             <source>报告导出失败，原有文件已保留。</source>
             <translation>Report export failed. The existing file is preserved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="469" />
+            <location filename="../../presentation/views/analysis.py" line="488" />
             <source>报告已发生变化，请重新选择导出。</source>
             <translation>The report changed. Select export again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="491" />
+            <location filename="../../presentation/views/analysis.py" line="510" />
             <source>报告已导出：</source>
             <translation>Report exported: </translation>
         </message>
@@ -307,18 +302,18 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Tags</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="506" />
+            <location filename="../../presentation/views/analysis.py" line="525" />
             <source>正在取消报告导出…</source>
             <translation>Canceling report export…</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="481" />
+            <location filename="../../presentation/views/analysis.py" line="500" />
             <source>正在生成报告…</source>
             <translation>Generating report…</translation>
         </message>
         <message>
             <location filename="../../presentation/views/analysis.py" line="187" />
-            <location filename="../../presentation/views/analysis.py" line="335" />
+            <location filename="../../presentation/views/analysis.py" line="345" />
             <source>正在读取统计数据…</source>
             <translation>Loading analytics…</translation>
         </message>
@@ -348,7 +343,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Filters changed. Click Apply Filters / Refresh to see the results.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="433" />
+            <location filename="../../presentation/views/analysis.py" line="452" />
             <source>筛选条件无效：开始日期需不晚于结束日期，范围最多 120 个月。</source>
             <translation>Invalid filters: the start date must not exceed the end date, and the range is limited to 120 months.</translation>
         </message>
@@ -368,7 +363,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Analytics &amp; Reports</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="435" />
+            <location filename="../../presentation/views/analysis.py" line="454" />
             <source>读取统计失败，请刷新重试。</source>
             <translation>Could not load analytics. Refresh and try again.</translation>
         </message>
@@ -388,7 +383,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Refund</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/analysis.py" line="375" />
+            <location filename="../../presentation/views/analysis.py" line="385" />
             <source>（已归档）</source>
             <translation> (Archived)</translation>
         </message>
@@ -396,44 +391,92 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>ArchiveDialog</name>
         <message>
-            <location filename="../../presentation/views/management.py" line="321" />
+            <location filename="../../presentation/views/management.py" line="330" />
             <source>归档后将保留历史记录；账户余额仍计入总资产。</source>
             <translation>Archiving preserves history; account balances still count toward total assets.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="316" />
+            <location filename="../../presentation/views/management.py" line="325" />
             <source>归档资料</source>
             <translation>Archive Item</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="335" />
+            <location filename="../../presentation/views/management.py" line="344" />
             <source>当前项为默认项，请先选择新的默认项。</source>
             <translation>This is the current default. Choose a new default first.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="323" />
+            <location filename="../../presentation/views/management.py" line="332" />
             <source>恢复后可再次用于记账。</source>
             <translation>After restoration, this item can be used for recording again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="316" />
+            <location filename="../../presentation/views/management.py" line="325" />
             <source>恢复资料</source>
             <translation>Restore Item</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="317" />
+            <location filename="../../presentation/views/management.py" line="326" />
             <source>操作对象：</source>
             <translation>Selected item: </translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="339" />
+            <location filename="../../presentation/views/management.py" line="348" />
             <source>请先创建另一个可用项，再归档当前默认项。</source>
             <translation>Create another active item before archiving the current default.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="330" />
+            <location filename="../../presentation/views/management.py" line="339" />
             <source>请选择新的默认项</source>
             <translation>Choose a New Default</translation>
+        </message>
+    </context>
+    <context>
+        <name>CurrencyDialog</name>
+        <message>
+            <location filename="../../presentation/views/management.py" line="645" />
+            <source>1 单位外币 = 填写数值 CNY。统计按交易日取此前最近汇率；修改汇率仅影响估值。</source>
+            <translation>One foreign unit equals the entered CNY amount. Reports use the latest dated rate. Editing rates changes valuations only.</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="653" />
+            <source>人民币汇率</source>
+            <translation>CNY per native unit</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="654" />
+            <source>备注</source>
+            <translation>Note</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="662" />
+            <source>已有汇率</source>
+            <translation>Existing quotations</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="639" />
+            <source>币种</source>
+            <translation>Currency</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="629" />
+            <source>手动汇率</source>
+            <translation>Manual exchange rates</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="656" />
+            <source>新建汇率</source>
+            <translation>New quotation</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="652" />
+            <source>生效日期</source>
+            <translation>Effective date</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="629" />
+            <source>统计显示币种</source>
+            <translation>Report currency</translation>
         </message>
     </context>
     <context>
@@ -480,123 +523,128 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>EntityDialog</name>
         <message>
-            <location filename="../../presentation/views/management.py" line="217" />
+            <location filename="../../presentation/views/management.py" line="223" />
             <source>上级分类</source>
             <translation>Parent Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="222" />
+            <location filename="../../presentation/views/management.py" line="228" />
             <source>不指定（记账时选择）</source>
             <translation>None (choose when recording)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="216" />
+            <location filename="../../presentation/views/management.py" line="222" />
             <source>分类类型</source>
             <translation>Category Type</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="205" />
+            <location filename="../../presentation/views/management.py" line="211" />
             <source>可选，如 #4f8cff</source>
             <translation>Optional, e.g. #4f8cff</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="164" />
+            <location filename="../../presentation/views/management.py" line="163" />
             <source>名称 *</source>
             <translation>Name *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="230" />
+            <location filename="../../presentation/views/management.py" line="236" />
             <source>建议付款账户</source>
             <translation>Suggested Payment Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="198" />
+            <location filename="../../presentation/views/management.py" line="204" />
             <source>开始记账日期 *</source>
             <translation>Account Start Date *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="178" />
+            <location filename="../../presentation/views/management.py" line="177" />
             <source>微信</source>
             <translation>WeChat</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="179" />
+            <location filename="../../presentation/views/management.py" line="178" />
             <source>支付宝</source>
             <translation>Alipay</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="208" />
+            <location filename="../../presentation/views/management.py" line="214" />
             <source>支出</source>
             <translation>Expense</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="209" />
+            <location filename="../../presentation/views/management.py" line="215" />
             <source>收入</source>
             <translation>Income</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="157" />
+            <location filename="../../presentation/views/management.py" line="156" />
             <source>新建资料</source>
             <translation>New Item</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="202" />
-            <location filename="../../presentation/views/management.py" line="251" />
+            <location filename="../../presentation/views/management.py" line="208" />
+            <location filename="../../presentation/views/management.py" line="257" />
             <source>无（一级分类）</source>
             <translation>None (top-level category)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="193" />
+            <location filename="../../presentation/views/management.py" line="199" />
             <source>期初余额请使用「修改期初」；实际余额请使用「余额校准」。</source>
             <translation>Use Edit Opening Balance for the opening amount, or Adjust Balance for the actual balance.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="176" />
+            <location filename="../../presentation/views/management.py" line="175" />
             <source>现金</source>
             <translation>Cash</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="157" />
+            <location filename="../../presentation/views/management.py" line="156" />
             <source>编辑资料</source>
             <translation>Edit Item</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="180" />
+            <location filename="../../presentation/views/management.py" line="179" />
             <source>自定义</source>
             <translation>Custom</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="199" />
-            <source>该日期的期初余额（元） *</source>
-            <translation>Opening Balance on This Date (CNY) *</translation>
+            <location filename="../../presentation/views/management.py" line="205" />
+            <source>该日期的期初余额（账户币种） *</source>
+            <translation>Opening balance on that date (native currency) *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="170" />
+            <location filename="../../presentation/views/management.py" line="169" />
             <source>说明</source>
             <translation>Description</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="187" />
-            <source>请输入金额；余额为零时填写 0.00</source>
-            <translation>Enter the amount; use 0.00 for a zero balance</translation>
+            <location filename="../../presentation/views/management.py" line="192" />
+            <source>请输入原币金额；余额为零时填写 0</source>
+            <translation>Enter a native amount; use 0 for a zero balance</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="189" />
+            <location filename="../../presentation/views/management.py" line="195" />
+            <source>账户币种（创建后固定）</source>
+            <translation>Account currency (fixed after creation)</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="194" />
             <source>账户类型</source>
             <translation>Account Type</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="177" />
+            <location filename="../../presentation/views/management.py" line="176" />
             <source>银行卡</source>
             <translation>Bank Card</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="219" />
+            <location filename="../../presentation/views/management.py" line="225" />
             <source>颜色</source>
             <translation>Color</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="259" />
+            <location filename="../../presentation/views/management.py" line="265" />
             <source>（已归档）</source>
             <translation> (Archived)</translation>
         </message>
@@ -604,522 +652,542 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>ExchangePage</name>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="225" />
+            <location filename="../../presentation/views/exchange.py" line="229" />
             <source>CSV / Excel 包含期初与校准供查看，普通导入支持收支、转账和退款。完整恢复使用 .olbackup 备份。单文件最多 20 MiB / 10,000 行。</source>
             <translation>CSV / Excel exports include opening balances and adjustments for inspection. Ordinary imports support income, expenses, transfers and refunds. Use an .olbackup backup for a complete restore. Each file is limited to 20 MiB / 10,000 rows.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="114" />
+            <location filename="../../presentation/views/exchange.py" line="118" />
             <source>CSV 编码</source>
             <translation>CSV Encoding</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="498" />
+            <location filename="../../presentation/views/exchange.py" line="506" />
             <source>Excel 公式不能作为交易导入，请先转为准确文本</source>
             <translation>Excel formulas cannot be imported as transactions. Convert them to exact text first.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="115" />
+            <location filename="../../presentation/views/exchange.py" line="119" />
             <source>Excel 工作表</source>
             <translation>Excel Worksheet</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="494" />
+            <location filename="../../presentation/views/exchange.py" line="502" />
             <source>交易日期早于账户起算日期</source>
             <translation>The transaction predates the account's start date.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="92" />
+            <location filename="../../presentation/views/exchange.py" line="96" />
             <source>先映射列并预览，再勾选确认。导入整批提交；含错误的行不能勾选。</source>
             <translation>Map columns and preview before selecting rows. Imports commit as one batch; rows with errors cannot be selected.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>分类 ID</source>
             <translation>Category ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>分类名称</source>
             <translation>Category Name</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="492" />
+            <location filename="../../presentation/views/exchange.py" line="500" />
             <source>分类的收入／支出类型与交易不一致</source>
             <translation>The category's income/expense type does not match the transaction.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="126" />
+            <location filename="../../presentation/views/exchange.py" line="130" />
             <source>列映射</source>
             <translation>Column Mapping</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="239" />
+            <location filename="../../presentation/views/exchange.py" line="243" />
             <source>创建时间（UTC）</source>
             <translation>Created At (UTC)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <source>到账币种</source>
+            <translation>Destination currency</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <source>到账金额（最小单位整数）</source>
+            <translation>Incoming amount (integer smallest units)</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>勾选</source>
             <translation>Select</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>原支出交易 ID</source>
             <translation>Original Expense Transaction ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="175" />
+            <location filename="../../presentation/views/exchange.py" line="179" />
             <source>取消文件任务</source>
             <translation>Cancel File Task</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="380" />
+            <location filename="../../presentation/views/exchange.py" line="384" />
             <source>可能重复，请手工核对后勾选</source>
             <translation>Possible duplicate — review manually before selecting</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>商户</source>
             <translation>Merchant</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="382" />
+            <location filename="../../presentation/views/exchange.py" line="386" />
             <source>基础校验通过</source>
             <translation>Basic validation passed</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>备注</source>
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>外部交易号</source>
             <translation>External Transaction ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="493" />
+            <location filename="../../presentation/views/exchange.py" line="501" />
             <source>外部交易号需要同时提供来源名称</source>
             <translation>An external transaction ID also requires a source name.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>外部来源</source>
             <translation>External Source</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="88" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <source>实际到账金额</source>
+            <translation>Actual incoming amount</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/exchange.py" line="92" />
             <source>导入与导出</source>
             <translation>Import &amp; Export</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="233" />
+            <location filename="../../presentation/views/exchange.py" line="237" />
             <source>导入批次历史</source>
             <translation>Import Batch History</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="576" />
+            <location filename="../../presentation/views/exchange.py" line="584" />
             <source>导出交易</source>
             <translation>Export Transactions</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="216" />
+            <location filename="../../presentation/views/exchange.py" line="220" />
             <source>导出全部有效交易 · {format}</source>
             <translation>Export All Active Transactions · {format}</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="502" />
+            <location filename="../../presentation/views/exchange.py" line="510" />
             <source>导出未完成，请检查目标文件是否被占用或目录权限</source>
             <translation>Export did not finish. Check whether the destination file is in use and whether the directory is writable.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="173" />
-            <location filename="../../presentation/views/exchange.py" line="597" />
+            <location filename="../../presentation/views/exchange.py" line="177" />
+            <location filename="../../presentation/views/exchange.py" line="605" />
             <source>导出错误明细</source>
             <translation>Export Error Details</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="100" />
+            <location filename="../../presentation/views/exchange.py" line="104" />
             <source>尚未选择文件</source>
             <translation>No file selected</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="278" />
+            <location filename="../../presentation/views/exchange.py" line="282" />
             <source>已取消确认准备，尚未提交资金事务。</source>
             <translation>Confirmation preparation canceled. No financial transaction was submitted.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="428" />
+            <location filename="../../presentation/views/exchange.py" line="436" />
             <source>已导出 {count} 行：{path}（数据版本 {revision}）</source>
             <translation>Exported {count} rows: {path} (data revision {revision})</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="549" />
+            <location filename="../../presentation/views/exchange.py" line="557" />
             <source>已提交</source>
             <translation>Committed</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="549" />
+            <location filename="../../presentation/views/exchange.py" line="557" />
             <source>已撤销</source>
             <translation>Reverted</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="159" />
+            <location filename="../../presentation/views/exchange.py" line="163" />
             <source>已有 ID 优先，其次同名资料，最后使用明确选定的默认值；未知标签需先创建。</source>
             <translation>Existing IDs take precedence, then matching names, then explicitly selected defaults. Create unknown tags first.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="491" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <source>币种</source>
+            <translation>Currency</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/exchange.py" line="499" />
             <source>引用的资料已归档，请先恢复或调整映射</source>
             <translation>A referenced item is archived. Restore it or adjust the mapping first.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="517" />
+            <location filename="../../presentation/views/exchange.py" line="525" />
             <source>批次操作已保存。</source>
             <translation>Batch operation saved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="519" />
+            <location filename="../../presentation/views/exchange.py" line="527" />
             <source>批次未保存，预览已保留。请核对资金约束后重试。</source>
             <translation>The batch was not saved. Your preview is preserved. Review financial constraints and try again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="239" />
+            <location filename="../../presentation/views/exchange.py" line="243" />
             <source>接受行数</source>
             <translation>Accepted Rows</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="562" />
+            <location filename="../../presentation/views/exchange.py" line="570" />
             <source>撤销批次</source>
             <translation>Revert Batch</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="247" />
+            <location filename="../../presentation/views/exchange.py" line="251" />
             <source>撤销选中批次</source>
             <translation>Revert Selected Batch</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="504" />
+            <location filename="../../presentation/views/exchange.py" line="512" />
             <source>操作未完成，请检查映射或输入后重试</source>
             <translation>The operation did not finish. Check the mapping or input and try again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="151" />
-            <location filename="../../presentation/views/exchange.py" line="386" />
+            <location filename="../../presentation/views/exchange.py" line="155" />
+            <location filename="../../presentation/views/exchange.py" line="390" />
             <source>支出</source>
             <translation>Expense</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="151" />
-            <location filename="../../presentation/views/exchange.py" line="385" />
+            <location filename="../../presentation/views/exchange.py" line="155" />
+            <location filename="../../presentation/views/exchange.py" line="389" />
             <source>收入</source>
             <translation>Income</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="239" />
+            <location filename="../../presentation/views/exchange.py" line="243" />
             <source>文件</source>
             <translation>File</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="501" />
+            <location filename="../../presentation/views/exchange.py" line="509" />
             <source>文件任务已取消，已有目标文件保留</source>
             <translation>File task canceled. The existing destination file is preserved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>日期</source>
             <translation>Date</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="486" />
+            <location filename="../../presentation/views/exchange.py" line="494" />
             <source>日期不能晚于当前记账日期</source>
             <translation>The date cannot be later than today's accounting date.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="485" />
+            <location filename="../../presentation/views/exchange.py" line="493" />
             <source>日期格式应为 YYYY-MM-DD，请核对日期精度</source>
             <translation>Use YYYY-MM-DD and check the date precision.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="342" />
+            <location filename="../../presentation/views/exchange.py" line="346" />
             <source>未提供 / 使用默认值</source>
             <translation>Not provided / use default</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="153" />
+            <location filename="../../presentation/views/exchange.py" line="157" />
             <source>未提供类型时</source>
             <translation>When Type Is Missing</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>校验结果</source>
             <translation>Validation Result</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="318" />
+            <location filename="../../presentation/views/exchange.py" line="322" />
             <source>正在校验所有行与重复身份…</source>
             <translation>Validating all rows and duplicate identities…</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="306" />
+            <location filename="../../presentation/views/exchange.py" line="310" />
             <source>正在读取文件…</source>
             <translation>Reading file…</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="487" />
+            <location filename="../../presentation/views/exchange.py" line="495" />
             <source>此交易身份已存在，不能再次导入</source>
             <translation>This transaction identity already exists and cannot be imported again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="497" />
+            <location filename="../../presentation/views/exchange.py" line="505" />
             <source>此类型不能普通导入；期初与校准请使用备份恢复</source>
             <translation>This type cannot be imported normally. Restore opening balances and adjustments from a backup.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="499" />
+            <location filename="../../presentation/views/exchange.py" line="507" />
             <source>源文件已变化，请重新生成预览</source>
             <translation>The source file changed. Generate a new preview.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>源行</source>
             <translation>Source Row</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="239" />
+            <location filename="../../presentation/views/exchange.py" line="243" />
             <source>状态</source>
             <translation>Status</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="163" />
+            <location filename="../../presentation/views/exchange.py" line="167" />
             <source>目标资料</source>
             <translation>Destination Details</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="488" />
+            <location filename="../../presentation/views/exchange.py" line="496" />
             <source>相同源交易 ID 的内容或来源身份矛盾</source>
             <translation>Conflicting contents or source identity for the same source transaction ID.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="451" />
+            <location filename="../../presentation/views/exchange.py" line="459" />
             <source>确认导入</source>
             <translation>Confirm Import</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="169" />
+            <location filename="../../presentation/views/exchange.py" line="173" />
             <source>确认导入勾选行</source>
             <translation>Import Selected Rows</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="563" />
+            <location filename="../../presentation/views/exchange.py" line="571" />
             <source>确认撤销整个批次？成员已被修改、删除或关联批次外退款时会拒绝撤销。</source>
             <translation>Revert the entire batch? Reversion is refused if a member has been edited, deleted or linked to a refund outside the batch.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="452" />
+            <location filename="../../presentation/views/exchange.py" line="460" />
             <source>确认整批导入 {count} 行？账户余额会随之变化。</source>
             <translation>Import {count} rows as one batch? Account balances will change accordingly.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>类型</source>
             <translation>Type</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="403" />
+            <location filename="../../presentation/views/exchange.py" line="407" />
             <source>继承原支出</source>
             <translation>Inherited from original expense</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="446" />
+            <location filename="../../presentation/views/exchange.py" line="454" />
             <source>请勾选至少一行有效记录。</source>
             <translation>Select at least one valid row.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="496" />
+            <location filename="../../presentation/views/exchange.py" line="504" />
             <source>请同时勾选退款对应的原支出</source>
             <translation>Also select the original expense associated with the refund.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="532" />
+            <location filename="../../presentation/views/exchange.py" line="540" />
             <source>请明确选择</source>
             <translation>Choose explicitly</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="356" />
+            <location filename="../../presentation/views/exchange.py" line="360" />
             <source>读取 {count} 行。请核对列映射和目标资料，再生成预览。</source>
             <translation>Read {count} rows. Review column mapping and destination details, then generate a preview.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>账户 ID</source>
             <translation>Account ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="489" />
+            <location filename="../../presentation/views/exchange.py" line="497" />
             <source>账户、账本或分类不存在，请核对映射与资料</source>
             <translation>Account, book or category does not exist. Check the mapping and reference details.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>账户名称</source>
             <translation>Account Name</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>账本 / 分类</source>
             <translation>Book / Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>账本 ID</source>
             <translation>Book ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>账本名称</source>
             <translation>Book Name</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="490" />
+            <location filename="../../presentation/views/exchange.py" line="498" />
             <source>资料 ID 与名称不一致，请核对映射</source>
             <translation>The reference ID and name do not match. Check the mapping.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="194" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
             <source>资金账户</source>
             <translation>Financial Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>转入账户 ID</source>
             <translation>Destination Account ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>转入账户名称</source>
             <translation>Destination Account Name</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>转出账户 ID</source>
             <translation>Source Account ID</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
+            <location filename="../../presentation/views/exchange.py" line="126" />
             <source>转出账户名称</source>
             <translation>Source Account Name</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="151" />
-            <location filename="../../presentation/views/exchange.py" line="387" />
+            <location filename="../../presentation/views/exchange.py" line="155" />
+            <location filename="../../presentation/views/exchange.py" line="391" />
             <source>转账</source>
             <translation>Transfer</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="151" />
-            <location filename="../../presentation/views/exchange.py" line="388" />
+            <location filename="../../presentation/views/exchange.py" line="155" />
+            <location filename="../../presentation/views/exchange.py" line="392" />
             <source>退款</source>
             <translation>Refund</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="495" />
+            <location filename="../../presentation/views/exchange.py" line="503" />
             <source>退款缺少可用的原支出记录</source>
             <translation>The refund has no usable original expense record.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="97" />
+            <location filename="../../presentation/views/exchange.py" line="101" />
             <source>选择 CSV / Excel</source>
             <translation>Choose CSV / Excel</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="296" />
+            <location filename="../../presentation/views/exchange.py" line="300" />
             <source>选择账单</source>
             <translation>Choose Statement</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="166" />
+            <location filename="../../presentation/views/exchange.py" line="170" />
             <source>重新读取并生成预览</source>
             <translation>Reload and Preview</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="484" />
+            <location filename="../../presentation/views/exchange.py" line="492" />
             <source>金额最多两位小数，不会自动舍入</source>
             <translation>Amounts support at most two decimal places; they are never rounded automatically.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="483" />
+            <location filename="../../presentation/views/exchange.py" line="491" />
             <source>金额需为大于 0 的数值</source>
             <translation>The amount must be greater than zero.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
-            <location filename="../../presentation/views/exchange.py" line="194" />
-            <source>金额（元）</source>
-            <translation>Amount (CNY)</translation>
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <source>金额（最小单位整数）</source>
+            <translation>Amount (integer smallest units)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="122" />
-            <source>金额（整数分）</source>
-            <translation>Amount (Integer Fen)</translation>
+            <location filename="../../presentation/views/exchange.py" line="126" />
+            <location filename="../../presentation/views/exchange.py" line="198" />
+            <source>金额（账户币种）</source>
+            <translation>Amount (native currency)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="433" />
+            <location filename="../../presentation/views/exchange.py" line="441" />
             <source>错误明细已导出：{path}</source>
             <translation>Error details exported: {path}</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="418" />
+            <location filename="../../presentation/views/exchange.py" line="426" />
             <source>预览 {total} 行，{valid} 行通过基础校验。疑似重复默认不勾选；资金约束在整批提交时再次校验，更改映射后需重新预览。</source>
             <translation>Preview: {total} rows, {valid} passed basic validation. Possible duplicates are deselected by default. Financial constraints are checked again when the batch commits; changing the mapping requires a new preview.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="500" />
+            <location filename="../../presentation/views/exchange.py" line="508" />
             <source>预览内容已变化，请重新生成预览</source>
             <translation>Preview contents changed. Generate a new preview.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="113" />
-            <location filename="../../presentation/views/exchange.py" line="350" />
+            <location filename="../../presentation/views/exchange.py" line="117" />
+            <location filename="../../presentation/views/exchange.py" line="354" />
             <source>默认工作表</source>
             <translation>Default Worksheet</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="143" />
+            <location filename="../../presentation/views/exchange.py" line="147" />
             <source>默认支出分类</source>
             <translation>Default Expense Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="143" />
+            <location filename="../../presentation/views/exchange.py" line="147" />
             <source>默认收入分类</source>
             <translation>Default Income Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="156" />
+            <location filename="../../presentation/views/exchange.py" line="160" />
             <source>默认时区（IANA）</source>
             <translation>Default Time Zone (IANA)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="143" />
+            <location filename="../../presentation/views/exchange.py" line="147" />
             <source>默认账户</source>
             <translation>Default Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="143" />
+            <location filename="../../presentation/views/exchange.py" line="147" />
             <source>默认账本</source>
             <translation>Default Book</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="143" />
+            <location filename="../../presentation/views/exchange.py" line="147" />
             <source>默认转入账户</source>
             <translation>Default Destination Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/exchange.py" line="143" />
+            <location filename="../../presentation/views/exchange.py" line="147" />
             <source>默认转出账户</source>
             <translation>Default Source Account</translation>
         </message>
@@ -1127,551 +1195,561 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>MainWindow</name>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="510" />
+            <location filename="../../presentation/views/main_window.py" line="515" />
             <source>AI 建议，请核对</source>
             <translation>AI suggestion — review before saving</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="488" />
+            <location filename="../../presentation/views/main_window.py" line="493" />
             <source>AI 解析未完成；当前输入与草稿已保留，可继续本地解析。</source>
             <translation>AI parsing did not finish. Your input and draft are preserved; local parsing remains available.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="272" />
+            <location filename="../../presentation/views/main_window.py" line="273" />
             <source>AI 解析（可选）</source>
             <translation>AI Parse (Optional)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1050" />
+            <location filename="../../presentation/views/main_window.py" line="1073" />
             <source>PySide6</source>
             <translation>PySide6</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1049" />
+            <location filename="../../presentation/views/main_window.py" line="1072" />
             <source>Python</source>
             <translation>Python</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1051" />
+            <location filename="../../presentation/views/main_window.py" line="1074" />
             <source>Qt</source>
             <translation>Qt</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1052" />
+            <location filename="../../presentation/views/main_window.py" line="1075" />
             <source>SQLite</source>
             <translation>SQLite</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1067" />
+            <location filename="../../presentation/views/main_window.py" line="1090" />
             <source>SQLite 运行库满足项目的 WAL 版本要求。</source>
             <translation>The SQLite runtime meets the project's WAL version requirements.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="535" />
+            <location filename="../../presentation/views/main_window.py" line="540" />
             <source>下午</source>
             <translation>Afternoon</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="172" />
+            <location filename="../../presentation/views/main_window.py" line="173" />
             <source>个人财务 · 本地优先</source>
             <translation>Personal Finance · Local First</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="534" />
+            <location filename="../../presentation/views/main_window.py" line="539" />
             <source>中午</source>
             <translation>Noon</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="903" />
+            <location filename="../../presentation/views/main_window.py" line="919" />
             <source>主题</source>
             <translation>Theme</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="182" />
+            <location filename="../../presentation/views/main_window.py" line="183" />
             <source>交易记录</source>
             <translation>Transactions</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="508" />
+            <location filename="../../presentation/views/main_window.py" line="513" />
             <source>从输入识别</source>
             <translation>Detected from input</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1035" />
+            <location filename="../../presentation/views/main_window.py" line="1058" />
             <source>以下信息用于检查安装情况和报告启动问题。</source>
             <translation>This information helps verify the installation and report startup problems.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="722" />
+            <location filename="../../presentation/views/main_window.py" line="727" />
             <source>余额没有变化，已记录本次确认。</source>
             <translation>The balance is unchanged. Your confirmation was recorded.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="735" />
+            <location filename="../../presentation/views/main_window.py" line="740" />
             <source>保存未完成，请检查输入后重试。</source>
             <translation>Could not save. Check your input and try again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="756" />
+            <location filename="../../presentation/views/main_window.py" line="772" />
             <source>先在「账户与管理」创建账户，明确期初余额与起算日期。</source>
             <translation>Create an account under Accounts first, with an explicit opening balance and start date.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="909" />
+            <location filename="../../presentation/views/main_window.py" line="925" />
             <source>全局快捷键</source>
             <translation>Global Shortcut</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1013" />
+            <location filename="../../presentation/views/main_window.py" line="1036" />
             <source>全局快捷键暂不可用，可使用托盘或主窗口快速记账。</source>
             <translation>The global shortcut is unavailable. Use the tray or main window for quick entry.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="895" />
+            <location filename="../../presentation/views/main_window.py" line="911" />
             <source>关闭主窗口时隐藏到托盘</source>
             <translation>Hide to tray when closing the main window</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="520" />
+            <location filename="../../presentation/views/main_window.py" line="525" />
             <source>分类</source>
             <translation>Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="916" />
+            <location filename="../../presentation/views/main_window.py" line="939" />
             <source>初始时区为 Asia/Shanghai，可在这里修改。时区变化后，未保存的自然语言草稿需要重新解析；已保存记录保留原时区。</source>
             <translation>The initial time zone is Asia/Shanghai. Change it here if needed. Unsaved natural-language drafts must be parsed again after a time-zone change; saved records retain their original time zone.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="817" />
+            <location filename="../../presentation/views/main_window.py" line="833" />
             <source>删除</source>
             <translation>Delete</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="321" />
+            <location filename="../../presentation/views/main_window.py" line="322" />
             <source>原输入识别依据</source>
             <translation>Evidence from Original Input</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="275" />
+            <location filename="../../presentation/views/main_window.py" line="276" />
             <source>取消 AI 解析</source>
             <translation>Cancel AI Parsing</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="287" />
+            <location filename="../../presentation/views/main_window.py" line="288" />
             <source>可直接手工填写；自然语言输入需要先解析。</source>
             <translation>You can fill in the form manually. Natural-language input must be parsed first.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1080" />
+            <location filename="../../presentation/views/main_window.py" line="1103" />
             <source>启动时创建并校验本地数据库。默认账本与分类不包含示例资金记录。</source>
             <translation>The local database is created and validated on startup. Default books and categories contain no sample financial records.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="898" />
+            <location filename="../../presentation/views/main_window.py" line="914" />
             <source>启用全局快捷键</source>
             <translation>Enable Global Shortcut</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="523" />
+            <location filename="../../presentation/views/main_window.py" line="528" />
             <source>备注</source>
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="875" />
+            <location filename="../../presentation/views/main_window.py" line="891" />
             <source>外观、记账时区与运行环境。</source>
             <translation>Appearance, accounting time zone and runtime environment.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="427" />
+            <location filename="../../presentation/views/main_window.py" line="432" />
             <source>多笔输入需要逐笔确认。其余候选保留在列表中，不会自动入账。</source>
             <translation>Multiple transactions must be confirmed individually. Other candidates remain in the list and are not recorded automatically.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="537" />
+            <location filename="../../presentation/views/main_window.py" line="542" />
             <source>夜间</source>
             <translation>Night</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="522" />
+            <location filename="../../presentation/views/main_window.py" line="931" />
+            <source>完整使用手册（离线）</source>
+            <translation>Complete user manual (offline)</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/main_window.py" line="527" />
             <source>对象</source>
             <translation>Counterparty</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="184" />
+            <location filename="../../presentation/views/main_window.py" line="185" />
             <source>导入与导出</source>
             <translation>Import / Export</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="720" />
+            <location filename="../../presentation/views/main_window.py" line="725" />
             <source>已保存。</source>
             <translation>Saved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1048" />
+            <location filename="../../presentation/views/main_window.py" line="1071" />
             <source>应用版本</source>
             <translation>Application Version</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="911" />
+            <location filename="../../presentation/views/main_window.py" line="927" />
             <source>应用设置</source>
             <translation>Apply Settings</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1069" />
+            <location filename="../../presentation/views/main_window.py" line="1092" />
             <source>当前 SQLite 运行库未达到项目的 WAL 版本要求。资金数据库采用回滚日志模式；WAL 需在运行库通过验证后启用。</source>
             <translation>The current SQLite runtime does not meet the project's WAL version requirements. The financial database uses rollback journaling. WAL requires a validated runtime.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="338" />
+            <location filename="../../presentation/views/main_window.py" line="339" />
             <source>当前版本：{version}</source>
             <translation>Current version: {version}</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="908" />
+            <location filename="../../presentation/views/main_window.py" line="924" />
             <source>快速记账</source>
             <translation>Quick Entry</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="180" />
-            <location filename="../../presentation/views/main_window.py" line="228" />
+            <location filename="../../presentation/views/main_window.py" line="181" />
+            <location filename="../../presentation/views/main_window.py" line="229" />
             <source>总览与记账</source>
             <translation>Overview</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="234" />
+            <location filename="../../presentation/views/main_window.py" line="235" />
             <source>总资产</source>
             <translation>Total Assets</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="758" />
+            <location filename="../../presentation/views/main_window.py" line="774" />
             <source>总资产包含已归档账户。本月净支出 = 支出 − 本月退款；转账、期初和余额校准不计入收支。</source>
             <translation>Total assets include archived accounts. Monthly net expenses = expenses − refunds received this month. Transfers, opening balances and balance adjustments are excluded from income and expenses.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="817" />
+            <location filename="../../presentation/views/main_window.py" line="833" />
             <source>恢复</source>
             <translation>Restore</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="261" />
+            <location filename="../../presentation/views/main_window.py" line="262" />
             <source>手工录入</source>
             <translation>Manual Entry</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="363" />
+            <location filename="../../presentation/views/main_window.py" line="364" />
             <source>手工录入：以当前表单为准，保存前请核对所有字段。</source>
             <translation>Manual entry uses the current form. Review every field before saving.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="512" />
+            <location filename="../../presentation/views/main_window.py" line="517" />
             <source>手工指定</source>
             <translation>Chosen manually</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="279" />
+            <location filename="../../presentation/views/main_window.py" line="280" />
             <source>打开快速记账窗口</source>
             <translation>Open Quick Entry</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="521" />
+            <location filename="../../presentation/views/main_window.py" line="526" />
             <source>支付方式</source>
             <translation>Payment Method</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="532" />
+            <location filename="../../presentation/views/main_window.py" line="537" />
             <source>支出</source>
             <translation>Expense</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="531" />
+            <location filename="../../presentation/views/main_window.py" line="536" />
             <source>收入</source>
             <translation>Income</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="732" />
+            <location filename="../../presentation/views/main_window.py" line="737" />
             <source>数据库正在使用中，请稍后重试；本次输入已保留。</source>
             <translation>The database is busy. Try again later; your input is preserved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1054" />
+            <location filename="../../presentation/views/main_window.py" line="1077" />
             <source>数据库版本</source>
             <translation>Database Version</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1053" />
+            <location filename="../../presentation/views/main_window.py" line="1076" />
             <source>数据目录</source>
             <translation>Data Directory</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="262" />
+            <location filename="../../presentation/views/main_window.py" line="263" />
             <source>新建草稿</source>
             <translation>New Draft</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="658" />
+            <location filename="../../presentation/views/main_window.py" line="663" />
             <source>新草稿：可输入自然语言，也可手工填写。</source>
             <translation>New draft: enter natural language or fill in the form manually.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="382" />
+            <location filename="../../presentation/views/main_window.py" line="386" />
             <source>无法解析，请检查输入内容或使用手工录入。</source>
             <translation>Could not parse. Check your input or use manual entry.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="456" />
+            <location filename="../../presentation/views/main_window.py" line="461" />
             <source>无法读取 AI 凭据，请检查设置；当前草稿已保留。</source>
             <translation>Could not read AI credentials. Check settings; your current draft is preserved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1055" />
+            <location filename="../../presentation/views/main_window.py" line="1078" />
             <source>日志模式</source>
             <translation>Journal Mode</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="517" />
+            <location filename="../../presentation/views/main_window.py" line="522" />
             <source>日期</source>
             <translation>Date</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="533" />
+            <location filename="../../presentation/views/main_window.py" line="538" />
             <source>早上</source>
             <translation>Morning</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="518" />
+            <location filename="../../presentation/views/main_window.py" line="523" />
             <source>时段</source>
             <translation>Time Period</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="892" />
+            <location filename="../../presentation/views/main_window.py" line="908" />
             <source>显示系统托盘图标</source>
             <translation>Show System Tray Icon</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="536" />
+            <location filename="../../presentation/views/main_window.py" line="541" />
             <source>晚上</source>
             <translation>Evening</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="195" />
+            <location filename="../../presentation/views/main_window.py" line="769" />
+            <source>未完整估值</source>
+            <translation>Incomplete valuation</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/main_window.py" line="196" />
             <source>本地规则解析</source>
             <translation>Local Rule Parsing</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="236" />
+            <location filename="../../presentation/views/main_window.py" line="237" />
             <source>本月净支出</source>
             <translation>Monthly Net Expenses</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="235" />
+            <location filename="../../presentation/views/main_window.py" line="236" />
             <source>本月收入</source>
             <translation>Monthly Income</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="691" />
+            <location filename="../../presentation/views/main_window.py" line="696" />
             <source>正在保存，请稍候…</source>
             <translation>Saving, please wait…</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="989" />
+            <location filename="../../presentation/views/main_window.py" line="1012" />
             <source>正在完成保存，完成后退出。</source>
             <translation>Finishing the save, then exiting.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="463" />
+            <location filename="../../presentation/views/main_window.py" line="468" />
             <source>正在请求 AI 建议，请等待并核对返回的草稿…</source>
             <translation>Requesting AI suggestions. Wait and review the returned draft…</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="879" />
+            <location filename="../../presentation/views/main_window.py" line="895" />
             <source>浅色</source>
             <translation>Light</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="880" />
+            <location filename="../../presentation/views/main_window.py" line="896" />
             <source>深色</source>
             <translation>Dark</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="905" />
+            <location filename="../../presentation/views/main_window.py" line="921" />
             <source>界面语言（重启生效）</source>
             <translation>Interface Language (restart required)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="822" />
+            <location filename="../../presentation/views/main_window.py" line="838" />
             <source>确认{action}这笔交易？账户余额会随之变化。</source>
             <translation>Confirm {action} for this transaction? Account balances will change accordingly.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="312" />
+            <location filename="../../presentation/views/main_window.py" line="313" />
             <source>确认保存（Ctrl+Enter）</source>
             <translation>Confirm and Save (Ctrl+Enter)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="301" />
+            <location filename="../../presentation/views/main_window.py" line="302" />
             <source>确认记账草稿</source>
             <translation>Review Transaction Draft</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="515" />
+            <location filename="../../presentation/views/main_window.py" line="520" />
             <source>类型</source>
             <translation>Type</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="906" />
+            <location filename="../../presentation/views/main_window.py" line="922" />
             <source>系统托盘</source>
             <translation>System Tray</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="181" />
+            <location filename="../../presentation/views/main_window.py" line="182" />
             <source>统计分析</source>
             <translation>Analytics</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="588" />
+            <location filename="../../presentation/views/main_window.py" line="593" />
             <source>草稿已生成。请核对建议、账户与日期，再确认保存。</source>
             <translation>Draft ready. Review suggestions, account and date before confirming the save.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="509" />
+            <location filename="../../presentation/views/main_window.py" line="514" />
             <source>规则建议</source>
             <translation>Rule suggestion</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="260" />
+            <location filename="../../presentation/views/main_window.py" line="261" />
             <source>解析草稿（Enter）</source>
             <translation>Parse Draft (Enter)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="228" />
+            <location filename="../../presentation/views/main_window.py" line="229" />
             <source>记下每一笔，确认后保存到本地账本。</source>
             <translation>Record each transaction, then confirm to save it in your local book.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="731" />
+            <location filename="../../presentation/views/main_window.py" line="736" />
             <source>记录已被修改。请刷新并重新打开编辑，原草稿已保留。</source>
             <translation>The record was modified. Refresh and reopen the editor; your original draft is preserved.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="904" />
+            <location filename="../../presentation/views/main_window.py" line="920" />
             <source>记账时区（IANA）</source>
             <translation>Accounting Time Zone (IANA)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="308" />
-            <location filename="../../presentation/views/main_window.py" line="962" />
+            <location filename="../../presentation/views/main_window.py" line="309" />
+            <location filename="../../presentation/views/main_window.py" line="985" />
             <source>记账时区：{zone}</source>
             <translation>Accounting time zone: {zone}</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="185" />
-            <location filename="../../presentation/views/main_window.py" line="875" />
+            <location filename="../../presentation/views/main_window.py" line="186" />
+            <location filename="../../presentation/views/main_window.py" line="891" />
             <source>设置</source>
             <translation>Settings</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="971" />
+            <location filename="../../presentation/views/main_window.py" line="994" />
             <source>设置保存失败，请检查数据目录权限。</source>
             <translation>Could not save settings. Check data directory permissions.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="967" />
+            <location filename="../../presentation/views/main_window.py" line="990" />
             <source>设置已保存，快捷键无法注册，请更换组合后重试。</source>
             <translation>Settings saved, but the shortcut could not be registered. Choose another combination and try again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="964" />
+            <location filename="../../presentation/views/main_window.py" line="987" />
             <source>设置已应用。</source>
             <translation>Settings applied.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="418" />
+            <location filename="../../presentation/views/main_window.py" line="423" />
             <source>识别到多笔，请选择本次要保存的一笔</source>
             <translation>Multiple transactions detected. Choose one to save now.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="444" />
+            <location filename="../../presentation/views/main_window.py" line="449" />
             <source>请先在设置中启用并配置 AI；本地解析始终可用。</source>
             <translation>Enable and configure AI in Settings first. Local parsing is always available.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="730" />
+            <location filename="../../presentation/views/main_window.py" line="735" />
             <source>请先解析并处理歧义，或明确选择手工录入。</source>
             <translation>Parse and resolve ambiguities first, or explicitly choose manual entry.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="577" />
+            <location filename="../../presentation/views/main_window.py" line="582" />
             <source>请手工补齐缺少的信息。</source>
             <translation>Complete the missing information manually.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="729" />
+            <location filename="../../presentation/views/main_window.py" line="734" />
             <source>请补齐资金账户、账本和分类。</source>
             <translation>Complete the account, book and category.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="727" />
+            <location filename="../../presentation/views/main_window.py" line="732" />
             <source>请输入大于 0 的金额。</source>
             <translation>Enter an amount greater than zero.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="448" />
+            <location filename="../../presentation/views/main_window.py" line="453" />
             <source>请输入需要解析的文字。</source>
             <translation>Enter some text to parse.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="183" />
+            <location filename="../../presentation/views/main_window.py" line="184" />
             <source>账户与管理</source>
             <translation>Accounts</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="519" />
+            <location filename="../../presentation/views/main_window.py" line="524" />
             <source>资金账户</source>
             <translation>Financial Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="881" />
+            <location filename="../../presentation/views/main_window.py" line="897" />
             <source>跟随系统</source>
             <translation>Follow System</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="352" />
+            <location filename="../../presentation/views/main_window.py" line="353" />
             <source>输入已变化，请重新解析；也可以选择手工录入。</source>
             <translation>Input changed. Parse again or use manual entry.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="432" />
+            <location filename="../../presentation/views/main_window.py" line="437" />
             <source>输入有歧义或暂不支持，请修改文字后重新解析，或选择手工录入。</source>
             <translation>The input is ambiguous or unsupported. Edit the text and parse again, or use manual entry.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="1034" />
+            <location filename="../../presentation/views/main_window.py" line="1057" />
             <source>运行环境</source>
             <translation>Runtime Environment</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="154" />
-            <location filename="../../presentation/views/main_window.py" line="201" />
+            <location filename="../../presentation/views/main_window.py" line="155" />
+            <location filename="../../presentation/views/main_window.py" line="202" />
             <source>退出</source>
             <translation>Exit</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="516" />
+            <location filename="../../presentation/views/main_window.py" line="521" />
             <source>金额</source>
             <translation>Amount</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="325" />
+            <location filename="../../presentation/views/main_window.py" line="326" />
             <source>金额、日期和支付方式的识别结果将在这里显示。分类建议和默认账户会标明来源，请在保存前核对。</source>
             <translation>Detected amounts, dates and payment methods appear here. Category suggestions and default accounts show their origin; review them before saving.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="728" />
+            <location filename="../../presentation/views/main_window.py" line="733" />
             <source>金额最多保留两位小数。</source>
             <translation>Amounts support at most two decimal places.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/main_window.py" line="511" />
+            <location filename="../../presentation/views/main_window.py" line="516" />
             <source>默认值</source>
             <translation>Default</translation>
         </message>
@@ -1679,178 +1757,188 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>ManagementPage</name>
         <message>
-            <location filename="../../presentation/views/management.py" line="696" />
+            <location filename="../../presentation/views/management.py" line="837" />
             <source> · 默认</source>
             <translation> · Default</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="711" />
-            <source> 元。期初余额由你填写，转账不会改变总资产。</source>
-            <translation> CNY. You enter opening balances; transfers do not change total assets.</translation>
-        </message>
-        <message>
-            <location filename="../../presentation/views/management.py" line="655" />
+            <location filename="../../presentation/views/management.py" line="796" />
             <source>余额校准</source>
             <translation>Adjust Balance</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="625" />
-            <source>余额（元）</source>
-            <translation>Balance (CNY)</translation>
+            <location filename="../../presentation/views/management.py" line="766" />
+            <source>余额（账户币种）</source>
+            <translation>Balance (native currency)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="768" />
+            <location filename="../../presentation/views/management.py" line="921" />
             <source>保存未完成，资料已保留。请检查提示后重试。</source>
             <translation>Could not save. Your details are preserved. Review the message and try again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="656" />
+            <location filename="../../presentation/views/management.py" line="797" />
             <source>修改期初</source>
             <translation>Edit Opening Balance</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="605" />
+            <location filename="../../presentation/views/management.py" line="740" />
             <source>分类</source>
             <translation>Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="694" />
+            <location filename="../../presentation/views/management.py" line="835" />
             <source>可用</source>
             <translation>Available</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="625" />
+            <location filename="../../presentation/views/management.py" line="766" />
             <source>名称</source>
             <translation>Name</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="694" />
+            <location filename="../../presentation/views/management.py" line="835" />
             <source>已归档</source>
             <translation>Archived</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="638" />
-            <location filename="../../presentation/views/management.py" line="732" />
+            <location filename="../../presentation/views/management.py" line="779" />
+            <location filename="../../presentation/views/management.py" line="885" />
             <source>归档</source>
             <translation>Archive</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="716" />
+            <location filename="../../presentation/views/management.py" line="869" />
             <source>归档会保留历史交易，资料变更不会改写历史金额。</source>
             <translation>Archiving preserves historical transactions. Changes to reference details do not rewrite historical amounts.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="683" />
+            <location filename="../../presentation/views/management.py" line="824" />
             <source>微信</source>
             <translation>WeChat</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="709" />
+            <location filename="../../presentation/views/management.py" line="865" />
             <source>总资产（含已归档账户）：</source>
             <translation>Total assets (including archived accounts): </translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="732" />
+            <location filename="../../presentation/views/management.py" line="885" />
             <source>恢复</source>
             <translation>Restore</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="684" />
+            <location filename="../../presentation/views/management.py" line="751" />
+            <source>手动汇率</source>
+            <translation>Manual exchange rates</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="825" />
             <source>支付宝</source>
             <translation>Alipay</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="607" />
+            <location filename="../../presentation/views/management.py" line="742" />
             <source>支付渠道</source>
             <translation>Payment Channel</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="686" />
+            <location filename="../../presentation/views/management.py" line="827" />
             <source>支出</source>
             <translation>Expense</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="687" />
+            <location filename="../../presentation/views/management.py" line="828" />
             <source>收入</source>
             <translation>Income</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="636" />
+            <location filename="../../presentation/views/management.py" line="777" />
             <source>新建</source>
             <translation>New</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="612" />
+            <location filename="../../presentation/views/management.py" line="747" />
             <source>显示已归档</source>
             <translation>Show Archived</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="606" />
+            <location filename="../../presentation/views/management.py" line="751" />
+            <source>显示币种</source>
+            <translation>Display currency</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="863" />
+            <source>未完整估值，请补充手动汇率。</source>
+            <translation>Incomplete valuation; add manual exchange rates.</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="741" />
             <source>标签</source>
             <translation>Tags</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="625" />
+            <location filename="../../presentation/views/management.py" line="766" />
             <source>状态</source>
             <translation>Status</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="681" />
+            <location filename="../../presentation/views/management.py" line="822" />
             <source>现金</source>
             <translation>Cash</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="625" />
+            <location filename="../../presentation/views/management.py" line="766" />
             <source>类型 / 说明</source>
             <translation>Type / Description</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="637" />
+            <location filename="../../presentation/views/management.py" line="778" />
             <source>编辑</source>
             <translation>Edit</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="685" />
+            <location filename="../../presentation/views/management.py" line="826" />
             <source>自定义</source>
             <translation>Custom</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="639" />
+            <location filename="../../presentation/views/management.py" line="780" />
             <source>设为默认</source>
             <translation>Set as Default</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="603" />
+            <location filename="../../presentation/views/management.py" line="738" />
             <source>账户</source>
             <translation>Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="596" />
+            <location filename="../../presentation/views/management.py" line="731" />
             <source>账户与资料管理</source>
             <translation>Accounts &amp; Reference Details</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="654" />
+            <location filename="../../presentation/views/management.py" line="795" />
             <source>账户转账</source>
             <translation>Account Transfer</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="604" />
+            <location filename="../../presentation/views/management.py" line="739" />
             <source>账本</source>
             <translation>Book</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="751" />
+            <location filename="../../presentation/views/management.py" line="904" />
             <source>资料已保留，请检查输入后重试。错误代码：</source>
             <translation>Your details are preserved. Check your input and try again. Error code: </translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="714" />
+            <location filename="../../presentation/views/management.py" line="867" />
             <source>还没有资料，点击「新建」开始。</source>
             <translation>No items yet. Click New to get started.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="682" />
+            <location filename="../../presentation/views/management.py" line="823" />
             <source>银行卡</source>
             <translation>Bank Card</translation>
         </message>
@@ -1858,128 +1946,128 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>OperationDialog</name>
         <message>
-            <location filename="../../presentation/views/management.py" line="478" />
-            <source> 元</source>
-            <translation> CNY</translation>
-        </message>
-        <message>
-            <location filename="../../presentation/views/management.py" line="410" />
+            <location filename="../../presentation/views/management.py" line="419" />
             <source>余额校准</source>
             <translation>Adjust Balance</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="484" />
+            <location filename="../../presentation/views/management.py" line="508" />
             <source>修改期初会影响余额。开始日期不得晚于该账户已有的有效交易。</source>
             <translation>Editing the opening balance changes the account balance. The start date cannot be later than any existing active transaction in this account.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="411" />
+            <location filename="../../presentation/views/management.py" line="420" />
             <source>修改期初余额</source>
             <translation>Edit Opening Balance</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="441" />
+            <location filename="../../presentation/views/management.py" line="450" />
             <source>到账账户 *</source>
             <translation>Receiving Account *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="474" />
+            <location filename="../../presentation/views/management.py" line="497" />
             <source>原支出日期：</source>
             <translation>Original expense date: </translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="500" />
+            <location filename="../../presentation/views/management.py" line="528" />
             <source>原记录的具体时间将保留；此处仅修改金额、账户与备注。</source>
             <translation>The original exact time is preserved. Only the amount, account and note are edited here.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="457" />
+            <location filename="../../presentation/views/management.py" line="480" />
             <source>备注</source>
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="452" />
+            <location filename="../../presentation/views/management.py" line="463" />
+            <source>实际到账金额（转入币种）</source>
+            <translation>Actual received amount (destination currency)</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/management.py" line="475" />
             <source>开始记账日期 *</source>
             <translation>Account Start Date *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="446" />
-            <source>当前实际余额（元） *</source>
-            <translation>Current Actual Balance (CNY) *</translation>
+            <location filename="../../presentation/views/management.py" line="455" />
+            <source>当前实际余额（账户币种） *</source>
+            <translation>Actual current balance (native currency) *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="481" />
+            <location filename="../../presentation/views/management.py" line="505" />
             <source>按当前实际余额记录差额；原有收支记录会完整保留。</source>
             <translation>Record the difference from the current actual balance. Existing income and expense records remain intact.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="452" />
+            <location filename="../../presentation/views/management.py" line="475" />
             <source>日期 *</source>
             <translation>Date *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="449" />
-            <source>期初余额（元） *</source>
-            <translation>Opening Balance (CNY) *</translation>
+            <location filename="../../presentation/views/management.py" line="458" />
+            <source>期初余额（账户币种） *</source>
+            <translation>Opening balance (native currency) *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="455" />
+            <location filename="../../presentation/views/management.py" line="478" />
             <source>校准原因 *</source>
             <translation>Adjustment Reason *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="407" />
+            <location filename="../../presentation/views/management.py" line="416" />
             <source>编辑转账</source>
             <translation>Edit Transfer</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="409" />
+            <location filename="../../presentation/views/management.py" line="418" />
             <source>编辑退款</source>
             <translation>Edit Refund</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="408" />
+            <location filename="../../presentation/views/management.py" line="417" />
             <source>记录退款</source>
             <translation>Record Refund</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="428" />
-            <source>请输入金额，单位：元</source>
-            <translation>Enter an amount in CNY</translation>
+            <location filename="../../presentation/views/management.py" line="437" />
+            <source>请输入原币金额</source>
+            <translation>Enter the native amount</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="420" />
-            <location filename="../../presentation/views/management.py" line="421" />
+            <location filename="../../presentation/views/management.py" line="429" />
+            <location filename="../../presentation/views/management.py" line="430" />
             <source>请选择账户</source>
             <translation>Choose Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="441" />
+            <location filename="../../presentation/views/management.py" line="450" />
             <source>账户 *</source>
             <translation>Account *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="406" />
+            <location filename="../../presentation/views/management.py" line="415" />
             <source>账户转账</source>
             <translation>Account Transfer</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="438" />
+            <location filename="../../presentation/views/management.py" line="447" />
             <source>转入账户 *</source>
             <translation>Destination Account *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="437" />
+            <location filename="../../presentation/views/management.py" line="446" />
             <source>转出账户 *</source>
             <translation>Source Account *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="444" />
-            <source>金额（元） *</source>
-            <translation>Amount (CNY) *</translation>
+            <location filename="../../presentation/views/management.py" line="453" />
+            <source>金额（账户币种） *</source>
+            <translation>Amount (native currency) *</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="476" />
+            <location filename="../../presentation/views/management.py" line="499" />
             <source>；本次可退上限：</source>
             <translation>; maximum refundable now: </translation>
         </message>
@@ -1987,7 +2075,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>QComboBox</name>
         <message>
-            <location filename="../../presentation/views/management.py" line="93" />
+            <location filename="../../presentation/views/management.py" line="92" />
             <source>（已归档）</source>
             <translation> (Archived)</translation>
         </message>
@@ -2000,17 +2088,17 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Example (Chinese input): 咖啡 25元; Enter to parse, review, then Ctrl+Enter to save</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="243" />
+            <location filename="../../presentation/views/quick_entry.py" line="250" />
             <source>保存未完成，草稿已保留。请检查后重试。</source>
             <translation>Could not save. Your draft is preserved. Review it and try again.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="240" />
+            <location filename="../../presentation/views/quick_entry.py" line="247" />
             <source>已保存，可继续输入下一笔。</source>
             <translation>Saved. You can enter the next transaction.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="198" />
+            <location filename="../../presentation/views/quick_entry.py" line="205" />
             <source>已生成规则建议，核对并补齐字段后确认保存。</source>
             <translation>Rule suggestions are ready. Review and complete the fields before saving.</translation>
         </message>
@@ -2030,7 +2118,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Fill In Manually</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="133" />
+            <location filename="../../presentation/views/quick_entry.py" line="136" />
             <source>手工填写：保存前请核对表单中的所有字段。</source>
             <translation>Manual entry: review every field before saving.</translation>
         </message>
@@ -2040,17 +2128,17 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>New Draft</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="162" />
+            <location filename="../../presentation/views/quick_entry.py" line="166" />
             <source>无法解析，请修改文字或选择手工填写。</source>
             <translation>Could not parse. Edit the text or fill in the form manually.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="296" />
+            <location filename="../../presentation/views/quick_entry.py" line="303" />
             <source>时区已变化，请重新解析并核对日期。</source>
             <translation>The time zone changed. Parse again and review the date.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="219" />
+            <location filename="../../presentation/views/quick_entry.py" line="226" />
             <source>正在保存，请稍候…</source>
             <translation>Saving, please wait…</translation>
         </message>
@@ -2070,22 +2158,22 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Parse Draft (Enter)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="171" />
+            <location filename="../../presentation/views/quick_entry.py" line="175" />
             <source>请每次输入一笔记录，并处理歧义；也可以选择手工填写。</source>
             <translation>Enter one transaction at a time and resolve ambiguities, or fill in the form manually.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="225" />
+            <location filename="../../presentation/views/quick_entry.py" line="232" />
             <source>请补齐字段并处理金额、日期或识别歧义。</source>
             <translation>Complete the fields and resolve amount, date or parsing ambiguities.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="277" />
+            <location filename="../../presentation/views/quick_entry.py" line="284" />
             <source>输入一笔记录，解析并核对后保存；Esc 可收起并保留草稿。</source>
             <translation>Enter a transaction, parse and review it, then save. Esc hides this window and preserves the draft.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/quick_entry.py" line="123" />
+            <location filename="../../presentation/views/quick_entry.py" line="126" />
             <source>输入已变化，请重新解析，或选择手工填写。</source>
             <translation>Input changed. Parse again or fill in the form manually.</translation>
         </message>
@@ -2093,7 +2181,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>QuickInput</name>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="44" />
+            <location filename="../../presentation/views/transaction_form.py" line="43" />
             <source>例如：昨天晚上和朋友吃火锅花了128元，微信支付</source>
             <translation>Example (Chinese input): 昨天晚上和朋友吃火锅花了128元，微信支付</translation>
         </message>
@@ -2101,153 +2189,153 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>TransactionForm</name>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="86" />
-            <source>0.00，单位：元</source>
-            <translation>0.00, in CNY</translation>
-        </message>
-        <message>
-            <location filename="../../presentation/views/transaction_form.py" line="96" />
+            <location filename="../../presentation/views/transaction_form.py" line="95" />
             <source>下午</source>
             <translation>Afternoon</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="95" />
+            <location filename="../../presentation/views/transaction_form.py" line="94" />
             <source>中午</source>
             <translation>Noon</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="93" />
+            <location filename="../../presentation/views/transaction_form.py" line="92" />
             <source>仅日期</source>
             <translation>Date Only</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="123" />
+            <location filename="../../presentation/views/transaction_form.py" line="122" />
             <source>分类</source>
             <translation>Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="126" />
+            <location filename="../../presentation/views/transaction_form.py" line="125" />
             <source>商户</source>
             <translation>Merchant</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="127" />
+            <location filename="../../presentation/views/transaction_form.py" line="126" />
             <source>地点</source>
             <translation>Location</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="128" />
+            <location filename="../../presentation/views/transaction_form.py" line="127" />
             <source>备注</source>
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="98" />
+            <location filename="../../presentation/views/transaction_form.py" line="97" />
             <source>夜间</source>
             <translation>Night</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="125" />
+            <location filename="../../presentation/views/transaction_form.py" line="124" />
             <source>对象</source>
             <translation>Counterparty</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="124" />
+            <location filename="../../presentation/views/transaction_form.py" line="123" />
             <source>支付方式</source>
             <translation>Payment Method</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="83" />
+            <location filename="../../presentation/views/transaction_form.py" line="82" />
             <source>支出</source>
             <translation>Expense</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="84" />
+            <location filename="../../presentation/views/transaction_form.py" line="83" />
             <source>收入</source>
             <translation>Income</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="118" />
+            <location filename="../../presentation/views/transaction_form.py" line="117" />
             <source>日期</source>
             <translation>Date</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="94" />
+            <location filename="../../presentation/views/transaction_form.py" line="93" />
             <source>早上</source>
             <translation>Morning</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="119" />
+            <location filename="../../presentation/views/transaction_form.py" line="118" />
             <source>时段</source>
             <translation>Time Period</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="97" />
+            <location filename="../../presentation/views/transaction_form.py" line="96" />
             <source>晚上</source>
             <translation>Evening</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="196" />
+            <location filename="../../presentation/views/transaction_form.py" line="195" />
             <source>未指定</source>
             <translation>Unspecified</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="331" />
+            <location filename="../../presentation/views/transaction_form.py" line="345" />
             <source>未指定精确时刻</source>
             <translation>No exact time specified</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="129" />
+            <location filename="../../presentation/views/transaction_form.py" line="128" />
             <source>标签（可多选）</source>
             <translation>Tags (select multiple)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="116" />
+            <location filename="../../presentation/views/transaction_form.py" line="115" />
             <source>类型</source>
             <translation>Type</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="120" />
+            <location filename="../../presentation/views/transaction_form.py" line="119" />
             <source>精确时间</source>
             <translation>Exact Time</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="223" />
+            <location filename="../../presentation/views/transaction_form.py" line="85" />
+            <source>请输入原币金额</source>
+            <translation>Enter the native amount</translation>
+        </message>
+        <message>
+            <location filename="../../presentation/views/transaction_form.py" line="222" />
             <source>请选择分类</source>
             <translation>Choose Category</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="194" />
+            <location filename="../../presentation/views/transaction_form.py" line="193" />
             <source>请选择账户</source>
             <translation>Choose Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="195" />
+            <location filename="../../presentation/views/transaction_form.py" line="194" />
             <source>请选择账本</source>
             <translation>Choose Book</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="122" />
+            <location filename="../../presentation/views/transaction_form.py" line="121" />
             <source>账本</source>
             <translation>Book</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="121" />
+            <location filename="../../presentation/views/transaction_form.py" line="120" />
             <source>资金账户</source>
             <translation>Financial Account</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="117" />
-            <source>金额（元）</source>
-            <translation>Amount (CNY)</translation>
+            <location filename="../../presentation/views/transaction_form.py" line="116" />
+            <source>金额（账户币种）</source>
+            <translation>Amount (native currency)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="202" />
-            <location filename="../../presentation/views/transaction_form.py" line="226" />
+            <location filename="../../presentation/views/transaction_form.py" line="201" />
+            <location filename="../../presentation/views/transaction_form.py" line="225" />
             <source>（已归档）</source>
             <translation> (Archived)</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transaction_form.py" line="328" />
+            <location filename="../../presentation/views/transaction_form.py" line="342" />
             <source>；修改日期或时段可改为模糊时间。</source>
             <translation>; change the date or period to use an approximate time.</translation>
         </message>
@@ -2295,7 +2383,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>All Books</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transactions.py" line="254" />
+            <location filename="../../presentation/views/transactions.py" line="256" />
             <source>共 {total} 笔 · 第 {page} 页</source>
             <translation>{total} transactions · Page {page}</translation>
         </message>
@@ -2310,7 +2398,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Note</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transactions.py" line="247" />
+            <location filename="../../presentation/views/transactions.py" line="249" />
             <source>已删除</source>
             <translation>Deleted</translation>
         </message>
@@ -2347,7 +2435,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Show Deleted</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transactions.py" line="247" />
+            <location filename="../../presentation/views/transactions.py" line="249" />
             <source>有效</source>
             <translation>Active</translation>
         </message>
@@ -2389,7 +2477,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Records changed. Returned to the first page.</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transactions.py" line="265" />
+            <location filename="../../presentation/views/transactions.py" line="267" />
             <source>读取失败，请检查筛选日期后重试。</source>
             <translation>Could not load records. Check the date filters and try again.</translation>
         </message>
@@ -2410,7 +2498,7 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
             <translation>Transfer</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/transactions.py" line="258" />
+            <location filename="../../presentation/views/transactions.py" line="260" />
             <source>还没有符合筛选条件的交易。</source>
             <translation>No transactions match these filters yet.</translation>
         </message>
@@ -2423,8 +2511,8 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
         </message>
         <message>
             <location filename="../../presentation/views/transactions.py" line="107" />
-            <source>金额（元）</source>
-            <translation>Amount (CNY)</translation>
+            <source>金额（账户币种）</source>
+            <translation>Amount (native currency)</translation>
         </message>
         <message>
             <location filename="../../presentation/views/transactions.py" line="81" />
@@ -2561,17 +2649,17 @@ Previous income {income} CNY · Previous net expenses {expense} CNY · Previous 
     <context>
         <name>_ValidatedDialog</name>
         <message>
-            <location filename="../../presentation/views/management.py" line="114" />
+            <location filename="../../presentation/views/management.py" line="113" />
             <source>保存</source>
             <translation>Save</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="116" />
+            <location filename="../../presentation/views/management.py" line="115" />
             <source>取消</source>
             <translation>Cancel</translation>
         </message>
         <message>
-            <location filename="../../presentation/views/management.py" line="131" />
+            <location filename="../../presentation/views/management.py" line="130" />
             <source>请检查必填项、金额、日期与账户选择。错误代码：</source>
             <translation>Check required fields, amount, date and account. Error code: </translation>
         </message>

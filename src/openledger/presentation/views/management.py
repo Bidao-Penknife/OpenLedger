@@ -30,32 +30,31 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from openledger.domain.currencies import CURRENCIES, currency, format_minor, rate_fraction
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import checked_aggregate, parse_amount, validate_minor
 from openledger.domain.values import normalize_text, validate_occurrence
 from openledger.infrastructure.ledger import LedgerService
 
 
-def _money_text(minor: int) -> str:
-    sign = "-" if minor < 0 else ""
-    whole, fraction = divmod(abs(minor), 100)
-    return f"{sign}{whole}.{fraction:02d}"
+def _money_text(minor: int, code: str = "CNY") -> str:
+    return format_minor(minor, code)
 
 
-def _signed_amount(text: str, *, aggregate: bool = False) -> int:
+def _signed_amount(text: str, *, aggregate: bool = False, code: str = "CNY") -> int:
     """Parse a signed CNY value exactly, allowing an explicit zero balance."""
     stripped = text.strip()
     match = re.fullmatch(r"[+-]?([0-9]+)(?:\.([0-9]+))?", stripped)
     if match is None:
         raise LedgerError("INVALID_AMOUNT")
     whole = match.group(1).lstrip("0") or "0"
-    if len(match.group(2) or "") > 2:
+    if len(match.group(2) or "") > currency(code).digits:
         raise LedgerError("AMOUNT_PRECISION")
     if len(whole) > 17:
         raise LedgerError("AMOUNT_OUT_OF_RANGE")
     with localcontext() as context:
         context.prec = 32
-        minor = int(Decimal(stripped) * 100)
+        minor = int(Decimal(stripped) * 10 ** currency(code).digits)
     return (
         checked_aggregate(minor)
         if aggregate
@@ -183,10 +182,17 @@ class EntityDialog(_ValidatedDialog):
         today = ledger.clock().astimezone(ZoneInfo(time_zone)).date()
         self.start = _date_editor(today, self, "balanceStart")
         self.opening = QLineEdit(self)
+        self.currency = QComboBox(self)
+        self.currency.addItems(list(CURRENCIES))
+        self.currency.setCurrentText(
+            str(row["currency_code"]) if row and entity == "account" else "CNY"
+        )
+        self.currency.setEnabled(row is None)
         self.opening.setObjectName("openingBalance")
-        self.opening.setPlaceholderText(self.tr("请输入金额；余额为零时填写 0.00"))
+        self.opening.setPlaceholderText(self.tr("请输入原币金额；余额为零时填写 0"))
         if entity == "account":
             form.addRow(self.tr("账户类型"), self.account_type)
+            form.addRow(self.tr("账户币种（创建后固定）"), self.currency)
             if row:
                 _select(self.account_type, row["account_type"])
                 hint = QLabel(
@@ -196,7 +202,7 @@ class EntityDialog(_ValidatedDialog):
                 form.addRow(hint)
             else:
                 form.addRow(self.tr("开始记账日期 *"), self.start)
-                form.addRow(self.tr("该日期的期初余额（元） *"), self.opening)
+                form.addRow(self.tr("该日期的期初余额（账户币种） *"), self.opening)
         self.parent_category = QComboBox(self)
         self.parent_category.setObjectName("parentCategory")
         self.parent_category.addItem(self.tr("无（一级分类）"), None)
@@ -274,13 +280,16 @@ class EntityDialog(_ValidatedDialog):
                 normalize_text(self.description.toPlainText(), max_length=1000) or ""
             )
         if self.entity == "account":
+            result["currency_code"] = self.currency.currentText()
             result["account_type"] = _selection(self.account_type)
             if not self.row:
                 start = cast(date, self.start.date().toPython())
                 validate_occurrence(start, self.time_zone, now=self.ledger.clock())
                 result.update(
                     balance_start_on=start,
-                    opening_balance_minor=_signed_amount(self.opening.text()),
+                    opening_balance_minor=_signed_amount(
+                        self.opening.text(), code=self.currency.currentText()
+                    ),
                 )
         if self.entity == "category":
             result.update(kind=_selection(self.kind), parent_id=self.parent_category.currentData())
@@ -425,7 +434,7 @@ class OperationDialog(_ValidatedDialog):
         _accounts(self.destination, ledger, retained=retained)
         self.amount = QLineEdit(self)
         self.amount.setObjectName("operationAmount")
-        self.amount.setPlaceholderText(self.tr("请输入金额，单位：元"))
+        self.amount.setPlaceholderText(self.tr("请输入原币金额"))
         self.day = _date_editor(today, self, "operationDate")
         self.note = QPlainTextEdit(self)
         self.note.setObjectName("operationNote")
@@ -441,13 +450,27 @@ class OperationDialog(_ValidatedDialog):
                 self.tr("到账账户 *") if operation.startswith("refund") else self.tr("账户 *"),
                 self.account,
             )
-        amount_label = self.tr("金额（元） *")
+        amount_label = self.tr("金额（账户币种） *")
         if operation == "adjust":
-            amount_label = self.tr("当前实际余额（元） *")
+            amount_label = self.tr("当前实际余额（账户币种） *")
             self.day.setEnabled(False)
         if operation == "opening":
-            amount_label = self.tr("期初余额（元） *")
+            amount_label = self.tr("期初余额（账户币种） *")
         form.addRow(amount_label, self.amount)
+        self.incoming = QLineEdit(self)
+        self.incoming.setObjectName("transferIncomingAmount")
+        if operation.startswith("transfer"):
+            form.addRow(self.tr("实际到账金额（转入币种）"), self.incoming)
+            if (
+                self._previous
+                and self._previous["currency_code"] != self._previous["to_currency_code"]
+            ):
+                self.incoming.setText(
+                    _money_text(
+                        cast(int, self._previous["to_amount_minor"]),
+                        str(self._previous["to_currency_code"]),
+                    )
+                )
         form.addRow(
             self.tr("开始记账日期 *") if operation == "opening" else self.tr("日期 *"), self.day
         )
@@ -474,8 +497,9 @@ class OperationDialog(_ValidatedDialog):
                 self.tr("原支出日期：")
                 + str(self._original["occurred_on"])
                 + self.tr("；本次可退上限：")
-                + _money_text(remaining)
-                + self.tr(" 元")
+                + _money_text(remaining, str(self._original["currency_code"]))
+                + " "
+                + str(self._original["currency_code"])
             )
         elif operation == "adjust":
             self.details.setText(self.tr("按当前实际余额记录差额；原有收支记录会完整保留。"))
@@ -485,7 +509,11 @@ class OperationDialog(_ValidatedDialog):
             )
             self.account.currentIndexChanged.connect(self._opening_date)
         if self._previous:
-            self.amount.setText(_money_text(cast(int, self._previous["amount_minor"])))
+            self.amount.setText(
+                _money_text(
+                    cast(int, self._previous["amount_minor"]), str(self._previous["currency_code"])
+                )
+            )
             self.note.setPlainText(str(self._previous["note"] or ""))
             original_day = date.fromisoformat(str(self._previous["occurred_on"]))
             self.day.setDate(QDate(original_day.year, original_day.month, original_day.day))
@@ -515,26 +543,32 @@ class OperationDialog(_ValidatedDialog):
         account_id = _selection(self.account)
         occurred_on = cast(date, self.day.date().toPython())
         validate_occurrence(occurred_on, self.time_zone, now=self.ledger.clock())
+        code = str(
+            next(row["currency_code"] for row in self._account_snapshots if row["id"] == account_id)
+        )
         if self.operation == "opening":
             row = next(item for item in self._account_snapshots if item["id"] == account_id)
             return {
                 "account_id": account_id,
                 "expected_account_version": row["version"],
                 "balance_start_on": occurred_on,
-                "opening_balance_minor": _signed_amount(self.amount.text()),
+                "opening_balance_minor": _signed_amount(self.amount.text(), code=code),
             }
         if self.operation == "adjust":
             if occurred_on != self.ledger.clock().astimezone(ZoneInfo(self.time_zone)).date():
                 raise LedgerError("ADJUSTMENT_DATE_MUST_BE_TODAY")
             return {
                 "account_id": account_id,
-                "target_balance_minor": _signed_amount(self.amount.text(), aggregate=True),
+                "target_balance_minor": _signed_amount(
+                    self.amount.text(), aggregate=True, code=code
+                ),
                 "occurred_on": occurred_on,
                 "time_zone": self.time_zone,
                 "reason": normalize_text(self.reason.text(), max_length=1000, required=True),
             }
         fields: dict[str, object] = {
-            "amount_minor": parse_amount(self.amount.text()),
+            "amount_minor": parse_amount(self.amount.text(), code),
+            "currency_code": code,
             "occurred_on": occurred_on,
             "time_zone": self.time_zone,
             "note": normalize_text(self.note.toPlainText(), max_length=4000) or "",
@@ -552,6 +586,15 @@ class OperationDialog(_ValidatedDialog):
             if account_id == destination_id:
                 raise LedgerError("INVALID_TRANSFER")
             fields.update(from_account_id=account_id, to_account_id=destination_id)
+            if self.incoming.text().strip():
+                destination_code = str(
+                    next(
+                        row["currency_code"]
+                        for row in self._account_snapshots
+                        if row["id"] == destination_id
+                    )
+                )
+                fields["to_amount_minor"] = parse_amount(self.incoming.text(), destination_code)
         else:
             assert self._original is not None
             if self._original["deleted_at_utc"] is not None:
@@ -571,6 +614,98 @@ class OperationDialog(_ValidatedDialog):
         result: dict[str, object] = {"id": self._id, "fields": fields}
         if self._previous:
             result["expected_version"] = self._previous["version"]
+        return result
+
+
+class CurrencyDialog(_ValidatedDialog):
+    """Review a display currency or a dated manual quotation before an audited write."""
+
+    def __init__(
+        self, ledger: LedgerService, *, rates: bool, parent: QWidget | None = None
+    ) -> None:
+        super().__init__(parent)
+        self.ledger, self.rates = ledger, rates
+        self.command_type = "rate.set.v1" if rates else "currency.set.v1"
+        self.setWindowTitle(self.tr("手动汇率") if rates else self.tr("统计显示币种"))
+        with ledger.database.read() as connection:
+            self.settings = dict(connection.execute("SELECT * FROM currency_settings").fetchone())
+            self.quotations = tuple(
+                dict(row) for row in connection.execute("SELECT * FROM exchange_rates")
+            )
+        form = QFormLayout()
+        self.code = QComboBox(self)
+        self.code.addItems([code for code in CURRENCIES if not rates or code != "CNY"])
+        self.code.setCurrentText("USD" if rates else str(self.settings["display_currency"]))
+        form.addRow(self.tr("币种"), self.code)
+        self.day = _date_editor(ledger.clock().date(), self, "rateDate")
+        self.rate = QLineEdit(self)
+        self.note = QLineEdit(self)
+        if rates:
+            policy = QLabel(
+                self.tr(
+                    "1 单位外币 = 填写数值 CNY。统计按交易日取此前最近汇率；修改汇率仅影响估值。"
+                ),
+                self,
+            )
+            policy.setWordWrap(True)
+            form.addRow(policy)
+            form.addRow(self.tr("生效日期"), self.day)
+            form.addRow(self.tr("人民币汇率"), self.rate)
+            form.addRow(self.tr("备注"), self.note)
+            self.previous = QComboBox(self)
+            self.previous.addItem(self.tr("新建汇率"), None)
+            for index, row in enumerate(self.quotations):
+                self.previous.addItem(
+                    f"{row['currency_code']} · {row['effective_on']} · {row['rate_text']}", index
+                )
+            self.previous.currentIndexChanged.connect(self._select_rate)
+            form.addRow(self.tr("已有汇率"), self.previous)
+        self.body.addLayout(form)
+        self._finish()
+
+    def _select_rate(self) -> None:
+        index = self.previous.currentData()
+        if index is None:
+            self.code.setEnabled(True)
+            self.day.setEnabled(True)
+            return
+        row = self.quotations[int(index)]
+        self.code.setCurrentText(str(row["currency_code"]))
+        self.day.setDate(QDate.fromString(str(row["effective_on"]), "yyyy-MM-dd"))
+        self.rate.setText(str(row["rate_text"]))
+        self.note.setText(str(row["note"]))
+        self.code.setEnabled(False)
+        self.day.setEnabled(False)
+
+    def payload(self) -> dict[str, object]:
+        """Use the originally displayed version rather than refreshing away a conflict."""
+        if not self.rates:
+            return {
+                "display_currency": self.code.currentText(),
+                "expected_version": self.settings["version"],
+            }
+        rate_fraction(self.rate.text())
+        day = cast(date, self.day.date().toPython())
+        validate_occurrence(day, self.ledger.time_zone, now=self.ledger.clock())
+        result: dict[str, object] = {
+            "currency_code": self.code.currentText(),
+            "effective_on": day.isoformat(),
+            "rate_text": self.rate.text(),
+            "note": self.note.text(),
+        }
+        row = next(
+            (
+                row
+                for row in self.quotations
+                if row["currency_code"] == result["currency_code"]
+                and row["effective_on"] == result["effective_on"]
+            ),
+            None,
+        )
+        if row is not None:
+            if self.previous.currentData() is None:
+                raise LedgerError("VERSION_CONFLICT")
+            result["expected_version"] = row["version"]
         return result
 
 
@@ -613,6 +748,12 @@ class ManagementPage(QWidget):
         self.include_archived.setObjectName("managementArchived")
         self.include_archived.toggled.connect(self.refresh)
         controls.addWidget(self.include_archived)
+        for currency_title, rates in ((self.tr("显示币种"), False), (self.tr("手动汇率"), True)):
+            button = QPushButton(currency_title, self)
+            button.clicked.connect(
+                lambda checked=False, edit_rates=rates: self._currency(edit_rates)
+            )
+            controls.addWidget(button)
         controls.addStretch()
         layout.addLayout(controls)
         self.status = QLabel(self)
@@ -622,7 +763,7 @@ class ManagementPage(QWidget):
         self.table = QTableWidget(0, 4, self)
         self.table.setObjectName("managementTable")
         self.table.setHorizontalHeaderLabels(
-            [self.tr("名称"), self.tr("类型 / 说明"), self.tr("余额（元）"), self.tr("状态")]
+            [self.tr("名称"), self.tr("类型 / 说明"), self.tr("余额（账户币种）"), self.tr("状态")]
         )
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
@@ -697,7 +838,11 @@ class ManagementPage(QWidget):
             values = [
                 str(row["name"]),
                 detail,
-                _money_text(balances.get(str(row["id"]), 0)) if entity == "account" else "",
+                str(row["currency_code"])
+                + " "
+                + _money_text(balances.get(str(row["id"]), 0), str(row["currency_code"]))
+                if entity == "account"
+                else "",
                 status,
             ]
             for column, value in enumerate(values):
@@ -705,11 +850,19 @@ class ManagementPage(QWidget):
             if row["id"] == identifier:
                 self.table.selectRow(index)
         if entity == "account":
-            self.status.setText(
-                self.tr("总资产（含已归档账户）：")
-                + _money_text(self.ledger.total_assets())
-                + self.tr(" 元。期初余额由你填写，转账不会改变总资产。")
+            from openledger.infrastructure.queries import LedgerQueries
+
+            overview = LedgerQueries(self.ledger.database).overview(
+                self.ledger.clock().astimezone(ZoneInfo(self.time_zone)).date()
             )
+            total = (
+                overview.currency_code
+                + " "
+                + _money_text(overview.total_assets_minor, overview.currency_code)
+                if overview.assets_complete
+                else self.tr("未完整估值，请补充手动汇率。")
+            )
+            self.status.setText(self.tr("总资产（含已归档账户）：") + total)
         elif not self._rows:
             self.status.setText(self.tr("还没有资料，点击「新建」开始。"))
         else:
@@ -775,6 +928,10 @@ class ManagementPage(QWidget):
         dialog = EntityDialog(
             self.ledger, _selection(self.entity), time_zone=self.time_zone, parent=self
         )
+        self._confirm(dialog, dialog.command_type)
+
+    def _currency(self, rates: bool) -> None:
+        dialog = CurrencyDialog(self.ledger, rates=rates, parent=self)
         self._confirm(dialog, dialog.command_type)
 
     def _edit(self) -> None:

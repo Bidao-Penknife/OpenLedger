@@ -18,6 +18,7 @@ from openledger.application.dto.parsing import (
     ParseStatus,
     Span,
 )
+from openledger.domain.currencies import currency, format_minor
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import parse_amount, validate_minor
 from openledger.domain.values import normalize_id
@@ -179,7 +180,7 @@ def _overlaps(span: Span, protected: tuple[Span, ...]) -> bool:
     return any(span.start < other.end and span.end > other.start for other in protected)
 
 
-def _amounts(text: str) -> tuple[_Amount, ...]:
+def _amounts(text: str, code: str = "CNY") -> tuple[_Amount, ...]:
     normalized = text.translate(_WIDTH)  # Every replacement is one character: indices stay valid.
     protected = _protected_spans(normalized)
     amounts: list[_Amount] = []
@@ -208,7 +209,7 @@ def _amounts(text: str) -> tuple[_Amount, ...]:
         try:
             if negative_prefix or leading_decimal:
                 raise LedgerError("INVALID_AMOUNT")
-            value = parse_amount(token.rstrip("万千").replace(",", "")) * multiplier
+            value = parse_amount(token.rstrip("万千").replace(",", ""), code) * multiplier
             if value % divisor:
                 raise LedgerError("AMOUNT_PRECISION")
             value //= divisor
@@ -221,7 +222,10 @@ def _amounts(text: str) -> tuple[_Amount, ...]:
         if _overlaps(span, protected) or any(_overlaps(span, (a.span,)) for a in amounts):
             continue
         try:
-            amounts.append(_Amount(span, _chinese_amount(match.group())))
+            chinese_value = _chinese_amount(match.group())
+            chinese_text = format_minor(chinese_value).removesuffix(".00")
+            native = parse_amount(chinese_text, code)
+            amounts.append(_Amount(span, native))
         except LedgerError as error:
             amounts.append(_Amount(span, None, error.code))
     return tuple(sorted(amounts, key=lambda item: item.span.start))
@@ -548,15 +552,22 @@ class LocalParser:
             return ParseResult(
                 request.draft_id, request.revision, self.provider_id, "unsupported", (), (invalid,)
             )
-        amounts = _amounts(request.text)
+        amounts = _amounts(request.text, request.currency_code)
         issues: list[ParseIssue] = []
         drafts: list[ParsedDraft] = []
-        if re.search(r"美元|美金|欧元|英镑|日元|USD|EUR|GBP|\$", request.text, re.IGNORECASE):
-            issues.append(
-                ParseIssue(
-                    "UNSUPPORTED_CURRENCY", "currency_code", "当前仅支持人民币，请核对币种。"
-                )
-            )
+        explicit_codes = {
+            code
+            for code, labels in {
+                "CNY": r"人民币|CNY|RMB|￥",
+                "USD": r"美元|美金|USD|\$",
+                "EUR": r"欧元|EUR|€",
+                "GBP": r"英镑|GBP|£",
+                "JPY": r"日元|JPY",
+                "HKD": r"港币|港元|HKD",
+                "KWD": r"KWD",
+            }.items()
+            if re.search(labels, request.text, re.IGNORECASE)
+        }
         if re.search(r"转账|转到|转入|转出|退款|退回", request.text):
             issues.append(
                 ParseIssue(
@@ -590,16 +601,6 @@ class LocalParser:
             candidate_id = str(
                 uuid5(NAMESPACE_URL, f"{request.draft_id}:{request.revision}:{index}")
             )
-            if amount.issue:
-                issues.append(
-                    ParseIssue(
-                        amount.issue,
-                        "amount_minor",
-                        "金额格式或精度无效，请核对金额。",
-                        amount.span,
-                        candidate_id,
-                    )
-                )
             kind = _kind(text, start)
             if kind.reason_code == "FIELD_CONFLICT":
                 issues.append(
@@ -617,6 +618,39 @@ class LocalParser:
             if payment.value is None and not payment.alternatives:
                 payment = _candidate(None)
             account = _account(text, start, request, payment)
+            native_code = next(
+                (
+                    choice.currency_code
+                    for choice in request.account_choices
+                    if choice.id == account.value
+                ),
+                request.currency_code,
+            )
+            native_amount = next(
+                (item for item in _amounts(request.text, native_code) if item.span == amount.span),
+                amount,
+            )
+            amount = native_amount
+            if amount.issue:
+                issues.append(
+                    ParseIssue(
+                        amount.issue,
+                        "amount_minor",
+                        "金额格式或精度无效，请核对金额。",
+                        amount.span,
+                        candidate_id,
+                    )
+                )
+            if explicit_codes and explicit_codes != {native_code}:
+                issues.append(
+                    ParseIssue(
+                        "UNSUPPORTED_CURRENCY",
+                        "currency_code",
+                        "文字币种与所选账户不一致，请核对账户和金额。",
+                        span,
+                        candidate_id,
+                    )
+                )
             category = _category(text, start, kind.value, request.category_choices)
             for field_name, field_value in (
                 ("payment_method_id", payment),
@@ -641,9 +675,9 @@ class LocalParser:
                     time_zone=request.time_zone,
                     kind=kind,
                     amount_minor=_candidate(
-                        amount.value,
+                        native_amount.value,
                         spans=(amount.span,) if amount.value is not None else (),
-                        rule="amount.cny.v1",
+                        rule="amount.cny.v1" if native_code == "CNY" else "amount.native.v1",
                         reason=amount.issue or ("MISSING_AMOUNT" if amount.value is None else None),
                     ),
                     occurred_on=business_date,
@@ -662,6 +696,7 @@ class LocalParser:
                     note=_candidate(
                         text.strip(), "rule_suggestion", spans=(span,), rule="note.original.v1"
                     ),
+                    currency_code=native_code,
                 )
             )
         status: ParseStatus = "single"
@@ -720,4 +755,10 @@ class LocalParser:
             return ParseIssue("INVALID_TIMEZONE", "time_zone", "时区无效，请选择有效时区。")
         if request.locale not in ("zh_CN", "zh-CN"):
             return ParseIssue("UNSUPPORTED_LOCALE", "locale", "当前本地规则仅支持中文。")
+        try:
+            currency(request.currency_code)
+            for choice in request.account_choices:
+                currency(choice.currency_code)
+        except LedgerError:
+            return ParseIssue("UNSUPPORTED_CURRENCY", "currency_code", "账户币种无效。")
         return None

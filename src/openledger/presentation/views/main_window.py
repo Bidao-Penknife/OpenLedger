@@ -2,12 +2,13 @@
 
 from collections.abc import Mapping
 from datetime import date
+from importlib.resources import files
 from typing import cast
 from uuid import uuid4
 from zoneinfo import ZoneInfo, available_timezones
 
-from PySide6.QtCore import QDate, Qt, QTimer
-from PySide6.QtGui import QAction, QCloseEvent, QKeySequence
+from PySide6.QtCore import QDate, Qt, QTimer, QUrl
+from PySide6.QtGui import QAction, QCloseEvent, QDesktopServices, QKeySequence
 from PySide6.QtWidgets import (
     QButtonGroup,
     QCheckBox,
@@ -365,7 +366,10 @@ class MainWindow(QMainWindow):
     def _choices(self, entity: str) -> tuple[ParseChoice, ...]:
         return tuple(
             ParseChoice(
-                str(row["id"]), str(row["name"]), kind=cast(str | None, row.get("transaction_kind"))
+                str(row["id"]),
+                str(row["name"]),
+                kind=cast(str | None, row.get("transaction_kind")),
+                currency_code=str(row.get("currency_code", "CNY")),
             )
             for row in self.ledger.entities(entity)
         )
@@ -404,6 +408,7 @@ class MainWindow(QMainWindow):
                 if row["default_account_id"]
             ),
             locale=self.settings.language,
+            currency_code=self.form.account_currency(),
         )
 
     def _accept_parse_result(self, result: ParseResult, request: ParseRequest) -> None:
@@ -501,7 +506,7 @@ class MainWindow(QMainWindow):
 
     def _apply_candidate(self, candidate: ParsedDraft) -> None:
         self._candidate = candidate
-        values: dict[str, object] = {}
+        values: dict[str, object] = {"currency_code": candidate.currency_code}
         values["time_zone"] = candidate.time_zone
         explanations: list[str] = []
         origins = {
@@ -751,7 +756,18 @@ class MainWindow(QMainWindow):
             ("income", overview.income_minor),
             ("expense", overview.expense_minor),
         ]:
-            self.metrics[key].setText("¥ " + money_text(amount))
+            complete = {
+                "assets": overview.assets_complete,
+                "income": overview.income_complete,
+                "expense": overview.expense_complete,
+            }[key]
+            self.metrics[key].setText(
+                ("¥" if overview.currency_code == "CNY" else overview.currency_code)
+                + " "
+                + money_text(amount, overview.currency_code)
+                if complete
+                else self.tr("未完整估值")
+            )
         self.first_run.setText(
             self.tr("先在「账户与管理」创建账户，明确期初余额与起算日期。")
             if not overview.balances
@@ -912,6 +928,13 @@ class MainWindow(QMainWindow):
         apply.setObjectName("applySettings")
         apply.clicked.connect(self._apply_settings)
         layout.addWidget(apply)
+        help_button = QPushButton(self.tr("完整使用手册（离线）"), page)
+        help_button.clicked.connect(
+            lambda: QDesktopServices.openUrl(
+                QUrl.fromLocalFile(str(files("openledger.resources").joinpath("help/manual.html")))
+            )
+        )
+        layout.addWidget(help_button)
         hint = QLabel(
             self.tr(
                 "初始时区为 Asia/Shanghai，可在这里修改。"

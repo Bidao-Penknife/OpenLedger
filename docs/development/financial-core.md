@@ -1,5 +1,7 @@
 # 资金核心接口
 
+Schema v2 / Windows 1.1 / Android 0.3 已扩展为账户原币最小单位整数。CNY 分只是 2 位精度的默认情形；JPY 为整数、KWD 为 3 位精度。换汇记录两端实际金额、退款同币种、估值不改余额。详见 [ADR-020](../adr/020-native-currency-and-capture-inbox.md) 和 [完整手册](../user/complete-manual.md)。下文的旧 CNY 示例继续有效。
+
 资金核心自阶段 4 建立，不依赖 GUI。当前入口是 `LedgerPort`，SQLite 实现为 `LedgerService`；阶段 5 接入桌面确认，阶段 6 增加批次导入，阶段 7 的快速窗口复用同一个资金 writer。服务不会从“微信支付”等渠道猜测实际扣款账户，AI 也只提供待确认草稿。
 
 ## 创建隔离演示账本

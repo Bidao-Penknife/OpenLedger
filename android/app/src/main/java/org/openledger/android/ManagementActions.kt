@@ -144,7 +144,16 @@ class ManagementActions(private val a: MainActivity) {
                 a.getString(R.string.no_binding),
             )
         val opening =
-            a.edit(a.getString(R.string.opening_amount), "0.00", amount = true, signed = true)
+            a.edit(a.getString(R.string.opening_amount), "0", amount = true, signed = true)
+        val currency =
+            a.spinner(CurrencyCatalog.codes).apply {
+                setSelection(
+                    CurrencyCatalog.codes
+                        .indexOf(item?.optString("currency_code") ?: "CNY")
+                        .coerceAtLeast(0)
+                )
+                isEnabled = item == null
+            }
         var day = a.snapshot.getString("today")
         val date = a.button(day) {}
         date.setOnClickListener {
@@ -159,6 +168,8 @@ class ManagementActions(private val a: MainActivity) {
         if (entity in listOf("book", "account")) form.addView(description)
         if (entity == "account") {
             form.addView(accountType)
+            form.addView(a.label(a.getString(R.string.account_currency), 13))
+            form.addView(currency)
             if (item == null) {
                 form.addView(opening)
                 form.addView(date)
@@ -191,6 +202,7 @@ class ManagementActions(private val a: MainActivity) {
                 payload.put("description", description.text.toString())
             if (entity == "account") {
                 payload.put("account_type", types[accountType.selectedItemPosition])
+                payload.put("currency_code", CurrencyCatalog.codes[currency.selectedItemPosition])
                 if (item == null)
                     payload
                         .put("opening_amount", opening.text.toString())
@@ -232,7 +244,8 @@ class ManagementActions(private val a: MainActivity) {
                 a.edit(
                     a.getString(if (opening) R.string.opening_amount else R.string.target_balance),
                     a.money(
-                        account.getLong(if (opening) "opening_balance_minor" else "balance_minor")
+                        account.getLong(if (opening) "opening_balance_minor" else "balance_minor"),
+                        account.getString("currency_code"),
                     ),
                     amount = true,
                     signed = true,

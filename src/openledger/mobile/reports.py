@@ -33,6 +33,7 @@ def report(service: AnalyticsService, body: dict[str, Any]) -> dict[str, Any]:
         "ranking_dimension",
         "ranking_metric",
         "rank_limit",
+        "currency_code",
     }:
         raise LedgerError("INVALID_FILTER")
     dimensions: dict[str, tuple[str, ...]] = {}
@@ -48,7 +49,13 @@ def report(service: AnalyticsService, body: dict[str, Any]) -> dict[str, Any]:
     start, end = body.get("start_on"), body.get("end_on")
     if not isinstance(start, str) or not isinstance(end, str):
         raise LedgerError("INVALID_FILTER")
-    filters = AnalyticsFilter(date.fromisoformat(start), date.fromisoformat(end), **dimensions)
+    from openledger.infrastructure.currencies import display_currency
+
+    with service.database.read() as connection:
+        code = body.get("currency_code", display_currency(connection))
+    filters = AnalyticsFilter(
+        date.fromisoformat(start), date.fromisoformat(end), **dimensions, currency_code=code
+    )
     return cast(
         dict[str, Any],
         exact_json(

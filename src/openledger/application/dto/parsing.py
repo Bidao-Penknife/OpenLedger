@@ -24,6 +24,7 @@ class ParseChoice:
     name: str
     kind: str | None = None
     aliases: tuple[str, ...] = ()
+    currency_code: str = "CNY"
 
 
 @dataclass(frozen=True)
@@ -50,6 +51,7 @@ class ParseRequest:
     payment_method_choices: tuple[ParseChoice, ...] = ()
     channel_account_mappings: tuple[ChannelAccountMapping, ...] = ()
     locale: str = "zh_CN"
+    currency_code: str = "CNY"
 
 
 @dataclass(frozen=True)
@@ -89,6 +91,7 @@ class ParsedDraft:
     merchant: FieldCandidate[str] = field(default_factory=lambda: FieldCandidate(None))
     location: FieldCandidate[str] = field(default_factory=lambda: FieldCandidate(None))
     note: FieldCandidate[str] = field(default_factory=lambda: FieldCandidate(None))
+    currency_code: str = "CNY"
 
     @property
     def occurrence_precision(self) -> str:

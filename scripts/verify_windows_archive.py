@@ -46,6 +46,9 @@ def main() -> int:
             "OpenLedger/licenses/Qt/LGPL-3.0-only.txt",
             "OpenLedger/_internal/openledger/resources/themes/light.qss",
             "OpenLedger/_internal/openledger/resources/migrations/0001.sql",
+            "OpenLedger/_internal/openledger/resources/migrations/0002.sql",
+            "OpenLedger/_internal/openledger/resources/currencies.json",
+            "OpenLedger/_internal/openledger/resources/help/manual.html",
             "OpenLedger/_internal/openledger/resources/translations/openledger_en_US.qm",
         ]:
             if required not in names:
@@ -54,6 +57,12 @@ def main() -> int:
         expected_sql = (project / "src/openledger/resources/migrations/0001.sql").read_bytes()
         if sql != expected_sql:
             raise RuntimeError("Bundled migration bytes differ from source.")
+        for resource in ("migrations/0002.sql", "currencies.json", "help/manual.html"):
+            if (
+                archive.read("OpenLedger/_internal/openledger/resources/" + resource)
+                != (project / "src/openledger/resources" / resource).read_bytes()
+            ):
+                raise RuntimeError("Bundled currency schema/manual differs from source.")
         translation = archive.read(
             "OpenLedger/_internal/openledger/resources/translations/openledger_en_US.qm"
         )

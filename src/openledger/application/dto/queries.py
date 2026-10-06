@@ -46,3 +46,8 @@ class Overview:
     month_start: date
     month_end: date
     change_seq: int
+    currency_code: str = "CNY"
+    assets_complete: bool = True
+    income_complete: bool = True
+    expense_complete: bool = True
+    missing_rates: tuple[str, ...] = ()

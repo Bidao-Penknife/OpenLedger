@@ -13,6 +13,7 @@ from openledger.application.dto.queries import Overview, TransactionFilter, Tran
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import checked_aggregate
 from openledger.domain.values import normalize_id
+from openledger.infrastructure.currencies import Valuation, display_currency
 from openledger.infrastructure.database.database import Database
 
 _KINDS = {"income", "expense", "expense_refund", "transfer", "opening", "adjustment"}
@@ -235,14 +236,40 @@ class LedgerQueries:
             ):
                 balances[entry[0]] += int(entry[1])
             balances = {key: checked_aggregate(value) for key, value in balances.items()}
-            total_assets = checked_aggregate(sum(balances.values()))
+            target = display_currency(connection)
+            valuation = Valuation(connection, target)
+            missing: set[str] = set()
+            assets_complete = income_complete = expense_complete = True
+            total_assets = 0
+            for account in connection.execute("SELECT id,currency_code FROM accounts"):
+                try:
+                    total_assets += valuation.convert(
+                        balances[account["id"]], account["currency_code"], reference_date
+                    )
+                except LedgerError as error:
+                    if error.code != "EXCHANGE_RATE_MISSING":
+                        raise
+                    missing.add(str(error))
+                    assets_complete = False
+            # Valuations are display integers, not stored native balances; retain all digits.
             totals = {"income": 0, "expense": 0, "expense_refund": 0}
             for row in connection.execute(
-                "SELECT kind,amount_minor FROM v_cashflow_transactions "
+                "SELECT kind,amount_minor,currency_code,occurred_on FROM v_cashflow_transactions "
                 "WHERE occurred_on>=? AND occurred_on<=?",
                 (month_start.isoformat(), month_end.isoformat()),
             ):
-                totals[row[0]] += int(row[1])
+                try:
+                    totals[row[0]] += valuation.convert(
+                        int(row[1]), row["currency_code"], date.fromisoformat(row["occurred_on"])
+                    )
+                except LedgerError as error:
+                    if error.code != "EXCHANGE_RATE_MISSING":
+                        raise
+                    missing.add(str(error))
+                    if row[0] == "income":
+                        income_complete = False
+                    else:
+                        expense_complete = False
             summary: Mapping[str, int] = totals
         expense = summary["expense"] - summary["expense_refund"]
         return Overview(
@@ -256,4 +283,9 @@ class LedgerQueries:
             month_start=month_start,
             month_end=month_end,
             change_seq=change_seq,
+            currency_code=target,
+            assets_complete=assets_complete,
+            income_complete=income_complete,
+            expense_complete=expense_complete,
+            missing_rates=tuple(sorted(missing)),
         )

@@ -1,0 +1,404 @@
+[
+  {
+    "coordinate": "com.google.android.datatransport:transport-api:2.2.1",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/datatransport/transport-api/2.2.1/transport-api-2.2.1.aar",
+    "artifact_sha256": "e62f73ba1c7f5d15f5d86d8e9a298c42ccd0648e7ce60b9e312f2ecd123b5ed0",
+    "pom_sha256": "8118f805b855f18f1d12e5af59e914a7f6206f71bb1d1192a8ab9a8db4107afe",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      },
+      {
+        "name": "embedded license",
+        "file": "transport-api-third_party_licenses.json",
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "name": "embedded license",
+        "file": "transport-api-third_party_licenses.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.datatransport:transport-backend-cct:2.3.3",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/datatransport/transport-backend-cct/2.3.3/transport-backend-cct-2.3.3.aar",
+    "artifact_sha256": "b22a14d560a590dc875e902424b29a13a02d1faf297b7c39a9007967ffadccbd",
+    "pom_sha256": "ab4e3c8df8bb695d6466df399f4c2e0da977c04d2fdea8a34ee51281683175b0",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      },
+      {
+        "name": "embedded license",
+        "file": "transport-backend-cct-third_party_licenses.json",
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "name": "embedded license",
+        "file": "transport-backend-cct-third_party_licenses.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.datatransport:transport-runtime:2.2.6",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/datatransport/transport-runtime/2.2.6/transport-runtime-2.2.6.aar",
+    "artifact_sha256": "d83ad23c134429691161c92476a3c83df236cd1f8badbfd4f00723b4eccd741c",
+    "pom_sha256": "aff04e2de298277827d2031cc265b5a28a030e54210a9ba3a018aa0859d29589",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      },
+      {
+        "name": "embedded license",
+        "file": "transport-runtime-third_party_licenses.json",
+        "sha256": "ca9b2e984212979d947d460c8da1e1ac6adee64961784b513b453dcb634298c6"
+      },
+      {
+        "name": "embedded license",
+        "file": "transport-runtime-third_party_licenses.txt",
+        "sha256": "00bdeca73c2a7724261eb7443713e3b4b913ba0907dfe5c4d67d87f3920c1e6e"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.gms:play-services-base:18.5.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/gms/play-services-base/18.5.0/play-services-base-18.5.0.aar",
+    "artifact_sha256": "59a5c0c2da12311d75d965ce1f419498536b1a167fb28ff7dfc2dfd9cefa4157",
+    "pom_sha256": "2570b515c2717af386c890e97f644782e3f86da7b677a4ff1036147e7ea622a4",
+    "licenses": [
+      {
+        "name": "Android Software Development Kit License",
+        "url": "https://developer.android.com/studio/terms.html"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-base-third_party_licenses.json",
+        "sha256": "f49b0d3754fe9430ca8e1d7578b98f9c74c912fa5182bee2db86f0c386ab7970"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-base-third_party_licenses.txt",
+        "sha256": "653d2e7a2bb02c79b897e826df9c3b2d8e8b1a3b2cef5e29585124fa455ddaf5"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.gms:play-services-basement:18.4.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/gms/play-services-basement/18.4.0/play-services-basement-18.4.0.aar",
+    "artifact_sha256": "ce5c936fd66814b3602f5c6a5e929911ff973d4b05f6de9996da596bef97cad2",
+    "pom_sha256": "05ca7c0ace0d6260931f97ed32c60ce598071ff560d3fa44f49e6f0695d2b687",
+    "licenses": [
+      {
+        "name": "Android Software Development Kit License",
+        "url": "https://developer.android.com/studio/terms.html"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-basement-third_party_licenses.json",
+        "sha256": "f49b0d3754fe9430ca8e1d7578b98f9c74c912fa5182bee2db86f0c386ab7970"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-basement-third_party_licenses.txt",
+        "sha256": "653d2e7a2bb02c79b897e826df9c3b2d8e8b1a3b2cef5e29585124fa455ddaf5"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.1",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/gms/play-services-mlkit-text-recognition-chinese/16.0.1/play-services-mlkit-text-recognition-chinese-16.0.1.aar",
+    "artifact_sha256": "0a3edb3967097536f72ab7bd68496c624a0752ceff5c31a4bc88d20c6f668e06",
+    "pom_sha256": "52630cd1de3f132548d7f25c173acafac8250c6dca1f9255a4e1e618ed93d0c0",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-mlkit-text-recognition-chinese-third_party_licenses.json",
+        "sha256": "1d58e3d1afdf9d30cdd8a2c47b34e364385c2b8ff388315eab0d0d567df6cec0"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-mlkit-text-recognition-chinese-third_party_licenses.txt",
+        "sha256": "6da40abfe5e602989582ae0fbe1e86c1a781dffe7dda8a457f0263c5baa2451c"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.gms:play-services-mlkit-text-recognition-common:19.1.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/gms/play-services-mlkit-text-recognition-common/19.1.0/play-services-mlkit-text-recognition-common-19.1.0.aar",
+    "artifact_sha256": "3be02b3c3c829476100f01d0ab79f0b4a923da23909d3ac63e486d1a63381c58",
+    "pom_sha256": "a2d1ec395cd22dec73b0cfcf1bc384d8c77c58f4a8b61c78dfbf6e541d9cc365",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-mlkit-text-recognition-common-third_party_licenses.json",
+        "sha256": "1d58e3d1afdf9d30cdd8a2c47b34e364385c2b8ff388315eab0d0d567df6cec0"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-mlkit-text-recognition-common-third_party_licenses.txt",
+        "sha256": "6da40abfe5e602989582ae0fbe1e86c1a781dffe7dda8a457f0263c5baa2451c"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.gms:play-services-tasks:18.2.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/gms/play-services-tasks/18.2.0/play-services-tasks-18.2.0.aar",
+    "artifact_sha256": "7f2aaa8f502068eaf54356ca92aec04271d6e7c416c52c45c0d23440fcbd1654",
+    "pom_sha256": "6b99c48a895d155e58abcee66cc22146db83abd5d84caf6c8f7a2aea9b1bcd21",
+    "licenses": [
+      {
+        "name": "Android Software Development Kit License",
+        "url": "https://developer.android.com/studio/terms.html"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-tasks-third_party_licenses.json",
+        "sha256": "f49b0d3754fe9430ca8e1d7578b98f9c74c912fa5182bee2db86f0c386ab7970"
+      },
+      {
+        "name": "embedded license",
+        "file": "play-services-tasks-third_party_licenses.txt",
+        "sha256": "653d2e7a2bb02c79b897e826df9c3b2d8e8b1a3b2cef5e29585124fa455ddaf5"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.android.odml:image:1.0.0-beta1",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/android/odml/image/1.0.0-beta1/image-1.0.0-beta1.aar",
+    "artifact_sha256": "2e71aa31f83a9415277f119de67195726f07d1760e9542c111778c320e3aa1f2",
+    "pom_sha256": "795f4793c375eedf4332a0381082981a5ce70b7a0a776221ca24ad9d40cbea1c",
+    "licenses": [
+      {
+        "name": "Android Software Development Kit License",
+        "url": "https://developer.android.com/studio/terms.html"
+      },
+      {
+        "name": "embedded license",
+        "file": "image-third_party_licenses.json",
+        "sha256": "595c1aeca965ae48385ab3ce6f1b5b59fa029d5d18343ca63df936503db0451e"
+      },
+      {
+        "name": "embedded license",
+        "file": "image-third_party_licenses.txt",
+        "sha256": "bb0feabf4a92027b248c075821ee93e14ad4ce53fc3ebb9ca9ee18b316f6aa25"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.firebase:firebase-annotations:16.0.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/firebase/firebase-annotations/16.0.0/firebase-annotations-16.0.0.jar",
+    "artifact_sha256": "8830f2e8a5e434cbc5e4bd18133073b6e8518a8ce8ec2ce6f3b273c91d9664c2",
+    "pom_sha256": "82c6d040edcb3c158b5b9865601d2bd742abcbd97cbd98903bde059da8edd087",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.firebase:firebase-components:16.1.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/firebase/firebase-components/16.1.0/firebase-components-16.1.0.aar",
+    "artifact_sha256": "82e91aa5ed186eedaf1f2210f5d241ba6e4456cf0c32949d5cdbe152b0e2e88b",
+    "pom_sha256": "8320c67176d416edcf58b65b2ef491b42faa1360f3cd7bf3d8c2eea4298ae70e",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      },
+      {
+        "name": "embedded license",
+        "file": "firebase-components-third_party_licenses.json",
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "name": "embedded license",
+        "file": "firebase-components-third_party_licenses.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.firebase:firebase-encoders-json:17.1.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/firebase/firebase-encoders-json/17.1.0/firebase-encoders-json-17.1.0.aar",
+    "artifact_sha256": "8295c755bcadc87a2aaee5b9e568f27fd138fd45ff1159a8ee747cf4c3a38d85",
+    "pom_sha256": "c823cbed7a0e75bf30fedbba42ff1c0c8752e3dc16edccf7d0f2e5d6cb69c7a8",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      },
+      {
+        "name": "embedded license",
+        "file": "firebase-encoders-json-third_party_licenses.json",
+        "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+      },
+      {
+        "name": "embedded license",
+        "file": "firebase-encoders-json-third_party_licenses.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.firebase:firebase-encoders:16.1.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/firebase/firebase-encoders/16.1.0/firebase-encoders-16.1.0.jar",
+    "artifact_sha256": "8f89a74298bbccc2c543385208a2f0c67f603ce67e6ec21cc772e98e688f7cf5",
+    "pom_sha256": "687bd5744fdc54fce404a4403ebbdb847fbf651b9b87293a4a56fc4d8fc68e1c",
+    "licenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.guava:listenablefuture:1.0",
+    "artifact_url": "https://repo.maven.apache.org/maven2/com/google/guava/listenablefuture/1.0/listenablefuture-1.0.jar",
+    "artifact_sha256": "e4ad7607e5c0477c6f890ef26a49cb8d1bb4dffb650bab4502afee64644e3069",
+    "pom_sha256": "53873caf26bc1ed8a567ea6c939ab2aaa3f47a5e32d5cade95ddf5080d23238a",
+    "licenses": [
+      {
+        "name": "Apache-2.0",
+        "file": "Kotlin.txt",
+        "url": "https://github.com/google/guava/blob/master/LICENSE"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.mlkit:common:18.11.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/mlkit/common/18.11.0/common-18.11.0.aar",
+    "artifact_sha256": "66408a08dbb2465687ff5dd0c8f6410b56549ce3ecf449d9096f3712282131d0",
+    "pom_sha256": "e50ec6f1d7c77025cdc4853b835ca4e8b1394966c5029543a699baf252aea057",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "common-third_party_licenses.json",
+        "sha256": "c421e0ab8fb44de3aea1eaae744d7e68a1d8905e1e309368bf0ca82c95ad9d3f"
+      },
+      {
+        "name": "embedded license",
+        "file": "common-third_party_licenses.txt",
+        "sha256": "86ed829b6e5a860ae586e8aef21f14c95fa5f5255f85f6a9388e9c7b3ee48e14"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.mlkit:text-recognition-bundled-common:17.0.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/mlkit/text-recognition-bundled-common/17.0.0/text-recognition-bundled-common-17.0.0.aar",
+    "artifact_sha256": "fb1d4e26d69125659b6f5a94f03cce145544b0116807d04333335a9775636e05",
+    "pom_sha256": "8472b8352251f8625283935821ef2112e4b345d4a7249b57070798efbca598e9",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "text-recognition-bundled-common-third_party_licenses.json",
+        "sha256": "02919d2466f2a05d0f1c4822ccad7dd105010211e918672d40fea34d2c3bf793"
+      },
+      {
+        "name": "embedded license",
+        "file": "text-recognition-bundled-common-third_party_licenses.txt",
+        "sha256": "b7d81734e6144858be69ba7538c0f4fcb9cc6a904437af90d6186abfe2a9627c"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.mlkit:text-recognition-chinese:16.0.1",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/mlkit/text-recognition-chinese/16.0.1/text-recognition-chinese-16.0.1.aar",
+    "artifact_sha256": "cb81f8036a6410e036cff88350ee8548e5258ff6f9e2ffbc7455defa7f672dbe",
+    "pom_sha256": "8b1d0ef4c9a114e8a2913f0acfc0ded142a3edcbf95a6b4e5d347ceb1698936a",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "text-recognition-chinese-third_party_licenses.json",
+        "sha256": "02919d2466f2a05d0f1c4822ccad7dd105010211e918672d40fea34d2c3bf793"
+      },
+      {
+        "name": "embedded license",
+        "file": "text-recognition-chinese-third_party_licenses.txt",
+        "sha256": "b7d81734e6144858be69ba7538c0f4fcb9cc6a904437af90d6186abfe2a9627c"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.mlkit:vision-common:17.3.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/mlkit/vision-common/17.3.0/vision-common-17.3.0.aar",
+    "artifact_sha256": "c0085ca5fba00f11529c0a83b12851ea6c599bbcc8affd927e914b29a743459f",
+    "pom_sha256": "4e649af84e58d4c824eeabc8522e142fb30be41524b4001b699f3e95bdd366ec",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "vision-common-third_party_licenses.json",
+        "sha256": "970e95c84c518383a7d0a5c861d2407e8ba22b9f7a536140b3d874ea3e68e44b"
+      },
+      {
+        "name": "embedded license",
+        "file": "vision-common-third_party_licenses.txt",
+        "sha256": "33b776d5cae5981fc08236f37ccb15cf7ea91c8d17bd38a0a612d19eaacfe160"
+      }
+    ]
+  },
+  {
+    "coordinate": "com.google.mlkit:vision-interfaces:16.3.0",
+    "artifact_url": "https://dl.google.com/dl/android/maven2/com/google/mlkit/vision-interfaces/16.3.0/vision-interfaces-16.3.0.aar",
+    "artifact_sha256": "8f0192a26d01b728a01a15a620d829fff7095822822694438a93127c04cb16fb",
+    "pom_sha256": "3422392e93c7f29c30149cc37e39f535ad32705fa6e015d8cae8a8f763e73ff6",
+    "licenses": [
+      {
+        "name": "ML Kit Terms of Service",
+        "url": "https://developers.google.com/ml-kit/terms"
+      },
+      {
+        "name": "embedded license",
+        "file": "vision-interfaces-third_party_licenses.json",
+        "sha256": "750f3c7ce8c0f0786436c51a027f093d050b0634b8d097fb80ca3f343306b1da"
+      },
+      {
+        "name": "embedded license",
+        "file": "vision-interfaces-third_party_licenses.txt",
+        "sha256": "39ce1aa1dc8a3209adcafd71fb1a5c993cb1850abd2b2d7921e33dca3940507f"
+      }
+    ]
+  },
+  {
+    "coordinate": "javax.inject:javax.inject:1",
+    "artifact_url": "https://repo.maven.apache.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
+    "artifact_sha256": "91c77044a50c481636c32d916fd89c9118a72195390452c81065080f957de7ff",
+    "pom_sha256": "943e12b100627804638fa285805a0ab788a680266531e650921ebfe4621a8bfa",
+    "licenses": [
+      {
+        "name": "Apache-2.0",
+        "file": "Kotlin.txt",
+        "url": "https://github.com/javax-inject/javax-inject"
+      }
+    ]
+  }
+]

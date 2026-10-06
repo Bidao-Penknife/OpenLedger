@@ -1,4 +1,9 @@
-# OpenLedger Android 0.2.0-beta1
+# OpenLedger Android 0.3.0-beta1
+
+新增通知访问与支付应用白名单、持久待确认箱、更新去重、退款/转账/收款分类；中文离线 OCR 保留原图和所有候选金额；系统中文语音及文字回退；165 个有数值精度的 ISO 币种、实际双端换汇、手动日期汇率与估值币种。通知/OCR/语音均经明确确认才入账，图片和账目随完整备份迁移。
+
+中文 OCR 模型随 APK 打包，无需首次下载；Google ML Kit 具有第三方条款和设备/性能诊断行为，首次使用前披露，启动不初始化 SDK。语音服务可能联网，调用前确认；无服务、权限拒绝或失败时可用文字。
+
 
 中文 Android 手机应用，与 Windows 版本共享 Python 3.12 记账核心、SQLite Schema v1、中文规则解析和资金事务。本期使用 Kotlin 原生界面，技术依据见 [ADR-019](../docs/adr/019-android-shared-core.md)。
 
@@ -17,13 +22,13 @@
 - 中文与英语界面、浅色/深色/系统主题、可选 IANA 时区；桌面快捷方式与快捷设置磁贴。
 - 已确认请求在进程重启后可恢复，UUID 回执防止重复扣款。
 
-Android 版本为 `0.2.0-beta1`，versionCode 为 2。APK 包名仍为 `org.openledger.android.preview`，公开测试包继续使用原调试签名。最低 Android 7.0 / API 24，支持 `arm64-v8a` 和 `x86_64`，不支持 32 位手机。
+Android 版本为 `0.3.0-beta1`，versionCode 为 3。APK 包名仍为 `org.openledger.android.preview`，公开测试包继续使用原调试签名。最低 Android 7.0 / API 24，支持 `arm64-v8a` 和 `x86_64`，不支持 32 位手机。
 
-手机与桌面各自本地保存。AI 默认关闭，不绑定服务；只有明确点击 AI 解析或检查更新才联网。APK 仅申请普通 `INTERNET` 权限，文件读写使用系统选择器，不读取支付通知。卸载或清除应用数据仍会删除账本，请先导出完整备份。实际云同步与插件市场按原需求留待扩展。
+手机与桌面各自本地保存。AI 默认关闭，不绑定服务；AI 和检查更新均需显式触发。OCR SDK 可能发送设备/性能诊断，普通系统语音服务可能联网。APK 申请 `INTERNET`、网络状态和运行时麦克风权限；通知服务必须由用户授权访问并勾选来源应用。文件读写使用系统选择器，无短信、无障碍或全盘存储权限。卸载或清除应用数据仍会删除账本，请先导出完整备份。实际云同步与插件市场按原需求留待扩展。
 
 ## 下载与功能路线
 
-[新版 APK 下载](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.2.0-beta1)。原 alpha 与 Windows 版本保留在 [v1.0.0rc1](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)。操作方法见[手机使用指南](../docs/user/android.md)，功能与剩余兼容性工作见[Android 路线](../docs/development/android-roadmap.md)。
+[新版 APK 下载](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.3.0-beta1)。原 alpha 与 Windows 版本保留在 [v1.0.0rc1](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/v1.0.0rc1)。操作方法见[完整图文使用手册](../docs/user/complete-manual.md)，功能与剩余兼容性工作见[Android 路线](../docs/development/android-roadmap.md)。
 
 ## 构建
 
@@ -52,7 +57,7 @@ $env:OPENLEDGER_BUILD_PYTHON = 'C:\Path\To\python.exe'
 把 APK 复制到符合要求的手机，允许该次安装来源后安装；也可用已配置的 ADB：
 
 ```powershell
-adb install -r dist/android/OpenLedger-0.2.0-beta1-android-preview.apk
+adb install -r dist/android/OpenLedger-0.3.0-beta1-android-preview.apk
 ```
 
 第一次创建一个合成现金账户，设置余额和起算日期，然后输入“咖啡25元”，核对账户与分类后保存。重启应用核对余额及流水。支付渠道与资金账户是分别确认的字段，不隐式认为“微信支付”必然从某个账户扣款。

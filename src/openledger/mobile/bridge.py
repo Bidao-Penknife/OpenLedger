@@ -19,6 +19,7 @@ from openledger.application.dto.ledger import TransactionFields
 from openledger.application.dto.parsing import ChannelAccountMapping, ParseChoice, ParseRequest
 from openledger.application.dto.queries import TransactionFilter
 from openledger.application.parsing import LocalParser
+from openledger.domain.currencies import CURRENCIES, currency
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import parse_amount, validate_minor
 from openledger.domain.values import normalize_id, utc_now
@@ -241,6 +242,25 @@ class MobileLedger:
             return MobileExchange(self.ledger, self.files, self.time_zone).dispatch(action, body)
         if action == "mutate":
             return self.mutations.execute(body)
+        if action == "currency_state":
+            _keys(body, set())
+            with self.database.read() as connection:
+                return {
+                    "supported": [asdict(value) for value in CURRENCIES.values()],
+                    "settings": dict(
+                        connection.execute("SELECT * FROM currency_settings").fetchone()
+                    ),
+                    "rates": [
+                        dict(row)
+                        for row in connection.execute(
+                            "SELECT * FROM exchange_rates ORDER BY currency_code,effective_on DESC"
+                        )
+                    ],
+                }
+        if action.startswith("capture_"):
+            from openledger.mobile.captures import MobileCaptures
+
+            return MobileCaptures(self).dispatch(action, body)
         if action == "transaction_detail":
             _keys(body, {"id"})
             from openledger.mobile.attachments import MobileAttachments
@@ -355,14 +375,23 @@ class MobileLedger:
             return self._record(body)
         if action == "create_account":
             _keys(
-                body, {"request_id", "name", "account_type", "opening_amount", "balance_start_on"}
+                body,
+                {
+                    "request_id",
+                    "name",
+                    "account_type",
+                    "opening_amount",
+                    "balance_start_on",
+                    "currency_code",
+                },
             )
             request_id = normalize_id(_text(body, "request_id"))
             payload = {
                 "id": str(uuid5(NAMESPACE_URL, f"openledger:mobile:account:{request_id}")),
                 "name": _text(body, "name", maximum=100),
                 "account_type": _text(body, "account_type", maximum=20),
-                "opening_balance_minor": _opening_amount(_text(body, "opening_amount")),
+                "currency_code": currency(body.get("currency_code", "CNY")).code,
+                "opening_balance_minor": self._signed_opening(body),
                 "balance_start_on": _day(body, "balance_start_on"),
             }
             return asdict(self.ledger.execute(request_id, "account.create.v1", payload))
@@ -384,12 +413,21 @@ class MobileLedger:
     def _preview(self, body: dict[str, Any]) -> dict[str, Any]:
         return asdict(LocalParser().parse(self._parse_request(body)))
 
+    @staticmethod
+    def _signed_opening(body: dict[str, Any]) -> int:
+        from openledger.mobile.mutations import signed_amount
+
+        return signed_amount(_text(body, "opening_amount"), str(body.get("currency_code", "CNY")))
+
     def _parse_request(self, body: dict[str, Any]) -> ParseRequest:
         _keys(body, {"text", "book_id", "account_id"})
         preferences = self.ledger.preferences()
         categories = self.ledger.entities("category")
         accounts = self.ledger.entities("account")
         payments = self.ledger.entities("payment_method")
+        default_account = _nullable_text(body, "account_id") or _nullable_text(
+            preferences, "default_account_id"
+        )
         return ParseRequest(
             draft_id=str(uuid5(NAMESPACE_URL, "openledger:mobile:preview")),
             revision=1,
@@ -405,7 +443,10 @@ class MobileLedger:
                 for row in categories
             ),
             account_choices=tuple(
-                ParseChoice(str(row["id"]), str(row["name"])) for row in accounts
+                ParseChoice(
+                    str(row["id"]), str(row["name"]), currency_code=str(row["currency_code"])
+                )
+                for row in accounts
             ),
             payment_method_choices=tuple(
                 ParseChoice(str(row["id"]), str(row["name"])) for row in payments
@@ -415,6 +456,7 @@ class MobileLedger:
                 for row in payments
                 if row["default_account_id"] is not None
             ),
+            currency_code=self.mutations.account_currency(default_account),
         )
 
     def _ai(self, action: str, body: dict[str, Any], secret: str | None) -> dict[str, Any]:
@@ -462,6 +504,7 @@ class MobileLedger:
                 "source",
                 "tag_ids",
                 "time_zone",
+                "currency_code",
             },
         )
         precision = (
@@ -477,7 +520,15 @@ class MobileLedger:
             raise LedgerError("INVALID_ENVELOPE")
         fields = TransactionFields(
             kind=_text(values, "kind", maximum=20),
-            amount_minor=parse_amount(_text(values, "amount", maximum=40)),
+            amount_minor=parse_amount(
+                _text(values, "amount", maximum=40),
+                self.mutations.account_currency(values.get("account_id")),
+            ),
+            currency_code=currency(
+                values.get(
+                    "currency_code", self.mutations.account_currency(values.get("account_id"))
+                )
+            ).code,
             account_id=_text(values, "account_id"),
             book_id=_text(values, "book_id"),
             category_id=_text(values, "category_id"),

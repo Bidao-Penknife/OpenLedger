@@ -2,11 +2,14 @@
 
 import hashlib
 import json
+import re
 import sqlite3
 from collections import defaultdict
 from datetime import date, datetime
+from uuid import NAMESPACE_URL, uuid5
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from openledger.domain.currencies import currency, rate_fraction
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import checked_aggregate, validate_minor
 from openledger.domain.values import normalize_id, utc_text
@@ -65,7 +68,10 @@ def _validate(connection: sqlite3.Connection) -> None:
         for row in connection.execute(f"SELECT id FROM {table}"):
             _require(normalize_id(row[0]) == row[0])
     for account in accounts.values():
+        currency(account["currency_code"])
         date.fromisoformat(account["balance_start_on"])
+    for book in connection.execute("SELECT currency_code FROM books"):
+        currency(book[0])
     for category in categories.values():
         parent_id = category["parent_id"]
         if parent_id is not None:
@@ -116,15 +122,25 @@ def _validate(connection: sqlite3.Connection) -> None:
         active = transaction["deleted_at_utc"] is None
         _require(len(rows) == (2 if kind == "transfer" else 1))
         if kind == "transfer":
-            _require(
-                rows[0][0] != rows[1][0] and sorted(delta for _, delta in rows) == [-amount, amount]
-            )
+            debit = [(account, delta) for account, delta in rows if delta < 0]
+            credit = [(account, delta) for account, delta in rows if delta > 0]
+            _require(len(debit) == len(credit) == 1 and debit[0][0] != credit[0][0])
+            destination_amount = transaction.get("to_amount_minor", amount)
+            destination_code = transaction.get("to_currency_code", transaction["currency_code"])
+            _require(debit[0][1] == -amount and credit[0][1] == validate_minor(destination_amount))
+            _require(accounts[debit[0][0]]["currency_code"] == transaction["currency_code"])
+            _require(accounts[credit[0][0]]["currency_code"] == destination_code)
+            if destination_code == transaction["currency_code"]:
+                _require(destination_amount == amount)
         elif kind == "expense":
             _require(rows[0][1] == -amount)
         elif kind in {"income", "expense_refund"}:
             _require(rows[0][1] == amount)
         else:
             _require(kind in {"opening", "adjustment"} and abs(rows[0][1]) == amount)
+        currency(transaction["currency_code"])
+        if kind != "transfer":
+            _require(accounts[rows[0][0]]["currency_code"] == transaction["currency_code"])
         if kind in {"income", "expense"}:
             _require(categories[transaction["category_id"]]["transaction_kind"] == kind)
         if kind == "adjustment":
@@ -148,6 +164,7 @@ def _validate(connection: sqlite3.Connection) -> None:
             if kind == "expense_refund":
                 original = transactions[transaction["original_transaction_id"]]
                 _require(original["kind"] == "expense" and original["deleted_at_utc"] is None)
+                _require(original["currency_code"] == transaction["currency_code"])
                 _require(day >= date.fromisoformat(original["occurred_on"]))
                 refunds[original["id"]] += amount
     for original_id, total in refunds.items():
@@ -185,7 +202,52 @@ def _validate(connection: sqlite3.Connection) -> None:
             _require(batch["status"] == "committed" and batch["version"] == 1)
     for balance in balances.values():
         checked_aggregate(balance)
-    checked_aggregate(sum(balances.values()))
+    native_totals: dict[str, int] = {}
+    for identifier, value in balances.items():
+        code = str(accounts[identifier]["currency_code"])
+        native_totals[code] = native_totals.get(code, 0) + value
+    for value in native_totals.values():
+        checked_aggregate(value)
+    if int(connection.execute("PRAGMA user_version").fetchone()[0]) >= 2:
+        for rate in connection.execute("SELECT * FROM exchange_rates"):
+            currency(rate["currency_code"])
+            _require(rate["currency_code"] != "CNY")
+            _require(date.fromisoformat(rate["effective_on"]).isoformat() == rate["effective_on"])
+            rate_fraction(rate["rate_text"])
+            _require(normalize_id(rate["id"]) == rate["id"])
+            _require(
+                rate["id"]
+                == str(
+                    uuid5(
+                        NAMESPACE_URL,
+                        f"openledger:rate:{rate['currency_code']}:{rate['effective_on']}",
+                    )
+                )
+            )
+        settings = connection.execute("SELECT * FROM currency_settings").fetchall()
+        _require(len(settings) == 1)
+        from openledger.infrastructure.currencies import SETTINGS_ID
+
+        _require(settings[0]["id"] == SETTINGS_ID)
+        currency(settings[0]["display_currency"])
+        for item in connection.execute("SELECT * FROM captured_inputs"):
+            _require(normalize_id(item["id"]) == item["id"])
+            _require(
+                item["id"] == str(uuid5(NAMESPACE_URL, f"openledger:capture:{item['source_key']}"))
+            )
+            _require(isinstance(json.loads(item["suggested_json"]), dict))
+            _require(len(item["suggested_json"]) <= 16000)
+            if item["image_relative_path"]:
+                _require(
+                    re.fullmatch(r"[0-9a-f-]{36}\.(?:png|jpg|webp)", item["image_relative_path"])
+                    is not None
+                )
+                normalize_id(item["image_relative_path"].rsplit(".", 1)[0])
+            for field in ("created_at_utc", "updated_at_utc"):
+                instant = datetime.fromisoformat(item[field].replace("Z", "+00:00"))
+                _require(utc_text(instant) == item[field])
+            if item["state"] == "saved":
+                _require(item["transaction_id"] in transactions)
     preferences = connection.execute("SELECT * FROM app_preferences").fetchall()
     _require(len(preferences) == 1 and preferences[0]["singleton"] == 1)
     for entity, table in [("book", "books"), ("account", "accounts")]:

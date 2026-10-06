@@ -1,5 +1,7 @@
 # Android 手机使用指南
 
+Android 0.3.0-beta1 新增通知、离线中文 OCR、语音及多币种。完整步骤、实际截图、样例和排错请先阅读[新版完整手册](complete-manual.md)；下文保留已有日常功能的简明操作。
+
 本指南对应 Android `0.2.0-beta1-preview`。下载来源为[项目 Release](https://github.com/Bidao-Penknife/OpenLedger/releases/tag/android-v0.2.0-beta1)。旧公开 alpha 可以使用同签名 APK 覆盖安装；请先备份，不要先卸载或清除应用数据。自行构建和 CI APK 使用各自调试密钥，不能假设它们可覆盖公开测试包。
 
 ## 第一次记账

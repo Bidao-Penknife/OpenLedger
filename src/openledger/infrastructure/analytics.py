@@ -16,8 +16,10 @@ from openledger.application.dto.analytics import (
     PeriodTotals,
     ReportData,
 )
+from openledger.domain.currencies import currency
 from openledger.domain.errors import LedgerError
 from openledger.domain.values import normalize_id, utc_now, utc_text
+from openledger.infrastructure.currencies import Valuation
 from openledger.infrastructure.database.database import Database
 
 _DIMENSIONS = {"merchant": "商户", "counterparty": "对象", "category": "分类"}
@@ -98,7 +100,12 @@ def _validate(filters: AnalyticsFilter) -> AnalyticsFilter:
             identifiers[attribute] = tuple(dict.fromkeys(normalize_id(value) for value in values))
         except LedgerError as error:
             raise LedgerError("INVALID_FILTER") from error
-    return AnalyticsFilter(filters.start_on, filters.end_on, **identifiers)
+    return AnalyticsFilter(
+        filters.start_on,
+        filters.end_on,
+        **identifiers,
+        currency_code=currency(filters.currency_code).code,
+    )
 
 
 def _months(start: date, end: date) -> Iterator[str]:
@@ -217,6 +224,7 @@ class AnalyticsService:
         is deliberately unused: valid turnover can exceed its signed 64-bit range.
         """
         filters = _validate(filters)
+        currency(filters.currency_code)
         if (
             not isinstance(ranking_dimension, str)
             or ranking_dimension not in _DIMENSIONS
@@ -239,17 +247,21 @@ class AnalyticsService:
             revision = int(
                 connection.execute("SELECT COALESCE(MAX(seq),0) FROM change_log").fetchone()[0]
             )
-            labels = _scope_labels(connection, filters)
+            labels = _scope_labels(connection, filters) + (f"显示币种：{filters.currency_code}",)
+            valuation = Valuation(connection, filters.currency_code)
             for row in connection.execute(
-                "SELECT flow.kind,flow.amount_minor,flow.occurred_on,flow.category_id,"
+                "SELECT flow.kind,flow.amount_minor,flow.currency_code,flow.occurred_on,"
+                "flow.category_id,"
                 "flow.merchant,flow.counterparty,category.name AS category_name "
                 "FROM v_cashflow_transactions flow "
                 "LEFT JOIN categories category ON category.id=flow.category_id WHERE " + where,
                 parameters,
             ):
                 kind = str(row["kind"])
-                amount = int(row["amount_minor"])
                 day = str(row["occurred_on"])
+                amount = valuation.convert(
+                    int(row["amount_minor"]), str(row["currency_code"]), date.fromisoformat(day)
+                )
                 if day < filters.start_on.isoformat():
                     comparison.add(kind, amount)
                     continue
@@ -310,12 +322,21 @@ class AnalyticsService:
             comparison.freeze() if comparison_start is not None else None,
             comparison_start,
             comparison_end,
-            _notes(
-                frozen_totals,
-                comparison_start,
-                comparison_end,
-                ranking_dimension,
-                ranking_metric,
+            tuple(
+                note
+                for note in _notes(
+                    frozen_totals,
+                    comparison_start,
+                    comparison_end,
+                    ranking_dimension,
+                    ranking_metric,
+                )
+                if not note.startswith("金额均为人民币")
+            )
+            + (
+                f"显示币种 {filters.currency_code}；原币记录保留。"
+                "跨币种按发生日期及最近的手动历史汇率换算，"
+                "每笔按显示币种最小单位四舍五入；缺失汇率不生成不完整报告。",
             ),
             labels,
             revision,

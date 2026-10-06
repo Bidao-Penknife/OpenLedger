@@ -26,6 +26,7 @@ from openledger.application.dto.exchange import (
     ImportRow,
 )
 from openledger.application.dto.queries import TransactionFilter
+from openledger.domain.currencies import currency
 from openledger.domain.errors import LedgerError
 from openledger.domain.money import parse_amount, validate_minor
 from openledger.domain.values import validate_occurrence
@@ -54,6 +55,8 @@ EXCHANGE_COLUMNS = (
     "kind",
     "currency_code",
     "amount_minor",
+    "to_amount_minor",
+    "to_currency_code",
     "occurred_on",
     "occurrence_precision",
     "time_period",
@@ -92,6 +95,9 @@ ALIASES = {
     "类型": "kind",
     "收支类型": "kind",
     "金额": "amount",
+    "币种": "currency_code",
+    "转入金额": "to_amount",
+    "转入币种": "to_currency_code",
     "金额(元)": "amount",
     "日期": "occurred_on",
     "交易日期": "occurred_on",
@@ -261,7 +267,7 @@ def automatic_columns(headers: Iterable[str]) -> tuple[tuple[str, str], ...]:
     result: dict[str, str] = {}
     for header in headers:
         target = ALIASES.get(header, header)
-        if target in EXCHANGE_COLUMNS or target == "amount":
+        if target in EXCHANGE_COLUMNS or target in {"amount", "to_amount"}:
             result.setdefault(target, header)
     return tuple(sorted(result.items()))
 
@@ -398,6 +404,21 @@ class ExchangeService:
                     )
                     if kind not in {"income", "expense", "transfer", "expense_refund"}:
                         raise LedgerError("UNSUPPORTED_IMPORT_KIND")
+                    primary = _resolve(
+                        references,
+                        "account",
+                        data,
+                        mapping.from_account_id if kind == "transfer" else mapping.account_id,
+                        prefix="from_account" if kind == "transfer" else "account",
+                    )
+                    native_code = str(
+                        next(row for row in references["account"] if row["id"] == primary)[
+                            "currency_code"
+                        ]
+                    )
+                    code = currency(data.get("currency_code") or native_code).code
+                    if code != native_code:
+                        raise LedgerError("CURRENCY_MISMATCH")
                     amount_text = data.get("amount_minor", "")
                     if amount_text:
                         if not amount_text.isascii() or not amount_text.isdigit():
@@ -405,7 +426,7 @@ class ExchangeService:
                         amount = int(amount_text)
                         validate_minor(amount)
                     else:
-                        amount = parse_amount(data.get("amount", ""))
+                        amount = parse_amount(data.get("amount", ""), code)
                     try:
                         day = date.fromisoformat(data.get("occurred_on", ""))
                     except ValueError as error:
@@ -429,8 +450,6 @@ class ExchangeService:
                         instant,
                         now=self.ledger.clock(),
                     )
-                    if data.get("currency_code", "CNY") != "CNY":
-                        raise LedgerError("CURRENCY_UNSUPPORTED")
                     fields = {
                         "kind": kind,
                         "amount_minor": amount,
@@ -439,7 +458,7 @@ class ExchangeService:
                         "occurrence_precision": precision,
                         "time_period": data.get("time_period") or None,
                         "occurred_at_utc": instant_text,
-                        "currency_code": "CNY",
+                        "currency_code": code,
                         "source": "import",
                         "source_text": data.get("source_text") or None,
                     }
@@ -501,6 +520,25 @@ class ExchangeService:
                         )
                         if fields["from_account_id"] == fields["to_account_id"]:
                             raise LedgerError("SAME_ACCOUNT_TRANSFER")
+                        target_code = str(
+                            next(
+                                row
+                                for row in references["account"]
+                                if row["id"] == fields["to_account_id"]
+                            )["currency_code"]
+                        )
+                        if data.get("to_currency_code") and data["to_currency_code"] != target_code:
+                            raise LedgerError("CURRENCY_MISMATCH")
+                        incoming = data.get("to_amount_minor", "")
+                        if incoming:
+                            if not incoming.isascii() or not incoming.isdigit():
+                                raise LedgerError("INVALID_AMOUNT")
+                            fields["to_amount_minor"] = int(incoming)
+                            validate_minor(fields["to_amount_minor"])
+                        elif data.get("to_amount"):
+                            fields["to_amount_minor"] = parse_amount(data["to_amount"], target_code)
+                        elif code != target_code:
+                            raise LedgerError("TRANSFER_TARGET_AMOUNT_REQUIRED")
                         for key in ("payment_method_id", "counterparty", "merchant", "location"):
                             fields.pop(key, None)
                     else:

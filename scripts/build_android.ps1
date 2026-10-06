@@ -24,6 +24,8 @@ try {
     $env:ANDROID_HOME = [IO.Path]::GetFullPath($SdkRoot)
     $env:OPENLEDGER_BUILD_PYTHON = [IO.Path]::GetFullPath($Python)
     $env:PYTHONUTF8 = '1'
+    & $Python (Join-Path $projectRoot 'scripts/build_help.py') --check
+    if ($LASTEXITCODE -ne 0) { throw 'The bundled offline manual differs from its reviewed sources.' }
     # A full workspace temporary path avoids Windows AF_UNIX failures with 8.3 aliases.
     $env:TEMP = $javaTemporary
     $env:TMP = $javaTemporary

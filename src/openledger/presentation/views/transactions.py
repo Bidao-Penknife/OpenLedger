@@ -104,7 +104,7 @@ class TransactionsPage(QWidget):
             [
                 self.tr("日期"),
                 self.tr("类型"),
-                self.tr("金额（元）"),
+                self.tr("金额（账户币种）"),
                 self.tr("账户"),
                 self.tr("账本 / 分类"),
                 self.tr("备注"),
@@ -238,7 +238,9 @@ class TransactionsPage(QWidget):
                 values = [
                     str(row["occurred_on"]),
                     kinds.get(str(row["kind"]), str(row["kind"])),
-                    money_text(int(str(row["amount_minor"]))),
+                    str(row["currency_code"])
+                    + " "
+                    + money_text(int(str(row["amount_minor"])), str(row["currency_code"])),
                     (str(row.get("from_account_name")) + " → " + str(row.get("to_account_name")))
                     if row["kind"] == "transfer"
                     else str(row.get("account_name") or "—"),

@@ -11,6 +11,11 @@ import org.json.JSONObject
 
 /** Keep one Python service and one writer queue for the entire app process. */
 class LedgerApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        CurrencyCatalog.initialize(this)
+    }
+
     val worker = Executors.newSingleThreadExecutor()
     private var service: PyObject? = null
     private var serviceDirectory: String? = null

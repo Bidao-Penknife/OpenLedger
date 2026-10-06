@@ -78,7 +78,7 @@ def test_empty_start_invents_no_accounts_or_balance(mobile: MobileLedger) -> Non
     assert snapshot["accounts"] == []
     assert snapshot["overview"]["total_assets_minor"] == 0
     assert snapshot["books"][0]["name"] == "我的账本"
-    assert snapshot["schema_version"] == 1
+    assert snapshot["schema_version"] == 2
 
 
 def test_preview_is_read_only_and_uses_desktop_rules(mobile: MobileLedger) -> None:
@@ -193,7 +193,7 @@ def test_malformed_json_never_changes_ledger(mobile: MobileLedger, raw: str, cod
         ("occurred_on", "2026-10-05", "FUTURE_DATE"),
         ("occurred_on", "20261004", "INVALID_DATE"),
         ("category_id", str(uuid4()), "ENTITY_NOT_FOUND"),
-        ("currency_code", "USD", "INVALID_ENVELOPE"),
+        ("currency_code", "USD", "CURRENCY_MISMATCH"),
     ],
 )
 def test_invalid_confirmation_rolls_back(
